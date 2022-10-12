@@ -1,8 +1,16 @@
+// Libraries
 const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
-const path = require('path');           
+const path = require('path');   
+
+// APIs
+const registerRouter = require('./routes/register');
+
+// Port
 const PORT = process.env.PORT || 5000;  
+
+// App intialization
 const app = express();
 app.set('port', (process.env.PORT || 5000));
 
@@ -23,14 +31,7 @@ app.use((req, res, next) =>
 });
 
 // Post requests
-app.post('/api/register', (req, res, next) => 
-{
-  const { email, password } = req.body;
-  console.log(post);
-  res.status(200).json({
-    message: 'User created for ' + email + ' with password ' + password
-  });
-});
+app.use('/api', registerRouter);
 
 // Heroku deployment
 if (process.env.NODE_ENV === 'production')
