@@ -4,6 +4,19 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 const path = require('path');   
 
+// Database
+require('dotenv').config(); 
+const url = process.env.MONGODB_URI; 
+const MongoClient = require('mongodb').MongoClient;
+const client = new MongoClient(url); 
+client.connect();
+async function s(){
+  const db = client.db("Pwdly");
+  const results = await db.collection('Users').find().toArray();
+  console.log(results);
+}
+s();
+
 // APIs
 const registerRouter = require('./routes/register');
 
