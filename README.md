@@ -1,2 +1,2 @@
 # password-manager
-Website: https://cop4331-pwd.herokuapp.com/
+Website: https://pwdly.herokuapp.com/
