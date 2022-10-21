@@ -1,6 +1,6 @@
 import "./App.css";
 import Landing from "./pages/Landing";
-import About from "./pages/About";
+import Dashboard from "./pages/Dashboard";
 import { BrowserRouter, Routes, Route, Link } from "react-router-dom";
 import { MantineProvider } from "@mantine/core";
 
