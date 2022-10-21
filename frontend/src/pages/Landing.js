@@ -1,11 +1,11 @@
-import LoginForm from '../components/LoginForm';
+import LoginForm from "../components/LoginForm";
 
 const Landing = () => {
-    return ( 
+    return (
         <>
-            <LoginForm/>
+            <LoginForm />
         </>
-     );
-}
- 
+    );
+};
+
 export default Landing;

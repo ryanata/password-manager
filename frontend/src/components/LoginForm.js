@@ -1,28 +1,28 @@
-import './LoginForm.css';
-import React, { useState } from 'react';
+import "./LoginForm.css";
+import React, { useState } from "react";
 
 // Create a form component
 const LoginForm = () => {
     // Create userId state
-    const [userId, setUserId] = useState('');
+    const [userId, setUserId] = useState("");
 
     // Create a post request to /api/register with async await
     const register = async (email, password) => {
-        const response = await fetch('/api/register', {
-            method: 'POST',
+        const response = await fetch("/api/register", {
+            method: "POST",
             headers: {
-                'Content-Type': 'application/json'
+                "Content-Type": "application/json",
             },
             body: JSON.stringify({
                 email: email,
-                password: password
-            })
+                password: password,
+            }),
         });
         const data = await response.json();
         console.log(data);
         setUserId(data.userId);
     };
-    
+
     const handleSubmit = (e) => {
         e.preventDefault();
         // Get value in first input field
@@ -34,13 +34,13 @@ const LoginForm = () => {
     return (
         <>
             <form className="loginForm" onSubmit={handleSubmit}>
-                <input type="email" placeholder="Email"/>
+                <input type="email" placeholder="Email" />
                 <input type="password" placeholder="Password" />
                 <button type="submit">Submit</button>
             </form>
             <p>{userId}</p>
         </>
-      );
-}
- 
+    );
+};
+
 export default LoginForm;
