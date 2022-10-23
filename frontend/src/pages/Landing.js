@@ -10,8 +10,7 @@ const cssCanvas = css`
         left: 0;
         z-index: -1;
         width: 100%;
-        // Get rid of height and unindent transform to make it slanted
-        height: 100%;
+        // Get rid of gradient.height and unindent transform to make it slanted
         // transform-origin: 0 100%;
         // transform: skewY(-12deg);
         --gradient-color-1: #04234d; //#2096F3;
@@ -26,6 +25,8 @@ const Landing = () => {
     useEffect(() => {
         const gradient = new Gradient();
         gradient.initGradient("#gradient-canvas");
+        // Set gradient height to maximum window height
+        gradient.height = window.screen.height;
     }, []);
 
     return (
