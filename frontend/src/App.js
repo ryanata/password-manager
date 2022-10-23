@@ -6,7 +6,13 @@ import { MantineProvider } from "@mantine/core";
 
 function App() {
     return (
-        <MantineProvider withGlobalStyles withNormalizeCSS>
+        <MantineProvider
+            withGlobalStyles
+            withNormalizeCSS
+            theme={{
+                colorScheme: "light",
+            }}
+        >
             <BrowserRouter>
                 <div className="App">
                     <Routes>
