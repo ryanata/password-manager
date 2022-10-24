@@ -270,7 +270,13 @@ export function LandingNav() {
                     </Group>
 
                     <Group ref={ref} className={classes.hiddenMobile}>
-                        <Button variant="white" radius="xl" color="gray.0" onClick={toggleLoginModal} className={classes.transparentColor}>
+                        <Button
+                            variant="white"
+                            radius="xl"
+                            color="gray.0"
+                            onClick={toggleLoginModal}
+                            className={classes.transparentColor}
+                        >
                             Log in
                         </Button>
                         <Button variant="light" radius="xl" color="gray.0" className={classes.opaque}>
@@ -286,7 +292,7 @@ export function LandingNav() {
                     />
                 </Group>
             </Header>
-            
+
             {/*Hamburger menu for mobile*/}
             <Drawer
                 opened={drawerOpened}
@@ -348,7 +354,7 @@ export function LandingNav() {
                     </Group>
                 </ScrollArea>
             </Drawer>
-            <LoginModal opened={loginModalOpened} closed={toggleLoginModal}/>
+            <LoginModal opened={loginModalOpened} closed={toggleLoginModal} />
         </Box>
     );
 }
