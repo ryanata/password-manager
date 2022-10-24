@@ -1,5 +1,6 @@
 import { Gradient } from "../scripts/Gradient";
-import { useEffect } from "react";
+import { Button } from "@mantine/core";  
+import { useEffect, useRef } from "react";
 import { Global, css } from "@emotion/react";
 import { LandingNav } from "../components/LandingNav";
 
@@ -21,18 +22,25 @@ const cssCanvas = css`
 `;
 
 const Landing = () => {
+    const canvasRef = useRef(null);
+
     // Loads in gradient
     useEffect(() => {
         const gradient = new Gradient();
         gradient.initGradient("#gradient-canvas");
         // Set gradient height to maximum window height
         gradient.height = window.screen.height;
+        canvasRef.current.addEventListener("webglcontextlost", (e) => { 
+            // Reload page if WebGL crashes
+            window.location.reload();
+         });
     }, []);
 
+    
     return (
         <div>
             <Global styles={cssCanvas} />
-            <canvas id="gradient-canvas" data-transition-in />
+                <canvas id="gradient-canvas" ref={canvasRef} data-transition-in />
             <LandingNav />
         </div>
     );
