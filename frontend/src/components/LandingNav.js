@@ -203,10 +203,10 @@ export function LandingNav() {
                 <Group position="apart" sx={{ height: "100%" }}>
                     <Group
                         sx={(theme) => ({
-                            paddingLeft: theme.spacing.sm,
                             [theme.fn.largerThan("sm")]: {
                                 width: groupSize[0],
                                 height: groupSize[1],
+                                paddingLeft: theme.spacing.sm,
                             },
                         })}
                     >
@@ -345,7 +345,15 @@ export function LandingNav() {
                     <Divider my="sm" color={theme.colorScheme === "dark" ? "dark.5" : "gray.1"} />
 
                     <Group position="center" grow pb="xl" px="md">
-                        <Button variant="white" radius="xl" className={classes.transparentColor}>
+                        <Button
+                            variant="white"
+                            radius="xl"
+                            onClick={() => {
+                                closeDrawer();
+                                toggleLoginModal();
+                            }}
+                            className={classes.transparentColor}
+                        >
                             Log in
                         </Button>
                         <Button variant="light" radius="xl">

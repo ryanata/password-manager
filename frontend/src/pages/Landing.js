@@ -1,5 +1,4 @@
 import { Gradient } from "../scripts/Gradient";
-import { Button } from "@mantine/core";
 import { useEffect, useRef } from "react";
 import { Global, css } from "@emotion/react";
 import { LandingNav } from "../components/LandingNav";
@@ -11,7 +10,6 @@ const cssCanvas = css`
         left: 0;
         z-index: -1;
         width: 100%;
-        // Get rid of gradient.height and unindent transform to make it slanted
         // transform-origin: 0 100%;
         // transform: skewY(-12deg);
         --gradient-color-1: #04234d; //#2096F3;
@@ -34,6 +32,11 @@ const Landing = () => {
             // Reload page if WebGL crashes
             window.location.reload();
         });
+    }, []);
+
+    // Sets page title
+    useEffect(() => {
+        document.title = "pwdly | Password Management Made Simple";
     }, []);
 
     return (
