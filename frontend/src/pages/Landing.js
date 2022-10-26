@@ -1,5 +1,5 @@
 import { Gradient } from "../scripts/Gradient";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { Global, css } from "@emotion/react";
 import { LandingNav } from "../components/LandingNav";
 
@@ -10,8 +10,6 @@ const cssCanvas = css`
         left: 0;
         z-index: -1;
         width: 100%;
-        // Get rid of height and unindent transform to make it slanted
-        height: 100%;
         // transform-origin: 0 100%;
         // transform: skewY(-12deg);
         --gradient-color-1: #04234d; //#2096F3;
@@ -22,16 +20,29 @@ const cssCanvas = css`
 `;
 
 const Landing = () => {
+    const canvasRef = useRef(null);
+
     // Loads in gradient
     useEffect(() => {
         const gradient = new Gradient();
         gradient.initGradient("#gradient-canvas");
+        // Set gradient height to maximum window height
+        gradient.height = window.screen.height;
+        canvasRef.current.addEventListener("webglcontextlost", (e) => {
+            // Reload page if WebGL crashes
+            window.location.reload();
+        });
+    }, []);
+
+    // Sets page title
+    useEffect(() => {
+        document.title = "pwdly | Password Management Made Simple";
     }, []);
 
     return (
         <div>
             <Global styles={cssCanvas} />
-            <canvas id="gradient-canvas" data-transition-in />
+            <canvas id="gradient-canvas" ref={canvasRef} data-transition-in />
             <LandingNav />
         </div>
     );

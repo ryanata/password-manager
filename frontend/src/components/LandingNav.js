@@ -29,6 +29,7 @@ import {
     IconClipboardList,
     IconHomeHeart,
 } from "@tabler/icons";
+import LoginModal from "./LoginModal";
 import { useState, useRef, useEffect } from "react";
 import { default as Logo } from "../assets/logo.svg";
 
@@ -150,6 +151,7 @@ export function LandingNav() {
     const [drawerOpened, { toggle: toggleDrawer, close: closeDrawer }] = useDisclosure(false);
     const [linksFeaturesOpened, { toggle: toggleFeatures }] = useDisclosure(false);
     const [linksSolutionsOpened, { toggle: toggleSolutions }] = useDisclosure(false);
+    const [loginModalOpened, { toggle: toggleLoginModal }] = useDisclosure(false);
     // Save width and height of login/signup div to use on image
     const [groupSize, setGroupSize] = useState([0, 0]);
     const ref = useRef(null);
@@ -201,10 +203,10 @@ export function LandingNav() {
                 <Group position="apart" sx={{ height: "100%" }}>
                     <Group
                         sx={(theme) => ({
-                            paddingLeft: theme.spacing.sm,
                             [theme.fn.largerThan("sm")]: {
                                 width: groupSize[0],
                                 height: groupSize[1],
+                                paddingLeft: theme.spacing.sm,
                             },
                         })}
                     >
@@ -214,14 +216,14 @@ export function LandingNav() {
                     <Group sx={{ height: "100%" }} spacing={0} className={classes.hiddenMobile}>
                         <HoverCard width={600} position="bottom" radius="md" shadow="md" withinPortal>
                             <HoverCard.Target>
-                                <a href="#" className={classes.link}>
+                                <Anchor href="#" className={classes.link}>
                                     <Center inline>
                                         <Box component="span" mr={5}>
                                             Features
                                         </Box>
                                         <IconChevronDown size={16} color="white" />
                                     </Center>
-                                </a>
+                                </Anchor>
                             </HoverCard.Target>
 
                             <HoverCard.Dropdown sx={{ overflow: "hidden" }}>
@@ -262,13 +264,19 @@ export function LandingNav() {
                             </HoverCard.Dropdown>
                         </HoverCard>
 
-                        <a href="#" className={classes.link}>
+                        <Anchor href="#" className={classes.link}>
                             About Us
-                        </a>
+                        </Anchor>
                     </Group>
 
                     <Group ref={ref} className={classes.hiddenMobile}>
-                        <Button variant="white" radius="xl" color="gray.0" className={classes.transparentColor}>
+                        <Button
+                            variant="white"
+                            radius="xl"
+                            color="gray.0"
+                            onClick={toggleLoginModal}
+                            className={classes.transparentColor}
+                        >
                             Log in
                         </Button>
                         <Button variant="light" radius="xl" color="gray.0" className={classes.opaque}>
@@ -285,6 +293,7 @@ export function LandingNav() {
                 </Group>
             </Header>
 
+            {/*Hamburger menu for mobile*/}
             <Drawer
                 opened={drawerOpened}
                 onClose={closeDrawer}
@@ -329,14 +338,22 @@ export function LandingNav() {
                     </UnstyledButton>
                     <Collapse in={linksSolutionsOpened}>{solutionslinks}</Collapse>
 
-                    <a href="#" className={classes.link}>
+                    <Anchor href="#" className={classes.link}>
                         About Us
-                    </a>
+                    </Anchor>
 
                     <Divider my="sm" color={theme.colorScheme === "dark" ? "dark.5" : "gray.1"} />
 
                     <Group position="center" grow pb="xl" px="md">
-                        <Button variant="white" radius="xl" className={classes.transparentColor}>
+                        <Button
+                            variant="white"
+                            radius="xl"
+                            onClick={() => {
+                                closeDrawer();
+                                toggleLoginModal();
+                            }}
+                            className={classes.transparentColor}
+                        >
                             Log in
                         </Button>
                         <Button variant="light" radius="xl">
@@ -345,6 +362,7 @@ export function LandingNav() {
                     </Group>
                 </ScrollArea>
             </Drawer>
+            <LoginModal opened={loginModalOpened} closed={toggleLoginModal} />
         </Box>
     );
 }
