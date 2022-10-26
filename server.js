@@ -2,23 +2,25 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
-const path = require('path');   
+const path = require('path'); 
+const mongoose = require('mongoose');
+const User = require('./model/user');
+
+// ENV
+require('dotenv').config();
 
 // Database
-require('dotenv').config(); 
 const url = process.env.MONGODB_URI; 
-const MongoClient = require('mongodb').MongoClient;
-const client = new MongoClient(url); 
-client.connect();
-async function s(){
-  const db = client.db("Pwdly");
-  const results = await db.collection('Users').find().toArray();
-  console.log(results);
-}
-s();
+mongoose.connect(url).then(() => {
+    console.log('Connected to MongoDB');
+    // Change database for mongoose to Pwdly
+}).catch((error) => {
+    console.log('Error connecting to MongoDB:', error.message);
+});
 
 // APIs
 const registerRouter = require('./routes/register');
+const loginRouter = require('./routes/login');
 
 // Port
 const PORT = process.env.PORT || 5000;  
@@ -45,6 +47,7 @@ app.use((req, res, next) =>
 
 // Post requests
 app.use('/api', registerRouter);
+app.use('/api', loginRouter);
 
 // Heroku deployment
 if (process.env.NODE_ENV === 'production')
