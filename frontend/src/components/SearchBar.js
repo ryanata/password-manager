@@ -1,8 +1,5 @@
-import { Input } from '@mantine/core';
-import { IconAt } from '@tabler/icons';
-import { Group } from '@mantine/core';
-import { Button } from '@mantine/core';
-import { IconPlus } from '@tabler/icons';
+import { Input, Group, Button } from '@mantine/core';
+import { IconAt, IconPlus } from '@tabler/icons';
 
 export function SearchBar() {
   return (
