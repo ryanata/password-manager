@@ -9,6 +9,7 @@ const authToken = process.env.TWILIO_AUTH_TOKEN;
 const twilio = require('twilio')(accountSid, authToken);
 
 
+// create a verification for a phone
 router.post('/verification/phone', async (req, res, next) =>
     {
         const { phoneNumber } = req.body;
@@ -16,6 +17,7 @@ router.post('/verification/phone', async (req, res, next) =>
         try
         {
             const foundPhone = await User.findOne({ phone: phoneNumber });
+            console.log(foundPhone);
             if (foundPhone === null)
             {
                 updateStatusCode(404, 'Phone number not found');
@@ -43,6 +45,7 @@ router.post('/verification/phone', async (req, res, next) =>
     }
 );
 
+// check verification code for a phone
 router.get('/verification/phone', async (req, res, next) =>
     {
         const { phoneNumber, verificationCode } = req.body;
@@ -83,5 +86,7 @@ router.get('/verification/phone', async (req, res, next) =>
         }
     }
 );
+
+
 
 module.exports = router;
