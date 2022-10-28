@@ -21,6 +21,7 @@ mongoose.connect(url).then(() => {
 // APIs
 const registerRouter = require('./routes/register');
 const loginRouter = require('./routes/login');
+const verificationRouter = require('./routes/verification');
 
 // Port
 const PORT = process.env.PORT || 5000;  
@@ -48,6 +49,7 @@ app.use((req, res, next) =>
 // Post requests
 app.use('/api', registerRouter);
 app.use('/api', loginRouter);
+app.use('/api', verificationRouter);
 
 // Heroku deployment
 if (process.env.NODE_ENV === 'production')
