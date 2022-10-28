@@ -66,4 +66,4 @@ const loginUser = asyncHandler(async (req, res) => {
 module.exports = {
     registerUser,
     loginUser,
-  }
+}

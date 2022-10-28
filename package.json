@@ -21,7 +21,8 @@
         "express-async-handler": "^1.2.0",
         "heroku": "^7.65.0",
         "mongodb": "^4.10.0",
-        "mongoose": "^6.7.0"
+        "mongoose": "^6.7.0",
+        "twilio": "^3.83.0"
     },
     "devDependencies": {
         "concurrently": "^7.5.0",
