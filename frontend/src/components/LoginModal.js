@@ -62,6 +62,7 @@ const LoginModal = ({ opened, closed }) => {
             password: "",
             remember: false,
             submittingLogin: null,
+            loggedIn: null,
         },
         validate: {
             email: (value) => !value.includes("@") && "Invalid email",
@@ -72,14 +73,14 @@ const LoginModal = ({ opened, closed }) => {
         // If submitting the login form
         if (values.submittingLogin) {
             // Call login api
-            axios.post("/api/login", {
+            axios.post("/api/user/login", {
                 email: values.email,
                 password: values.password,
             }).then((res) => {
                 // If login successful
                 if (res.status === 200) {
                     // Redirect to dashboard
-                    return <Navigate to="/dashboard" />;
+                    form.setFieldValue("loggedIn", true);
                 }
             }).catch((err) => {
                 // If login failed
@@ -92,13 +93,17 @@ const LoginModal = ({ opened, closed }) => {
                 }
             }).then(() => {
                 // Reset submittingLogin
-                form.setFieldValue("submittingLogin", false);
+                form.setFieldValue("submittingLogin", null);
             });
         } else {
             // TODO: Send forgot password request to backend
             setState({ alert: values.email });
         }
     };
+
+    if (form.values.loggedIn) {
+        return <Navigate to="/dashboard" />;
+    }
 
     return (
         <Modal
