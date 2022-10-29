@@ -21,6 +21,7 @@
         "express": "^4.18.2",
         "express-async-handler": "^1.2.0",
         "heroku": "^7.65.0",
+        "jsonwebtoken": "^8.5.1",
         "mongodb": "^4.10.0",
         "mongoose": "^6.7.0",
         "twilio": "^3.83.0"
