@@ -1,6 +1,10 @@
+const jwt = require('jsonwebtoken');
+const bcrypt = require('bcrypt');
 const User = require('../models/user');
 const asyncHandler = require('express-async-handler');
 
+// @desc    Create new user
+// @route   GET /api/users/register
 const registerUser = asyncHandler(async (req, res) => {
     const { firstName, lastName, email, phoneNumber, password } = req.body;
 
@@ -16,11 +20,15 @@ const registerUser = asyncHandler(async (req, res) => {
         throw new Error('User already exists');
     }
 
+    // Hash password
+    const salt = await bcrypt.genSalt(10)
+    const hashedPassword = await bcrypt.hash(password, salt)
+
     const user = await User.create({
         email: email,
         emailVerified: false,
         phone: phoneNumber,
-        password: password,
+        password: hashedPassword,
         name: {
             firstName: firstName,
             lastName: lastName,
@@ -30,7 +38,15 @@ const registerUser = asyncHandler(async (req, res) => {
     if (user) {
         res.status(201).json({
             message: 'User created!',
-            user: user,
+            user: {
+                id: user._id,
+                firstName: user.name.firstName,
+                lastName: user.name.lastName,
+                email: user.email,
+                phoneNumber: user.phone,
+                emailVerified: user.emailVerified,
+                token: generateToken(user._id),
+            },
         });
     } else {
         res.status(400);
@@ -38,6 +54,8 @@ const registerUser = asyncHandler(async (req, res) => {
     }
 });
 
+// @desc    Login user
+// @route   GET /api/users/login
 const loginUser = asyncHandler(async (req, res) => {
     const { email, password } = req.body;
 
@@ -52,10 +70,18 @@ const loginUser = asyncHandler(async (req, res) => {
         res.status(401);
         throw new Error('Email not found');
     }
-    if (user && user.password === password){
+    if (user && (await bcrypt.compare(password, user.password))) {
         res.status(200).json({
             message: 'User logged in!',
-            user: user,
+            user: {
+                id: user._id,
+                firstName: user.name.firstName,
+                lastName: user.name.lastName,
+                email: user.email,
+                phoneNumber: user.phone,
+                emailVerified: user.emailVerified,
+                token: generateToken(user._id),
+            },
         });
     } else {
         res.status(401);
@@ -63,7 +89,21 @@ const loginUser = asyncHandler(async (req, res) => {
     }
 });
 
+// @desc    Get user data
+// @route   GET /api/users/me
+const getMe = asyncHandler(async (req, res) => {
+    res.status(200).json(req.user)
+})
+  
+// Generate JWT
+const generateToken = (id) => {
+    return jwt.sign({ id }, process.env.JWT_KEY, {
+        expiresIn: '1d',
+    })
+}
+
 module.exports = {
     registerUser,
     loginUser,
+    getMe,
   }
