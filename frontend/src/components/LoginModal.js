@@ -73,28 +73,33 @@ const LoginModal = ({ opened, closed }) => {
         // If submitting the login form
         if (values.submittingLogin) {
             // Call login api
-            axios.post("/api/user/login", {
-                email: values.email,
-                password: values.password,
-            }).then((res) => {
-                // If login successful
-                if (res.status === 200) {
-                    // Redirect to dashboard
-                    form.setFieldValue("loggedIn", true);
-                }
-            }).catch((err) => {
-                // If login failed
-                if (err.response.status === 401) {
-                    // Set alert message
-                    setState({ alert: err.response.data.message });
-                } else {
-                    // Set alert message
-                    setState({ alert: "An error occured" });
-                }
-            }).then(() => {
-                // Reset submittingLogin
-                form.setFieldValue("submittingLogin", null);
-            });
+            axios
+                .post("/api/user/login", {
+                    email: values.email,
+                    password: values.password,
+                })
+                .then((res) => {
+                    // If login successful
+                    if (res.status === 200) {
+                        // Redirect to dashboard
+                        localStorage.setItem("pwdlyToken", JSON.stringify(res.data.user.token));
+                        form.setFieldValue("loggedIn", true);
+                    }
+                })
+                .catch((err) => {
+                    // If login failed
+                    if (err.response.status === 401) {
+                        // Set alert message
+                        setState({ alert: err.response.data.message });
+                    } else {
+                        // Set alert message
+                        setState({ alert: "An error occured" });
+                    }
+                })
+                .then(() => {
+                    // Reset submittingLogin
+                    form.setFieldValue("submittingLogin", null);
+                });
         } else {
             // TODO: Send forgot password request to backend
             setState({ alert: values.email });
@@ -186,7 +191,7 @@ const LoginModal = ({ opened, closed }) => {
                             mb="sm"
                             color="steel-blue"
                         >
-                            {form.values.submittingLogin ? <Loader color="white"/> : "Login"}
+                            {form.values.submittingLogin ? <Loader color="white" /> : "Login"}
                         </Button>
                     )}
 
