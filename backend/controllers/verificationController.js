@@ -11,23 +11,24 @@ const TYPE_EMAIL = "email";
 const createVerification = asyncHandler(async (req, res) => {
     // get the type of the request: sms or email are our accepted mediums
     const type = req.query.type;
-    const { phoneNumber, email } = req.body;
+    // email address or phone number
+    const contact = req.params.contact;
 
     if (type != TYPE_PHONE && type != TYPE_EMAIL) {    
         res.status(400);
         throw new Error('Please enter a valid type of request: ' + TYPE_PHONE + ' or ' + TYPE_EMAIL);
     }
 
-    if (type == TYPE_PHONE && !phoneNumber) {
+    if (type == TYPE_PHONE && !contact) {
         res.status(400);
         throw new Error('Please enter phone number');
-    } else if (type == TYPE_EMAIL && !email) {
+    } else if (type == TYPE_EMAIL && !contact) {
         res.status(400);
         throw new Error('Please enter email');
     }
 
     // Check for existing user
-    const userExists = await User.findOne({ type: type == TYPE_PHONE ? phoneNumber : email });
+    const userExists = await User.findOne({ type: contact });
     
     if (!userExists) {
         res.status(400);
@@ -42,9 +43,10 @@ const createVerification = asyncHandler(async (req, res) => {
     //     return;
     // }
     
-    sendTo = type == TYPE_PHONE ? '+' + phoneNumber : email;
     channel = type == TYPE_PHONE ? 'sms' : 'email';
+    sendTo = type == TYPE_PHONE ? '+' + contact : contact;
     verificationStatus = ""
+    
     await twilio.verify.v2.services(serviceSid)
         .verifications
         .create({to: sendTo, channel: channel})
@@ -63,17 +65,19 @@ const createVerification = asyncHandler(async (req, res) => {
 const checkVerification = asyncHandler(async (req, res) => {
     // get the type of the request: sms or email are our accepted mediums
     const type = req.query.type;
-    const { phoneNumber, email, verificationCode } = req.body;
+    const verificationCode = req.query.code;
+    // email address or phone number
+    const contact = req.params.contact;
 
     if (type != TYPE_PHONE && type != TYPE_EMAIL) {    
         res.status(400);
         throw new Error('Please enter a valid type of request: ' + TYPE_PHONE + ' or ' + TYPE_EMAIL);
     }
 
-    if (type == TYPE_PHONE && !phoneNumber) {
+    if (type == TYPE_PHONE && !contact) {
         res.status(400);
         throw new Error('Please enter phone number');
-    } else if (type == TYPE_EMAIL && !email) {
+    } else if (type == TYPE_EMAIL && !contact) {
         res.status(400);
         throw new Error('Please enter email');
     }
@@ -85,16 +89,19 @@ const checkVerification = asyncHandler(async (req, res) => {
     }
 
     // Check for existing user
-    const userExists = await User.findOne({ type: type == TYPE_PHONE ? phoneNumber : email });
+    const userExists = await User.findOne({ type: contact });
     
     if (!userExists) {
         res.status(400);
         throw new Error('No user found with this ' + type == TYPE_PHONE ? ' phone number' : ' email');
     }
 
-    sendTo = type == TYPE_PHONE ? '+' + phoneNumber : email;
+    sendTo = type == TYPE_PHONE ? '+' + contact : contact;
     verificationStatus = ""
+
     // check if the verification exists
+    // this is needed because the Twilio API returns a not found error
+    // if the verification no longer exists
     try {
         await twilio.verify.v2.services(serviceSid)
             .verificationChecks
@@ -102,7 +109,7 @@ const checkVerification = asyncHandler(async (req, res) => {
             .then(check => verificationStatus = check.status);
     } catch(e) {
         res.status(400);
-        throw new Error('Verification does not exist');
+        throw new Error('Verification does not exist: ' + e);
     }
     
 

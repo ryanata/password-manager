@@ -6,7 +6,7 @@ const {
     checkVerification
 } = require('../controllers/verificationController');
 
-router.post('', createVerification);
-router.get('', checkVerification);
+router.post('/:contact', createVerification);
+router.get('/:contact', checkVerification);
 
 module.exports = router;
