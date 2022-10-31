@@ -5,35 +5,49 @@ const accountSid = process.env.TWILIO_ACCOUNT_SID;
 const serviceSid = process.env.TWILIO_SERVICE_SID;
 const authToken = process.env.TWILIO_AUTH_TOKEN;
 const twilio = require('twilio')(accountSid, authToken);
+const TYPE_PHONE = "phone";
+const TYPE_EMAIL = "email";
 
-const createVerificationPhone = asyncHandler(async (req, res) => {
-    const { phoneNumber } = req.body;
+const createVerification = asyncHandler(async (req, res) => {
+    // get the type of the request: sms or email are our accepted mediums
+    const type = req.query.type;
+    const { phoneNumber, email } = req.body;
 
-    if (!phoneNumber) {
+    if (type != TYPE_PHONE && type != TYPE_EMAIL) {    
+        res.status(400);
+        throw new Error('Please enter a valid type of request: ' + TYPE_PHONE + ' or ' + TYPE_EMAIL);
+    }
+
+    if (type == TYPE_PHONE && !phoneNumber) {
         res.status(400);
         throw new Error('Please enter phone number');
+    } else if (type == TYPE_EMAIL && !email) {
+        res.status(400);
+        throw new Error('Please enter email');
     }
 
     // Check for existing user
-    const userExists = await User.findOne({ phone: phoneNumber });
+    const userExists = await User.findOne({ type: type == TYPE_PHONE ? phoneNumber : email });
+    
     if (!userExists) {
         res.status(400);
-        throw new Error('No user found with this phone number');
+        throw new Error('No user found with this ' + type == TYPE_PHONE ? ' phone number' : ' email');
     }
-    console.log(userExists);
 
     // check if user is already verified
-    if (userExists.emailVerified) {
-        res.status(200).json({
-            message: 'User is already verified',
-        });
-        return;
-    }
+    // if (userExists.emailVerified) {
+    //     res.status(200).json({
+    //         message: 'User is already verified',
+    //     });
+    //     return;
+    // }
     
+    sendTo = type == TYPE_PHONE ? '+' + phoneNumber : email;
+    channel = type == TYPE_PHONE ? 'sms' : 'email';
     verificationStatus = ""
     await twilio.verify.v2.services(serviceSid)
         .verifications
-        .create({to: '+' + phoneNumber, channel: 'sms'})
+        .create({to: sendTo, channel: channel})
         .then(check => verificationStatus = check.status);
 
     if (verificationStatus == "pending") {
@@ -46,28 +60,45 @@ const createVerificationPhone = asyncHandler(async (req, res) => {
     }
 });
 
-const checkVerificationPhone = asyncHandler(async (req, res) => {
-    const { phoneNumber, verificationCode } = req.body;
+const checkVerification = asyncHandler(async (req, res) => {
+    // get the type of the request: sms or email are our accepted mediums
+    const type = req.query.type;
+    const { phoneNumber, email, verificationCode } = req.body;
 
-    if (!phoneNumber || !verificationCode) {
+    if (type != TYPE_PHONE && type != TYPE_EMAIL) {    
         res.status(400);
-        throw new Error('Please enter all fields');
+        throw new Error('Please enter a valid type of request: ' + TYPE_PHONE + ' or ' + TYPE_EMAIL);
+    }
+
+    if (type == TYPE_PHONE && !phoneNumber) {
+        res.status(400);
+        throw new Error('Please enter phone number');
+    } else if (type == TYPE_EMAIL && !email) {
+        res.status(400);
+        throw new Error('Please enter email');
+    }
+
+
+    if (!verificationCode) {
+        res.status(400);
+        throw new Error('Please enter the verification code');
     }
 
     // Check for existing user
-    const userExists = await User.findOne({ phone: phoneNumber });
+    const userExists = await User.findOne({ type: type == TYPE_PHONE ? phoneNumber : email });
+    
     if (!userExists) {
         res.status(400);
-        throw new Error('No user found with this phone number');
+        throw new Error('No user found with this ' + type == TYPE_PHONE ? ' phone number' : ' email');
     }
 
-    verificationStatus = "";
-
+    sendTo = type == TYPE_PHONE ? '+' + phoneNumber : email;
+    verificationStatus = ""
     // check if the verification exists
     try {
         await twilio.verify.v2.services(serviceSid)
             .verificationChecks
-            .create({to: '+' + phoneNumber, code: verificationCode})
+            .create({to: sendTo, code: verificationCode})
             .then(check => verificationStatus = check.status);
     } catch(e) {
         res.status(400);
@@ -90,52 +121,7 @@ const checkVerificationPhone = asyncHandler(async (req, res) => {
     }
 });
 
-const createVerificationEmail = asyncHandler(async (req, res) => {
-    const { email } = req.body;
-
-    if (!email) {
-        res.status(400);
-        throw new Error('Please enter email');
-    }
-
-    // Check for existing user
-    const userExists = await User.findOne({ email });
-    if (!userExists) {
-        res.status(400);
-        throw new Error('No user found with this email');
-    }
-    console.log(userExists);
-
-    // check if user is already verified
-    if (userExists.emailVerified) {
-        res.status(200).json({
-            message: 'User is already verified',
-        });
-        return;
-    }
-    
-    verificationStatus = ""
-    await twilio.verify.v2.services(serviceSid)
-        .verifications
-        .create({channelConfiguration: {
-            template_id: 'd-76401c75169e4e0c95826a6146dae908',
-            from: 'pwdlyverify@gmail.com',
-            from_name: 'Pwdly'
-        }, to: email, channel: 'email'})
-        .then(check => verificationStatus = check.status);
-
-    if (verificationStatus == "pending") {
-        res.status(201).json({
-            message: 'Verification created',
-        });
-    } else {
-        res.status(400);
-        throw new Error('Issue initiating verification');
-    }
-});
-
 module.exports = {
-    createVerificationPhone,
-    checkVerificationPhone,
-    createVerificationEmail
+    createVerification,
+    checkVerification
 }

@@ -2,13 +2,11 @@ const express = require('express');
 const router = express.Router();
 
 const {
-    createVerificationPhone,
-    checkVerificationPhone,
-    createVerificationEmail
+    createVerification,
+    checkVerification
 } = require('../controllers/verificationController');
 
-router.post('/phone', createVerificationPhone);
-router.get('/phone', checkVerificationPhone);
-router.post('/email', createVerificationEmail)
+router.post('', createVerification);
+router.get('', checkVerification);
 
 module.exports = router;
