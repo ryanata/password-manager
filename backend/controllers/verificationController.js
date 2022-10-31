@@ -46,11 +46,16 @@ const createVerification = asyncHandler(async (req, res) => {
     channel = type == TYPE_PHONE ? 'sms' : 'email';
     sendTo = type == TYPE_PHONE ? '+' + contact : contact;
     verificationStatus = ""
-    
+
     await twilio.verify.v2.services(serviceSid)
         .verifications
-        .create({to: sendTo, channel: channel})
+        .create({channelConfiguration: {
+            substitutions: {
+              contact: contact
+            }
+          },to: sendTo, channel: channel})
         .then(check => verificationStatus = check.status);
+    
 
     if (verificationStatus == "pending") {
         res.status(201).json({
