@@ -30,6 +30,7 @@ import {
     IconHomeHeart,
 } from "@tabler/icons";
 import LoginModal from "./LoginModal";
+import SignupModal from "./SignupModal";
 import { useState, useRef, useEffect } from "react";
 import { default as Logo } from "../assets/logo.svg";
 
@@ -152,6 +153,7 @@ export function LandingNav() {
     const [linksFeaturesOpened, { toggle: toggleFeatures }] = useDisclosure(false);
     const [linksSolutionsOpened, { toggle: toggleSolutions }] = useDisclosure(false);
     const [loginModalOpened, { toggle: toggleLoginModal }] = useDisclosure(false);
+    const [signupModalOpened, { toggle: toggleSignupModal }] = useDisclosure(false);
     // Save width and height of login/signup div to use on image
     const [groupSize, setGroupSize] = useState([0, 0]);
     const ref = useRef(null);
@@ -279,7 +281,13 @@ export function LandingNav() {
                         >
                             Log in
                         </Button>
-                        <Button variant="light" radius="xl" color="gray.0" className={classes.opaque}>
+                        <Button
+                            variant="light"
+                            radius="xl"
+                            color="gray.0"
+                            onClick={toggleSignupModal}
+                            className={classes.opaque}
+                        >
                             Sign up
                         </Button>
                     </Group>
@@ -356,13 +364,21 @@ export function LandingNav() {
                         >
                             Log in
                         </Button>
-                        <Button variant="light" radius="xl">
+                        <Button
+                            variant="light"
+                            radius="xl"
+                            onClick={() => {
+                                closeDrawer();
+                                toggleSignupModal();
+                            }}
+                        >
                             Sign up
                         </Button>
                     </Group>
                 </ScrollArea>
             </Drawer>
             <LoginModal opened={loginModalOpened} closed={toggleLoginModal} />
+            <SignupModal opened={signupModalOpened} closed={toggleSignupModal} />
         </Box>
     );
 }
