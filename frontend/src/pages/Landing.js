@@ -2,6 +2,7 @@ import { Gradient } from "../scripts/Gradient";
 import { useEffect, useRef } from "react";
 import { Global, css } from "@emotion/react";
 import { LandingNav } from "../components/LandingNav";
+import { ProductDescription } from "../components/ProductDescription";
 
 const cssCanvas = css`
     #gradient-canvas {
@@ -44,6 +45,7 @@ const Landing = () => {
             <Global styles={cssCanvas} />
             <canvas id="gradient-canvas" ref={canvasRef} data-transition-in />
             <LandingNav />
+            <ProductDescription />
         </div>
     );
 };
