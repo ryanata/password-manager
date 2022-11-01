@@ -55,11 +55,11 @@ const SignupModal = ({ opened, closed }) => {
             </Title>
             <Text align="center" color={theme.colors.gray[6]} className={classes.modalSubheader}>
                 {"Already have an account? "}
-                <Anchor>Create account</Anchor>
+                <Anchor>Log in</Anchor>
             </Text>
             <form>
                 <Stack>
-                    <Group position="apart">
+                    <Group position="center" spacing="sm" grow>
                         <TextInput
                             required={true}
                             label="First name"
@@ -77,7 +77,7 @@ const SignupModal = ({ opened, closed }) => {
                             // error={form.errors.email && "Invalid email"}
                         />
                     </Group>
-                    <TextInput
+                    <TextInput 
                         required={true}
                         label="Email"
                         placeholder="john.doe@gmail.com"
