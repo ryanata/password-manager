@@ -6,6 +6,7 @@ const {
     checkVerification
 } = require('../controllers/verificationController');
 
+// contact is a phone number or email address
 router.post('/:contact', createVerification);
 router.get('/:contact', checkVerification);
 
