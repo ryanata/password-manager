@@ -22,7 +22,7 @@ const createVerification = asyncHandler(async (req, res) => {
     // if this is for a password reset, we use the service allocated for that
     const twilioSid = type == TYPE_PASSWORD_RESET ? serviceSidPasswordReset : serviceSid;
 
-    verificationAlreadyExists = false;
+    let verificationAlreadyExists = false;
 
     if (medium != MEDIUM_PHONE && medium != MEDIUM_EMAIL) {    
         res.status(400);
@@ -75,6 +75,7 @@ const checkVerification = asyncHandler(async (req, res) => {
     // get the medium of the request: sms or email are our accepted mediums
     const medium = req.query.medium;
     const verificationCode = req.query.code;
+    const passwordReset = req.query.passwordReset;
     // email address or phone number
     const contact = req.params.contact;
     const type = req.query.type;
