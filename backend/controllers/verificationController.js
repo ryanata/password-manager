@@ -9,6 +9,7 @@ const twilio = require('twilio')(accountSid, authToken);
 const MEDIUM_PHONE = "phone";
 const MEDIUM_EMAIL = "email";
 const TYPE_PASSWORD_RESET = "passwordReset";
+const TYPE_ACCOUNT_VERIFICATION = "verifyAccount";
 const TYPE_DEFAULT_VERIFICATION = "default";
 
 const createVerification = asyncHandler(async (req, res) => {
@@ -20,6 +21,8 @@ const createVerification = asyncHandler(async (req, res) => {
 
     // if this is for a password reset, we use the service allocated for that
     const twilioSid = type == TYPE_PASSWORD_RESET ? serviceSidPasswordReset : serviceSid;
+
+    verificationAlreadyExists = false;
 
     if (medium != MEDIUM_PHONE && medium != MEDIUM_EMAIL) {    
         res.status(400);
@@ -34,21 +37,15 @@ const createVerification = asyncHandler(async (req, res) => {
         throw new Error('Please enter email');
     }
 
+    // implement creating a new 2FA if one already exists
+
     // Check for existing user
     const userExists = await User.findOne({ medium: contact });
     
     if (!userExists) {
-        res.status(400);
+        res.status(404);
         throw new Error('No user found with this ' + medium == MEDIUM_PHONE ? ' phone number' : ' email');
     }
-
-    // check if user is already verified
-    // if (userExists.emailVerified) {
-    //     res.status(200).json({
-    //         message: 'User is already verified',
-    //     });
-    //     return;
-    // }
     
     channel = medium == MEDIUM_PHONE ? 'sms' : 'email';
     sendTo = medium == MEDIUM_PHONE ? '+' + contact : contact;
@@ -78,7 +75,6 @@ const checkVerification = asyncHandler(async (req, res) => {
     // get the medium of the request: sms or email are our accepted mediums
     const medium = req.query.medium;
     const verificationCode = req.query.code;
-    const passwordReset = req.query.passwordReset;
     // email address or phone number
     const contact = req.params.contact;
     const type = req.query.type;
@@ -129,16 +125,31 @@ const checkVerification = asyncHandler(async (req, res) => {
         res.status(400);
         throw new Error('Verification does not exist: ' + e);
     }
-    
 
     if (verificationStatus) {
         // verify the user
         // this is the line for the email verification, not for phone
         // const updatedUser = await User.updateOne({email: email}, {emailVerified: true});
-
-        res.status(200).json({
-            message: "Verification " + verificationStatus,
-        });
+        if (type == TYPE_ACCOUNT_VERIFICATION) {
+            if (verificationStatus == "approved") {
+                const updatedUser = await User.updateOne({email: contact}, {emailVerified: true});
+                
+                if (updatedUser) {
+                    res.status(200).json({
+                        message: "Account was verified",
+                    });
+                } else {
+                    res.status(400).json({
+                        message: "Account could not be verified",
+                    });
+                }
+            }
+        }
+        else {
+            res.status(200).json({
+                message: "Verification " + verificationStatus,
+            });
+        }
         
     } else {
         res.status(400);
