@@ -2,6 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Center, Loader, Text, Anchor } from "@mantine/core";
 import { Link } from "react-router-dom";
 import axios from "axios";
+import PasswordTable from "../components/PasswordTable";
 
 const Dashboard = () => {
     let token = "none";
@@ -38,6 +39,7 @@ const Dashboard = () => {
         <div>
             <h1>Dashboard</h1>
             <p>{"Welcome" + " " + user.name.firstName + " " + user.name.lastName}</p>
+            <PasswordTable />
         </div>
     );
 };
