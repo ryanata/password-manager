@@ -14,27 +14,32 @@ const vaultSchema = new mongoose.Schema({
             type: Number,
         },
     },
-    accounts: {
-        type: [{name: {
-            type: String,
-            required: true,
-        },
-        username: {
-            type: String,
-            required: true,
-        },
-        password: {
-            type: String,
-            required: true,
-        },
-        url: {
-            type: String,
-            required: true,
-        },
-        // list of string tags
-        tags: {
-            type: [String],
-        }}]
+    sites: {
+        type: [{
+            name: {
+                type: String,
+                required: true,
+            },
+            url: {
+                type: String,
+                required: true,
+            },
+            accounts: {
+                type: [{
+                    username: {
+                        type: String,
+                        required: true,
+                    },
+                    password: {
+                        type: String,
+                        required: true,
+                    },
+                    tags: {
+                        type: [String],
+                    }
+                }],
+            },
+        }]
     },
 });
 

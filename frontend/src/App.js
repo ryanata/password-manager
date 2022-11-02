@@ -18,6 +18,7 @@ function App() {
                     colorScheme: "light",
                     colors: {
                         "steel-blue": { 6: "#4681D0" },
+                        "gray-web": { 6: "#7E7E7E" },
                     },
                     fontFamily: "'Public Sans', sans-serif",
                     headings: {
