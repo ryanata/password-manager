@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { AppShell, Center, Loader, Navbar, Header, Text, Anchor } from "@mantine/core";
+import { AppShell, Center, Loader, Group, Navbar, Header, Text, Anchor } from "@mantine/core";
 import axios from "axios";
 import VaultTable from "../components/VaultTable";
 
@@ -46,14 +46,18 @@ const Dashboard = () => {
                 header={
                     <Header height={60} p="xs">
                         {
-                            <Anchor
-                                onClick={() => {
-                                    localStorage.removeItem("pwdlyToken");
-                                }}
-                                href="/"
-                            >
-                                Log out
-                            </Anchor>
+                            <Group position="apart">
+                                <Text>{`Welcome ${user.name.firstName} ${user.name.lastName}!`}</Text>
+
+                                <Anchor
+                                    onClick={() => {
+                                        localStorage.removeItem("pwdlyToken");
+                                    }}
+                                    href="/"
+                                >
+                                    Log out
+                                </Anchor>
+                            </Group>
                         }
                     </Header>
                 }
