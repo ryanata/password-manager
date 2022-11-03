@@ -1,19 +1,38 @@
-import { Text, Title, Button, Grid, Image } from "@mantine/core";
+import { createStyles, Text, Title, Button, Grid, Group, Image } from "@mantine/core";
+import { default as landingMock } from "../assets/mocksLanding.png";
+
+const useStyles = createStyles((theme) => ({
+    hiddenMobile: {
+        [theme.fn.smallerThan("sm")]: {
+            display: "none",
+        },
+    },
+    outerGrid: {
+        maxWidth: "100%",
+    },
+}));
 
 export function ProductDescription() {
+    const { classes, theme } = useStyles();
+    const mobilePadding = 20;
+    const desktopPadding = 50;
     return (
         <>
-            <Grid grow gutter={40}>
-                <Grid.Col span={2}>
+            <Grid grow gutter={40} m={0} className={classes.outerGrid}>
+                <Grid.Col span={3}>
                     <Title
                         sx={{
                             color: "#ffffff",
-                            fontSize: 60,
-                            lineHeight: 1.4,
+                            fontSize: 50,
+                            lineHeight: 1.2,
                             float: "left",
                             fontFamily: "nunito",
                             textAlign: "left",
-                            paddingLeft: 50,
+                            paddingLeft: desktopPadding,
+                            [theme.fn.smallerThan("sm")]: {
+                                paddingLeft: mobilePadding,
+                                fontSize: 40,
+                            },
                         }}
                     >
                         Take your passwords everywhere, safe.
@@ -22,62 +41,70 @@ export function ProductDescription() {
                         sx={{
                             color: "#ffffff",
                             fontSize: 26,
-                            lineHeight: 1.4,
+                            lineHeight: 1.6,
                             float: "left",
                             fontFamily: "public sans",
                             textAlign: "left",
-                            paddingLeft: 50,
+                            paddingLeft: desktopPadding,
+                            [theme.fn.smallerThan("sm")]: {
+                                paddingLeft: mobilePadding,
+                                fontSize: 22,
+                            },
+                            paddingTop: 30,
+                            paddingBottom: 30,
                         }}
                     >
                         The only password manager you need for all your life chapters. Learn how you can store, share,
                         and secure your life with{" "}
-                        <Text color="red" inherit component="span">
+                        <Text weight={600} component="span">
                             pwdly
                         </Text>
                         .
                     </Text>
-                    <Button
+                    <Group
                         sx={{
-                            color: "#ffffff",
-                            backgroundColor: "#052754",
-                            marginRight: 12,
-                            marginTop: 20,
-                            fontFamily: "nunito",
-                            fontSize: 30,
+                            width: "100%",
+                            paddingLeft: desktopPadding,
+                            [theme.fn.smallerThan("sm")]: {
+                                paddingLeft: mobilePadding,
+                            },
                         }}
-                        radius="xl"
                     >
-                        Learn More
-                    </Button>
-                    <Button
-<<<<<<< HEAD
-                        sx={{
-                            color: "#4681D0",
-                            backgroundColor: "#ffffff",
-                            fontFamily: "nunito",
-                            fontWeight: 700,
-                            fontSize: 30,
-                        }}
-                        radius="xl"
-                        size="lg"
-                        pl="xl"
-                        pr="xl"
-=======
-                        sx={{ color: "#4681D0", backgroundColor: "#ffffff", fontFamily: "nunito", fontSize: 30 }}
-                        radius="xl"
->>>>>>> 4b0b75c (pretty)
-                    >
-                        Get Started
-                    </Button>
+                        <Button
+                            sx={{
+                                color: "#ffffff",
+                                backgroundColor: "#052754",
+                                fontFamily: "nunito",
+                                fontSize: 25,
+                                [theme.fn.smallerThan("sm")]: {
+                                    fontSize: 20,
+                                },
+                            }}
+                            radius="xl"
+                        >
+                            Learn More
+                        </Button>
+                        <Button
+                            sx={{
+                                color: "#4681D0",
+                                backgroundColor: "#ffffff",
+                                fontFamily: "nunito",
+                                fontSize: 25,
+                                [theme.fn.smallerThan("sm")]: {
+                                    fontSize: 20,
+                                },
+                                "&:hover": {
+                                    color: "#ffffff",
+                                },
+                            }}
+                            radius="xl"
+                        >
+                            Get Started
+                        </Button>
+                    </Group>
                 </Grid.Col>
-                <Grid.Col span={4}>
-                    <Image
-                        width={990}
-                        height={590}
-                        radius="md"
-                        src="https://cdn.dribbble.com/users/1930239/screenshots/18753108/media/23933d022522e7fb8abdd23996b6f037.png"
-                        alt="Random unsplash image"
-                    />
+                <Grid.Col span={3} className={classes.hiddenMobile}>
+                    <Image width="110%" src={landingMock} alt="Random unsplash image" />
                 </Grid.Col>
             </Grid>
         </>
