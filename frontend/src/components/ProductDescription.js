@@ -50,6 +50,7 @@ export function ProductDescription() {
                         Learn More
                     </Button>
                     <Button
+<<<<<<< HEAD
                         sx={{
                             color: "#4681D0",
                             backgroundColor: "#ffffff",
@@ -61,6 +62,10 @@ export function ProductDescription() {
                         size="lg"
                         pl="xl"
                         pr="xl"
+=======
+                        sx={{ color: "#4681D0", backgroundColor: "#ffffff", fontFamily: "nunito", fontSize: 30 }}
+                        radius="xl"
+>>>>>>> 4b0b75c (pretty)
                     >
                         Get Started
                     </Button>
