@@ -53,6 +53,7 @@ const SignupModal = ({ opened, closed }) => {
         initialValues: {
             firstName: "",
             lastName: "",
+            phoneNumber: "",
             email: "",
             password: "",
             loggedIn: false,
@@ -67,7 +68,7 @@ const SignupModal = ({ opened, closed }) => {
             .post("/api/user/register", {
                 firstName: values.firstName,
                 lastName: values.lastName,
-                phoneNumber: 123,
+                phoneNumber: values.phoneNumber,
                 email: values.email,
                 password: values.password,
             })
@@ -119,39 +120,36 @@ const SignupModal = ({ opened, closed }) => {
                             placeholder="john"
                             value={form.values.firstName}
                             {...form.getInputProps("firstName")}
-                            // value={form.values.email}
-                            // onChange={(event) => form.setFieldValue("email", event.currentTarget.value)}
-                            // error={form.errors.email && "Invalid email"}
                         />
                         <TextInput
                             required={true}
                             label="Last name"
                             placeholder="doe"
-                            mt="md"
                             value={form.values.lastName}
                             {...form.getInputProps("lastName")}
-                            // value={form.values.email}
-                            // onChange={(event) => form.setFieldValue("email", event.currentTarget.value)}
-                            // error={form.errors.email && "Invalid email"}
                         />
                     </Group>
+                
                     <TextInput
                         required={true}
                         label="Email"
                         placeholder="john.doe@gmail.com"
-                        mt="md"
                         value={form.values.email}
                         {...form.getInputProps("email")}
-                        // value={form.values.email}
-                        // onChange={(event) => form.setFieldValue("email", event.currentTarget.value)}
-                        // error={form.errors.email && "Invalid email"}
+                    />
+
+                    <TextInput
+                        required={true}
+                        label="Phone number"
+                        placeholder="john.doe@gmail.com"
+                        value={form.values.phoneNumber}
+                        {...form.getInputProps("phoneNumber")}
                     />
 
                     <PasswordInput
                         required={true}
                         label="Password"
                         placeholder="********"
-                        mt="md"
                         value={form.values.password}
                         {...form.getInputProps("password")}
                     />
@@ -161,7 +159,6 @@ const SignupModal = ({ opened, closed }) => {
                         onClick={() => form.setFieldValue("submittingSignup", true)}
                         size="md"
                         mb="sm"
-                        mt="md"
                     >
                         Sign up
                     </Button>
