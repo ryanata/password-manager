@@ -77,7 +77,7 @@ const SignupModal = ({ opened, closed }) => {
                             // error={form.errors.email && "Invalid email"}
                         />
                     </Group>
-                    <TextInput 
+                    <TextInput
                         required={true}
                         label="Email"
                         placeholder="john.doe@gmail.com"
