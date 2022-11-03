@@ -1,20 +1,12 @@
-import { 
-    createStyles, 
-    Button,
-    Center,
-    Modal, 
-    PasswordInput, 
-    Text 
-} from "@mantine/core";
+import { createStyles, Button, Center, Modal, PasswordInput, Text } from "@mantine/core";
 import { useState } from "react";
-const useStyles = createStyles((theme) => ({
-}));
-const MasterPasswordModal = ({opened, closed}) => {
+const useStyles = createStyles((theme) => ({}));
+const MasterPasswordModal = ({ opened, closed }) => {
     const { classes, theme } = useStyles();
     const [password, setPassword] = useState("");
     const [passwordError, setPasswordError] = useState("");
 
-    return (  
+    return (
         <Modal
             centered={true}
             opened={opened}
@@ -26,22 +18,22 @@ const MasterPasswordModal = ({opened, closed}) => {
                     marginBottom: 0,
                 },
             }}
-            padding="lg">
-            <PasswordInput 
+            padding="lg"
+        >
+            <PasswordInput
                 label="Master password"
                 value={password}
-                onChange={(event) => {setPassword(event.target.value)}}/>
+                onChange={(event) => {
+                    setPassword(event.target.value);
+                }}
+            />
             <Center mt="md">
-                <Button>
-                    Submit
-                </Button>
+                <Button>Submit</Button>
             </Center>
-            
-            <Text color="red"> 
-                {passwordError}
-            </Text>
+
+            <Text color="red">{passwordError}</Text>
         </Modal>
     );
-}
- 
+};
+
 export default MasterPasswordModal;
