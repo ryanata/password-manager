@@ -129,7 +129,6 @@ const SignupModal = ({ opened, closed }) => {
                             {...form.getInputProps("lastName")}
                         />
                     </Group>
-                
                     <TextInput
                         required={true}
                         label="Email"
