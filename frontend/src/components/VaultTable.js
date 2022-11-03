@@ -18,7 +18,7 @@ import {
  import { IconSelector, IconChevronDown, IconChevronUp, IconEyeOff, IconEye, IconCopy } from '@tabler/icons';
  import { useQuery } from '@tanstack/react-query';
  import { useState, useEffect } from 'react';
- import PasswordTableRows from './PasswordTableRows';
+ import VaultRows from './VaultRows';
 
 const useStyles = createStyles((theme) => ({
     table: {
@@ -138,7 +138,40 @@ const getVaultData = () => {
                         tags: ['social media'],
                     },
                 ],
-            }
+            },
+            {
+                name: 'twitter.com',
+                url: 'https://twitter.com',
+                account: [
+                    {
+                        username: 'john.doe6',
+                        password: 'password6',
+                        tags: ['social media'],
+                    },
+                ],
+            },
+            {
+                name: 'youtube.com',
+                url: 'https://youtube.com',
+                account: [
+                    {
+                        username: 'john.doe7',
+                        password: 'password7',
+                        tags: ['social media'],
+                    },
+                ],
+            },
+            {
+                name: 'netflix.com',
+                url: 'https://netflix.com',
+                account: [
+                    {
+                        username: 'john.doe8',
+                        password: 'password8',
+                        tags: ['social media'],
+                    },
+                ],
+            },
         ]
     };
     // create a promise that resolves after 1 second
@@ -150,7 +183,7 @@ const getVaultData = () => {
     });
 };
 
-const PasswordTable = () => {
+const VaultTable = () => {
     const { classes, theme } = useStyles();
     const [sort, setSort] = useState('unsorted');
     const { data, isLoading, error } = useQuery(['vault'], getVaultData);
@@ -215,10 +248,10 @@ const PasswordTable = () => {
                         </th>
                     </tr>
                 </thead>
-                <PasswordTableRows data={sortByState()} showPassword={false} rowSpans={[43,33,24]}/>
+                <VaultRows data={sortByState()} rowSpans={[43,33,24]}/>
             </Table>
         </ScrollArea>
      );
 }
  
-export default PasswordTable;
+export default VaultTable;
