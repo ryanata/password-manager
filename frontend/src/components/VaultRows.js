@@ -7,8 +7,10 @@ import {
     Text,
     UnstyledButton,
 } from '@mantine/core'
-import { IconCopy, IconEye, IconEyeOff } from '@tabler/icons'
-import HiddenInput from './HiddenInput';
+import { useDisclosure } from '@mantine/hooks'
+import { useState } from 'react';
+import MasterPasswordModal from './MasterPasswordModal';
+import PasswordData from './PasswordData';
 
 const useStyles = createStyles((theme) => ({
     borderBottom: {
@@ -20,16 +22,14 @@ const useStyles = createStyles((theme) => ({
         flexWrap: 'nowrap',
         overflow: 'scroll',
     },
-    passwordWrapper: {
-        margin: 0,
-        fontSize: theme.fontSizes.lg,
-    },
-
 }));
 
 
-const PasswordTableRows = ({ children, data, showPassword, rowSpans}) => {
+const VaultRows = ({ children, data, rowSpans}) => {
     const { classes, theme } = useStyles();
+    const [showPassword, setShowPassword] = useState(false);
+    const [masterPassModalOpened, { toggle: toggleMasterPassModal }] = useDisclosure(false);
+    // If user has no passwords in the vault, show a message
     if (data.length === 0) {
         return (
             <tbody>
@@ -44,6 +44,7 @@ const PasswordTableRows = ({ children, data, showPassword, rowSpans}) => {
             </tbody>
         )
     }
+
     return (
         <tbody>
             {data.map((site, i) => (
@@ -92,37 +93,22 @@ const PasswordTableRows = ({ children, data, showPassword, rowSpans}) => {
                             )
                         )}
                     </td>
+                    {/* Password */}
                     <td colSpan={rowSpans[2]}>
                         {site.account.map((account, i) => (
-                            <Group
-                                pt={i == 0 ? (32 + theme.spacing.sm) : theme.spacing.sm}
+                            <PasswordData 
+                                account={account}
                                 key={i}
-                                spacing="xl"
-                                className={classes.passwordWrapper}
-                            >
-                                <HiddenInput
-                                    value={showPassword ? account.password : '•••••••••••••••'}
-                                />
-
-                                <Group 
-                                    spacing="xs"
-                                    className={classes.passwordWrapper}>
-                                    <UnstyledButton>
-                                        {showPassword ? <IconEye stroke={3}/> : <IconEyeOff stroke={3}/>}
-                                    </UnstyledButton>
-                                    <UnstyledButton>
-                                        <IconCopy stroke={3}/>
-                                    </UnstyledButton>
-                                </Group>
-                            </Group>
-                            
+                                i={i}
+                            />
                         ))}
                     </td>
                 </tr>
             ))}
             {children}
+            <MasterPasswordModal opened={masterPassModalOpened} closed={toggleMasterPassModal}/>
         </tbody>
     );
 }
 
-export default PasswordTableRows;
+export default VaultRows;

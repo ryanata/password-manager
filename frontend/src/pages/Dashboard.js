@@ -1,8 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
-import { Center, Loader, Text, Anchor } from "@mantine/core";
-import { Link } from "react-router-dom";
+import { AppShell, Center, Loader, Navbar, Header, Text, Anchor } from "@mantine/core";
 import axios from "axios";
-import PasswordTable from "../components/PasswordTable";
+import VaultTable from "../components/VaultTable";
 
 const Dashboard = () => {
     let token = "none";
@@ -37,9 +36,19 @@ const Dashboard = () => {
     const user = data.data;
     return (
         <div>
-            <h1>Dashboard</h1>
-            <p>{"Welcome" + " " + user.name.firstName + " " + user.name.lastName}</p>
-            <PasswordTable />
+            <AppShell
+                padding="md"
+                navbar={<Navbar width={{ base: 300 }} p="xs">{/* Navbar content */}</Navbar>}
+                header={
+                <Header height={60} p="xs">{
+                    <Anchor onClick={() => {localStorage.removeItem("pwdlyToken")}} href="/">Log out</Anchor>}
+                </Header>}
+                styles={(theme) => ({
+                    main: { backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[8] : theme.colors.gray[0] },
+                })}
+                >
+                    <VaultTable />
+                </AppShell>
         </div>
     );
 };
