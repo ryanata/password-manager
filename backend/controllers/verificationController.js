@@ -22,19 +22,15 @@ const createVerification = asyncHandler(async (req, res) => {
     // if this is for a password reset, we use the service allocated for that
     const twilioSid = type == TYPE_PASSWORD_RESET ? serviceSidPasswordReset : serviceSid;
 
-    let verificationAlreadyExists = false;
-
     if (medium != MEDIUM_PHONE && medium != MEDIUM_EMAIL) {    
         res.status(400);
         throw new Error('Please enter a valid medium of request: ' + MEDIUM_PHONE + ' or ' + MEDIUM_EMAIL);
     }
 
-    if (medium == MEDIUM_PHONE && !contact) {
-        res.status(400);
-        throw new Error('Please enter phone number');
-    } else if (medium == MEDIUM_EMAIL && !contact) {
-        res.status(400);
-        throw new Error('Please enter email');
+    if (!contact) {   
+        res.status(400);   
+        const missingMedium = medium == MEDIUM_EMAIL ? "email" : "phone number";   
+        throw new Error('Please enter ' + missingMedium);   
     }
 
     // implement creating a new 2FA if one already exists
