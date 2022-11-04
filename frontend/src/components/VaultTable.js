@@ -17,7 +17,7 @@ import {
 } from "@mantine/core";
 import { IconSelector, IconChevronDown, IconChevronUp, IconEyeOff, IconEye, IconCopy } from "@tabler/icons";
 import { useQuery } from "@tanstack/react-query";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import VaultRows from "./VaultRows";
 
 const useStyles = createStyles((theme) => ({
