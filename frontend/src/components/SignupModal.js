@@ -33,7 +33,7 @@ const useStyles = createStyles((theme) => ({
     },
 }));
 
-const SignupModal = ({ opened, closed }) => {
+const SignupModal = ({ opened, closed, openLoginModal }) => {
     // Styling
     const { classes, theme } = useStyles();
 
@@ -77,6 +77,14 @@ const SignupModal = ({ opened, closed }) => {
                 setAlert(err.response.data.message);
             });
     };
+
+    const redirectToLogin = () => {
+        // Close Modal
+        closed();
+        // Open Login Modal
+        openLoginModal();
+    };  
+
     if (form.values.loggedIn) {
         return <Navigate to="/dashboard" />;
     }
@@ -87,7 +95,7 @@ const SignupModal = ({ opened, closed }) => {
             opened={opened}
             onClose={closed}
             fullScreen={isMobile}
-            size="sm"
+            size="md"
             radius={theme.radius.md}
             styles={{
                 header: {
@@ -101,7 +109,7 @@ const SignupModal = ({ opened, closed }) => {
             </Title>
             <Text align="center" color={theme.colors.gray[6]} className={classes.modalSubheader}>
                 {"Already have an account? "}
-                <Anchor>Log in</Anchor>
+                <Anchor onClick={redirectToLogin}>Log in</Anchor>
             </Text>
             <form onSubmit={form.onSubmit(formHandler)}>
                 <Stack>
