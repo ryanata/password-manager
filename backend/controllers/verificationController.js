@@ -89,12 +89,10 @@ const checkVerification = asyncHandler(async (req, res) => {
         throw new Error('Please enter a valid medium of request: ' + MEDIUM_PHONE + ' or ' + MEDIUM_EMAIL);
     }
 
-    if (medium == MEDIUM_PHONE && !contact) {
-        res.status(400);
-        throw new Error('Please enter phone number');
-    } else if (medium == MEDIUM_EMAIL && !contact) {
-        res.status(400);
-        throw new Error('Please enter email');
+    if (!contact) {   
+        res.status(400);   
+        const missingMedium = medium == MEDIUM_EMAIL ? "email" : "phone number";   
+        throw new Error('Please enter ' + missingMedium);   
     }
 
 
@@ -108,11 +106,12 @@ const checkVerification = asyncHandler(async (req, res) => {
     
     if (!userExists) {
         res.status(400);
-        throw new Error('No user found with this ' + medium == MEDIUM_PHONE ? ' phone number' : ' email');
+        const missingMedium = medium == MEDIUM_EMAIL ? "email" : "phone number";   
+        throw new Error('No user found with this ' + missingMedium);
     }
 
-    sendTo = medium == MEDIUM_PHONE ? '+' + contact : contact;
-    verificationStatus = ""
+    const sendTo = medium == MEDIUM_PHONE ? '+' + contact : contact;
+    let verificationStatus = ""
 
     // check if the verification exists
     // this is needed because the Twilio API returns a not found error
