@@ -98,7 +98,11 @@ const VaultRows = ({ children, data, rowSpans }) => {
                     {/* Password */}
                     <td colSpan={rowSpans[2]}>
                         {site.account.map((account, i) => (
-                            <PasswordData account={account} key={i} i={i} />
+                            <PasswordData 
+                                account={account} 
+                                key={i} 
+                                i={i} 
+                                toggleModal={toggleMasterPassModal}/>
                         ))}
                     </td>
                 </tr>

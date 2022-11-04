@@ -1,10 +1,42 @@
-import { createStyles, Button, Center, Modal, PasswordInput, Text } from "@mantine/core";
-import { useState } from "react";
+import { createStyles, Button, Center, Modal, PasswordInput, Group, Text } from "@mantine/core";
+import { useForm } from "@mantine/form";
+import { useState, useContext } from "react";
+import { VaultContext } from "../contexts/VaultContext";
+
 const useStyles = createStyles((theme) => ({}));
 const MasterPasswordModal = ({ opened, closed }) => {
+    // Styling
     const { classes, theme } = useStyles();
-    const [password, setPassword] = useState("");
-    const [passwordError, setPasswordError] = useState("");
+    
+    // Hooks
+    const form = useForm({
+        initialValues: {
+            password: "",
+            error: "",
+        },
+    });
+    const { vault, setVault } = useContext(VaultContext);
+    const [alert, setAlert] = useState("");
+
+    // Handlers
+    const formHandler = async (values) => {
+        // TODO: Send request to backend
+
+        // This is mocking a successful response
+        if (values.password === "djkhaled") {
+            // Set vault.unlocked to true
+            setVault({ 
+                ...vault, 
+                unlocked: true 
+            });
+            // Close modal
+            closed();
+        } else {
+            // Set error message
+            setAlert("Incorrect password");
+        }
+    };
+
 
     return (
         <Modal
@@ -20,18 +52,17 @@ const MasterPasswordModal = ({ opened, closed }) => {
             }}
             padding="lg"
         >
-            <PasswordInput
-                label="Master password"
-                value={password}
-                onChange={(event) => {
-                    setPassword(event.target.value);
-                }}
-            />
-            <Center mt="md">
-                <Button>Submit</Button>
-            </Center>
-
-            <Text color="red">{passwordError}</Text>
+            <form onSubmit={form.onSubmit((values) => formHandler(values))}>
+                <PasswordInput
+                    label="Master password"
+                    {...form.getInputProps("password")}
+                />
+                <Group position="right" mt="md">
+                    <Button type="submit">Submit</Button>
+                </Group>
+                <Text color="red">{alert}</Text>
+            </form>
+            
         </Modal>
     );
 };

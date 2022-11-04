@@ -2,8 +2,29 @@ import { useQuery } from "@tanstack/react-query";
 import { AppShell, Center, Loader, Group, Navbar, Header, Text, Anchor } from "@mantine/core";
 import axios from "axios";
 import VaultTable from "../components/VaultTable";
+import { VaultContext } from "../contexts/VaultContext";
+import { useState, useMemo } from "react";
+
+const initialVault = {
+    name: "Personal",
+    unlocked: false
+};
+
+const VaultProvider = ({ children }) => {
+    const [vault, setVault] = useState(initialVault);
+    const value = useMemo(() => ({
+        vault, setVault
+    }), [vault]);
+
+    return (
+        <VaultContext.Provider value={value}>
+            {children}
+        </VaultContext.Provider>
+    );
+};
 
 const Dashboard = () => {
+    // Get jwt token to authenticate
     let token = "none";
     try {
         token = JSON.parse(localStorage.getItem("pwdlyToken"));
@@ -22,6 +43,7 @@ const Dashboard = () => {
         );
     }
 
+    // Kick them out if invalid jwt
     if (error) {
         return (
             <Center style={{ width: "100%", height: "100vh" }}>
@@ -35,7 +57,7 @@ const Dashboard = () => {
 
     const user = data.data;
     return (
-        <div>
+        <VaultProvider>
             <AppShell
                 padding="md"
                 navbar={
@@ -69,7 +91,7 @@ const Dashboard = () => {
             >
                 <VaultTable />
             </AppShell>
-        </div>
+        </VaultProvider>
     );
 };
 
