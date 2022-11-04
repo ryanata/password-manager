@@ -1,38 +1,39 @@
 import {
-    createStyles,
-    Header,
-    HoverCard,
-    Group,
-    Button,
-    UnstyledButton,
-    Text,
-    SimpleGrid,
-    ThemeIcon,
     Anchor,
-    Divider,
-    Center,
     Box,
     Burger,
-    Drawer,
+    Button,
+    Center,
     Collapse,
+    Divider,
+    Drawer,
+    Group,
+    Header,
+    HoverCard,
     ScrollArea,
+    SimpleGrid,
+    Text,
+    ThemeIcon,
+    UnstyledButton,
+    createStyles,
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import {
-    IconShield,
-    IconFolder,
-    IconPlane,
-    IconDiscountCheck,
-    IconChevronDown,
-    IconSchool,
     IconBook2,
+    IconChevronDown,
     IconClipboardList,
+    IconDiscountCheck,
+    IconFolder,
     IconHomeHeart,
+    IconPlane,
+    IconSchool,
+    IconShield,
 } from "@tabler/icons";
+import { useEffect, useRef, useState } from "react";
+
+import { default as Logo } from "../assets/logo.svg";
 import LoginModal from "./LoginModal";
 import SignupModal from "./SignupModal";
-import { useState, useRef, useEffect } from "react";
-import { default as Logo } from "../assets/logo.svg";
 
 const useStyles = createStyles((theme) => ({
     transparentColor: {
@@ -218,7 +219,7 @@ export function LandingNav() {
                     <Group sx={{ height: "100%" }} spacing={0} className={classes.hiddenMobile}>
                         <HoverCard width={600} position="bottom" radius="md" shadow="md" withinPortal>
                             <HoverCard.Target>
-                                <Anchor href="#" className={classes.link}>
+                                <Anchor href="/" className={classes.link}>
                                     <Center inline>
                                         <Box component="span" mr={5}>
                                             Features
@@ -243,7 +244,7 @@ export function LandingNav() {
 
                         <HoverCard width={600} position="bottom" radius="md" shadow="md" withinPortal>
                             <HoverCard.Target>
-                                <a href="#" className={classes.link}>
+                                <a href="/" className={classes.link}>
                                     <Center inline>
                                         <Box component="span" mr={5}>
                                             Solutions
@@ -266,7 +267,7 @@ export function LandingNav() {
                             </HoverCard.Dropdown>
                         </HoverCard>
 
-                        <Anchor href="#" className={classes.link}>
+                        <Anchor href="/" className={classes.link}>
                             About Us
                         </Anchor>
                     </Group>
@@ -346,7 +347,7 @@ export function LandingNav() {
                     </UnstyledButton>
                     <Collapse in={linksSolutionsOpened}>{solutionslinks}</Collapse>
 
-                    <Anchor href="#" className={classes.link}>
+                    <Anchor href="/" className={classes.link}>
                         About Us
                     </Anchor>
 

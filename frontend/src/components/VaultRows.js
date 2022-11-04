@@ -1,6 +1,6 @@
-import { createStyles, Avatar, Chip, Group, Stack, Text, UnstyledButton } from "@mantine/core";
+import { Avatar, Chip, Group, Stack, Text, UnstyledButton, createStyles } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
-import { useState } from "react";
+
 import MasterPasswordModal from "./MasterPasswordModal";
 import PasswordData from "./PasswordData";
 
@@ -18,8 +18,8 @@ const useStyles = createStyles((theme) => ({
 
 const VaultRows = ({ children, data, rowSpans }) => {
     const { classes, theme } = useStyles();
-    const [showPassword, setShowPassword] = useState(false);
     const [masterPassModalOpened, { toggle: toggleMasterPassModal }] = useDisclosure(false);
+
     // If user has no passwords in the vault, show a message
     if (data.length === 0) {
         return (
@@ -75,7 +75,7 @@ const VaultRows = ({ children, data, rowSpans }) => {
                             /* For every account, create a scroll area and grid for the tags*/
                             <Group
                                 key={i}
-                                pt={i == 0 ? 32 + theme.spacing.sm : theme.spacing.sm}
+                                pt={i === 0 ? 32 + theme.spacing.sm : theme.spacing.sm}
                                 spacing="sm"
                                 className={classes.tagsWrapper}
                             >
@@ -98,11 +98,7 @@ const VaultRows = ({ children, data, rowSpans }) => {
                     {/* Password */}
                     <td colSpan={rowSpans[2]}>
                         {site.account.map((account, i) => (
-                            <PasswordData 
-                                account={account} 
-                                key={i} 
-                                i={i} 
-                                toggleModal={toggleMasterPassModal}/>
+                            <PasswordData account={account} key={i} i={i} toggleModal={toggleMasterPassModal} />
                         ))}
                     </td>
                 </tr>

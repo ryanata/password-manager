@@ -1,5 +1,4 @@
 import {
-    createStyles,
     Anchor,
     Button,
     Checkbox,
@@ -8,15 +7,16 @@ import {
     Modal,
     PasswordInput,
     Stack,
-    Title,
     Text,
     TextInput,
+    Title,
+    createStyles,
 } from "@mantine/core";
-import { useMediaQuery } from "@mantine/hooks";
 import { useForm } from "@mantine/form";
+import { useMediaQuery } from "@mantine/hooks";
+import axios from "axios";
 import { useReducer } from "react";
 import { Navigate } from "react-router-dom";
-import axios from "axios";
 
 const useStyles = createStyles((theme) => ({
     link: {
