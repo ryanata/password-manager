@@ -43,9 +43,9 @@ const createVerification = asyncHandler(async (req, res) => {
         throw new Error('No user found with this ' + medium == MEDIUM_PHONE ? ' phone number' : ' email');
     }
     
-    channel = medium == MEDIUM_PHONE ? 'sms' : 'email';
-    sendTo = medium == MEDIUM_PHONE ? '+' + contact : contact;
-    verificationStatus = ""
+    const channel = medium == MEDIUM_PHONE ? 'sms' : 'email';
+    const sendTo = medium == MEDIUM_PHONE ? '+' + contact : contact;
+    let verificationStatus = ""
 
     await twilio.verify.v2.services(twilioSid)
         .verifications
