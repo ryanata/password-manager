@@ -1,15 +1,16 @@
-import { Navbar, Group, Code, ScrollArea, createStyles } from "@mantine/core";
+import { Code, Group, Navbar, ScrollArea, createStyles } from "@mantine/core";
 import {
-    IconNotes,
-    IconCalendarStats,
-    IconGauge,
-    IconPresentationAnalytics,
-    IconFileAnalytics,
     IconAdjustments,
+    IconCalendarStats,
+    IconFileAnalytics,
+    IconGauge,
     IconLock,
+    IconNotes,
+    IconPresentationAnalytics,
 } from "@tabler/icons";
-import { UserButton } from "../UserButton/UserButton";
+
 import { LinksGroup } from "../NavbarLinksGroup/NavbarLinksGroup";
+import { UserButton } from "../UserButton/UserButton";
 import { Logo } from "./Logo";
 
 const mockdata = [
