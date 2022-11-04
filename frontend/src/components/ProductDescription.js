@@ -1,4 +1,5 @@
-import { createStyles, Text, Title, Button, Grid, Group, Image } from "@mantine/core";
+import { Button, Grid, Group, Image, Text, Title, createStyles } from "@mantine/core";
+
 import { default as landingMock } from "../assets/mocksLanding.png";
 
 const useStyles = createStyles((theme) => ({

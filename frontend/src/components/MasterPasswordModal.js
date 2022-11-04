@@ -1,13 +1,14 @@
-import { createStyles, Button, Center, Modal, PasswordInput, Group, Text } from "@mantine/core";
+import { Button, Group, Modal, PasswordInput, Text, createStyles } from "@mantine/core";
 import { useForm } from "@mantine/form";
-import { useState, useContext } from "react";
+import { useContext, useState } from "react";
+
 import { VaultContext } from "../contexts/VaultContext";
 
 const useStyles = createStyles((theme) => ({}));
 const MasterPasswordModal = ({ opened, closed }) => {
     // Styling
     const { classes, theme } = useStyles();
-    
+
     // Hooks
     const form = useForm({
         initialValues: {
@@ -25,9 +26,9 @@ const MasterPasswordModal = ({ opened, closed }) => {
         // This is mocking a successful response
         if (values.password === "djkhaled") {
             // Set vault.unlocked to true
-            setVault({ 
-                ...vault, 
-                unlocked: true 
+            setVault({
+                ...vault,
+                unlocked: true,
             });
             // Close modal
             closed();
@@ -36,7 +37,6 @@ const MasterPasswordModal = ({ opened, closed }) => {
             setAlert("Incorrect password");
         }
     };
-
 
     return (
         <Modal
@@ -53,16 +53,12 @@ const MasterPasswordModal = ({ opened, closed }) => {
             padding="lg"
         >
             <form onSubmit={form.onSubmit((values) => formHandler(values))}>
-                <PasswordInput
-                    label="Master password"
-                    {...form.getInputProps("password")}
-                />
+                <PasswordInput label="Master password" {...form.getInputProps("password")} />
                 <Group position="right" mt="md">
                     <Button type="submit">Submit</Button>
                 </Group>
                 <Text color="red">{alert}</Text>
             </form>
-            
         </Modal>
     );
 };

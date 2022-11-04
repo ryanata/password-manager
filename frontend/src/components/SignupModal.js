@@ -1,20 +1,19 @@
 import {
-    createStyles,
     Anchor,
     Button,
-    Checkbox,
     Group,
     Modal,
     PasswordInput,
     Stack,
-    Title,
     Text,
     TextInput,
+    Title,
+    createStyles,
 } from "@mantine/core";
-import { useMediaQuery } from "@mantine/hooks";
 import { useForm } from "@mantine/form";
-import { useState } from "react";
+import { useMediaQuery } from "@mantine/hooks";
 import axios from "axios";
+import { useState } from "react";
 import { Navigate } from "react-router-dom";
 
 const useStyles = createStyles((theme) => ({
@@ -40,14 +39,7 @@ const SignupModal = ({ opened, closed }) => {
 
     // Hooks
     const isMobile = useMediaQuery(`(max-width: ${theme.breakpoints.sm - 1}px)`);
-    const [submittedValues, setSubmittedValues] = useState("");
     const [alert, setAlert] = useState("");
-
-    // Form close
-    const onClose = () => {
-        // Triggers css display: none
-        closed();
-    };
 
     const form = useForm({
         initialValues: {

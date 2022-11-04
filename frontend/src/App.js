@@ -1,9 +1,10 @@
-import "./App.css";
-import Landing from "./pages/Landing";
-import Dashboard from "./pages/Dashboard";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { MantineProvider } from "@mantine/core";
-import { useQuery, useMutation, useQueryClient, QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
+
+import "./App.css";
+import Dashboard from "./pages/Dashboard";
+import Landing from "./pages/Landing";
 
 // Create a client
 const queryClient = new QueryClient();

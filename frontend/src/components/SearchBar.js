@@ -1,5 +1,5 @@
-import { TextInput, Group, Button } from "@mantine/core";
-import { IconSearch, IconPlus } from "@tabler/icons";
+import { Button, Group, TextInput } from "@mantine/core";
+import { IconPlus, IconSearch } from "@tabler/icons";
 
 export function SearchBar() {
     return (
