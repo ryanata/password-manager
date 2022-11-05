@@ -1,10 +1,14 @@
-import { Anchor, AppShell, Center, Group, Header, Loader, Navbar, Text } from "@mantine/core";
+import { Anchor, AppShell, Center, Group, Header, Loader, Navbar, Text, createStyles } from "@mantine/core";
+import { useMediaQuery } from "@mantine/hooks";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { useMemo, useState } from "react";
 
 import VaultTable from "../components/VaultTable";
 import { VaultContext } from "../contexts/VaultContext";
+
+const useStyles = createStyles((theme) => ({
+}));
 
 const initialVault = {
     name: "Personal",
@@ -25,6 +29,10 @@ const VaultProvider = ({ children }) => {
 };
 
 const Dashboard = () => {
+    const { classes, theme } = useStyles();
+    // Hooks
+    const isTablet = useMediaQuery(`(max-width: ${theme.breakpoints.md - 1}px)`);
+
     // Get jwt token to authenticate
     let token = "none";
     try {
@@ -62,8 +70,8 @@ const Dashboard = () => {
             <AppShell
                 padding="md"
                 navbar={
-                    <Navbar width={{ base: 300 }} p="xs">
-                        {/* Navbar content */}
+                    isTablet ? null : 
+                    <Navbar width={{ base: 250 }}>
                     </Navbar>
                 }
                 header={

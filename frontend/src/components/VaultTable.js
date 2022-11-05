@@ -1,57 +1,20 @@
-import { Center, Group, Loader, ScrollArea, Table, Text, UnstyledButton, createStyles } from "@mantine/core";
-import { IconChevronDown, IconChevronUp, IconSelector } from "@tabler/icons";
+import { Box, Center, Divider, Loader, ScrollArea, Text, createStyles } from "@mantine/core";
+import { useDisclosure } from "@mantine/hooks";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 
-import VaultRows from "./VaultRows";
+import MasterPasswordModal from "./MasterPasswordModal";
+import VaultRow from "./VaultRow";
+import VaultHeader from "./VaultHeader";
 
 const useStyles = createStyles((theme) => ({
-    table: {
-        tableLayout: "fixed",
-    },
-    th: {
+    noSpacing: {
         padding: "0 !important",
-    },
-    control: {
-        width: "100%",
-        padding: `${theme.spacing.xs}px ${theme.spacing.md}px`,
-
-        "&:hover": {
-            backgroundColor: theme.colorScheme === "dark" ? theme.colors.dark[6] : theme.colors.gray[0],
-        },
-    },
-    icon: {
-        width: 21,
-        height: 21,
-        borderRadius: 21,
+        marginRight: "0 !important",
+        marginLeft: "0 !important",
     },
 }));
 
-const Icons = {
-    ascending: IconChevronUp,
-    descending: IconChevronDown,
-    unsorted: IconSelector,
-};
-
-// Header
-const Th = ({ children, sort, colSpan, onSort }) => {
-    const { classes } = useStyles();
-    const Icon = Icons[sort];
-    return (
-        <th colSpan={colSpan} className={classes.th}>
-            <UnstyledButton onClick={onSort} className={classes.control}>
-                <Group position="apart">
-                    <Text weight={500} size="sm">
-                        {children}
-                    </Text>
-                    <Center className={classes.icon}>
-                        <Icon size={14} stroke={1.5} />
-                    </Center>
-                </Group>
-            </UnstyledButton>
-        </th>
-    );
-};
 
 const getVaultData = () => {
     const data = {
@@ -177,6 +140,7 @@ const VaultTable = () => {
     const { classes, theme } = useStyles();
     const [sort, setSort] = useState("unsorted");
     const { data, isLoading, error } = useQuery(["vault"], getVaultData);
+    const [masterPassModalOpened, { toggle: toggleMasterPassModal }] = useDisclosure(false);
 
     // Cycle through sort states
     const toggleSort = () => {
@@ -219,26 +183,17 @@ const VaultTable = () => {
 
     console.log(sort);
     return (
-        <ScrollArea>
-            <Table className={classes.table}>
-                <thead>
-                    <tr>
-                        <Th
-                            colSpan="43"
-                            sort={sort}
-                            onSort={() => {
-                                toggleSort();
-                            }}
-                        >
-                            NAME
-                        </Th>
-                        <th colSpan="33">TAGS</th>
-                        <th colSpan="24">PASSWORD</th>
-                    </tr>
-                </thead>
-                <VaultRows data={sortByState()} rowSpans={[43, 33, 24]} />
-            </Table>
-        </ScrollArea>
+        <>
+            <Box className={classes.noSpacing}>
+                <VaultHeader sort={sort} toggleSort={toggleSort}/>
+                <Divider mb="xs"/>
+                {/* Map through data and create a VaultRow component for each */}
+                {sortByState().map((site, index) => (
+                    <VaultRow key={index} site={site} toggleModal={toggleMasterPassModal} />
+                ))}
+            </Box>
+            <MasterPasswordModal opened={masterPassModalOpened} closed={toggleMasterPassModal} />
+        </>
     );
 };
 
