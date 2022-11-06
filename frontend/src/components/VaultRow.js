@@ -1,7 +1,6 @@
-// Import all the mantine components being used in the file
-import { ThemeContext } from "@emotion/react";
-import { Avatar, Badge, Box, Divider, Group, Grid, Text, createStyles, ScrollArea } from "@mantine/core";
+import { Avatar, Badge, Box, Divider, Grid, Group, ScrollArea, Text, createStyles } from "@mantine/core";
 import { useMediaQuery } from "@mantine/hooks";
+
 import PasswordData from "./PasswordData";
 
 const useStyles = createStyles((theme) => ({
@@ -45,7 +44,7 @@ const useStyles = createStyles((theme) => ({
     },
     accountText: {
         // Padding left = icon size + flex gap
-        paddingLeft: + 32 + theme.spacing.sm,
+        paddingLeft: +32 + theme.spacing.sm,
         fontSize: theme.fontSizes.md,
         [theme.fn.smallerThan("sm")]: {
             paddingLeft: 16 + theme.spacing.sm,
@@ -53,15 +52,14 @@ const useStyles = createStyles((theme) => ({
         },
         [theme.fn.smallerThan("xs")]: {
             fontSize: theme.fontSizes.xs,
-        },  
+        },
     },
-
 }));
 
 const badgeHeights = {
-    "sm": 18,
-    "md": 20,
-    "lg": 26,
+    sm: 18,
+    md: 20,
+    lg: 26,
 };
 
 const VaultRow = ({ site, provided, toggleModal }) => {
@@ -69,18 +67,14 @@ const VaultRow = ({ site, provided, toggleModal }) => {
     const isMobile = useMediaQuery(`(max-width: ${theme.breakpoints.sm - 1}px)`);
     const isTablet = useMediaQuery(`(max-width: ${theme.breakpoints.md - 1}px)`);
 
-
     const iconSize = isMobile ? 16 : 32;
-    const badgeSize = isMobile ? "sm" : (isTablet ? "md" : "lg");
+    const badgeSize = isMobile ? "sm" : isTablet ? "md" : "lg";
     return (
         <Box pl="sm" className={classes.root}>
             {/* Give the site header its own row */}
             <Grid justify="flex-start">
                 <Grid.Col span={5}>
-                    <Group 
-                        spacing="sm"
-                        className={classes.siteHeader}
-                    >
+                    <Group spacing="sm" className={classes.siteHeader}>
                         <Avatar
                             size={iconSize}
                             variant="outline"
@@ -94,34 +88,27 @@ const VaultRow = ({ site, provided, toggleModal }) => {
             </Grid>
             {site.account.map((account, i) => (
                 <Grid key={i}>
-                    <Grid.Col span={5}>       
-                            <Group>
-                                <Text
-                                    color="gray-web"
-                                    align="left"
-                                    className={classes.accountText}
-                                >
-                                    {account.username}
-                                </Text>
-                            </Group>
-                            
+                    <Grid.Col span={5}>
+                        <Group>
+                            <Text color="gray-web" align="left" className={classes.accountText}>
+                                {account.username}
+                            </Text>
+                        </Group>
                     </Grid.Col>
                     <Grid.Col span={4}>
                         <div
-                            data-rbd-drag-handle-context-id={provided?.dragHandleProps?.["data-rbd-drag-handle-context-id"]}
+                            data-rbd-drag-handle-context-id={
+                                provided?.dragHandleProps?.["data-rbd-drag-handle-context-id"]
+                            }
                             data-rbd-drag-handle-draggable-id="prevent-drag"
                             style={{
-                                cursor: "auto"
+                                cursor: "auto",
                             }}
                         >
                             <ScrollArea offsetScrollbars>
-                                <Group
-                                    key={i}
-                                    spacing="sm"
-                                    className={classes.tagsWrapper}
-                                >
+                                <Group key={i} spacing="sm" className={classes.tagsWrapper}>
                                     {account.tags.length == 0 && (
-                                        <Box sx={{ width: "12px", height: badgeHeights[badgeSize]}}/>
+                                        <Box sx={{ width: "12px", height: badgeHeights[badgeSize] }} />
                                     )}
                                     {account.tags.map((tag, j) => (
                                         <Badge key={j} radius="sm" size={badgeSize}>
@@ -133,16 +120,13 @@ const VaultRow = ({ site, provided, toggleModal }) => {
                         </div>
                     </Grid.Col>
                     <Grid.Col span={3}>
-                        <PasswordData 
-                            account={account} 
-                            toggleModal={toggleModal}
-                        />     
+                        <PasswordData account={account} toggleModal={toggleModal} />
                     </Grid.Col>
                 </Grid>
             ))}
-            <Divider mb="xs"/>  
+            <Divider mb="xs" />
         </Box>
-     );
-}
- 
+    );
+};
+
 export default VaultRow;

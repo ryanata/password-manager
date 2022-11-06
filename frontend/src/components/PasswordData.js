@@ -32,7 +32,14 @@ const HiddenInput = ({ children, value, passwordHandler }) => {
     const { classes, theme } = useStyles();
 
     return (
-        <input onClick={passwordHandler} type="text" readOnly value={value} className={classes.input} size={theme.spacing.sm}>
+        <input
+            onClick={passwordHandler}
+            type="text"
+            readOnly
+            value={value}
+            className={classes.input}
+            size={theme.spacing.sm}
+        >
             {children}
         </input>
     );
@@ -46,7 +53,6 @@ const PasswordData = ({ account, toggleModal }) => {
     const { vault, setVault } = useContext(VaultContext);
     const isMobile = useMediaQuery(`(max-width: ${theme.breakpoints.sm - 1}px)`);
     const isTablet = useMediaQuery(`(max-width: ${theme.breakpoints.md - 1}px)`);
-
 
     // Handlers
     const showPasswordHandler = () => {
@@ -76,10 +82,17 @@ const PasswordData = ({ account, toggleModal }) => {
     const iconSize = isTablet ? 20 : 24;
     return (
         <Group spacing="xl" className={classes.root}>
-            <HiddenInput passwordHandler={inputPasswordHandler} value={showPassword && vault.unlocked ? account.password : "•••••••••••••••"} />
+            <HiddenInput
+                passwordHandler={inputPasswordHandler}
+                value={showPassword && vault.unlocked ? account.password : "•••••••••••••••"}
+            />
             <Group spacing="xs" className={classes.iconContainer}>
                 <UnstyledButton onClick={showPasswordHandler}>
-                    {showPassword && vault.unlocked ? <IconEye size={iconSize} stroke={2} /> : <IconEyeOff size={iconSize} stroke={2} />}
+                    {showPassword && vault.unlocked ? (
+                        <IconEye size={iconSize} stroke={2} />
+                    ) : (
+                        <IconEyeOff size={iconSize} stroke={2} />
+                    )}
                 </UnstyledButton>
                 <UnstyledButton onClick={copyHandler}>
                     <IconCopy size={iconSize} stroke={2} />

@@ -1,12 +1,12 @@
 import { Box, Center, Loader, Text, createStyles } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
-import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
+import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
 
 import MasterPasswordModal from "./MasterPasswordModal";
-import VaultRow from "./VaultRow";
 import VaultHeader from "./VaultHeader";
+import VaultRow from "./VaultRow";
 
 const useStyles = createStyles((theme) => ({
     noSpacing: {
@@ -144,8 +144,7 @@ const getVaultData = () => {
     return new Promise((resolve) => {
         setTimeout(() => {
             resolve(data);
-        }
-        , 2000);
+        }, 2000);
     });
 };
 
@@ -221,7 +220,6 @@ const VaultTable = () => {
         mutate({ sites: items });
     };
 
-
     if (isLoading) {
         return (
             <Center style={{ width: "100%", height: "100%" }}>
@@ -241,37 +239,41 @@ const VaultTable = () => {
     return (
         <>
             <Box className={classes.noSpacing}>
-                <VaultHeader sort={sort} toggleSort={toggleSort}/>
-                {sort === "unsorted" ?
-                <DragDropContext onDragEnd={onDragEnd}>
-                    <Droppable droppableId="sites">
-                        {(provided) => (
-                            <Box {...provided.droppableProps} ref={provided.innerRef}>
-                                {/* Map through data and create a VaultRow component for each */}
-                                {data.sites.map((site, index) => (
-                                    <Draggable key={site.name} draggableId={site.name} index={index}>
-                                        {(provided) => (
-                                            <Box
-                                                {...provided.draggableProps}
-                                                {...provided.dragHandleProps}
-                                                ref={provided.innerRef}
-                                                id={site.name}
-                                            >
-                                                <VaultRow site={site} provided={provided} toggleModal={toggleMasterPassModal} />
-                                            </Box>
-                                        )}
-                                    </Draggable>
-                                ))}
-                                {provided.placeholder}
-                            </Box>
-                        )}
-                    </Droppable>
-                </DragDropContext>
-                :
-                sortByState().map((site, index) => (
-                    <VaultRow key={index} site={site} toggleModal={toggleMasterPassModal}/>
-                ))
-                } 
+                <VaultHeader sort={sort} toggleSort={toggleSort} />
+                {sort === "unsorted" ? (
+                    <DragDropContext onDragEnd={onDragEnd}>
+                        <Droppable droppableId="sites">
+                            {(provided) => (
+                                <Box {...provided.droppableProps} ref={provided.innerRef}>
+                                    {/* Map through data and create a VaultRow component for each */}
+                                    {data.sites.map((site, index) => (
+                                        <Draggable key={site.name} draggableId={site.name} index={index}>
+                                            {(provided) => (
+                                                <Box
+                                                    {...provided.draggableProps}
+                                                    {...provided.dragHandleProps}
+                                                    ref={provided.innerRef}
+                                                    id={site.name}
+                                                >
+                                                    <VaultRow
+                                                        site={site}
+                                                        provided={provided}
+                                                        toggleModal={toggleMasterPassModal}
+                                                    />
+                                                </Box>
+                                            )}
+                                        </Draggable>
+                                    ))}
+                                    {provided.placeholder}
+                                </Box>
+                            )}
+                        </Droppable>
+                    </DragDropContext>
+                ) : (
+                    sortByState().map((site, index) => (
+                        <VaultRow key={index} site={site} toggleModal={toggleMasterPassModal} />
+                    ))
+                )}
             </Box>
             <MasterPasswordModal opened={masterPassModalOpened} closed={toggleMasterPassModal} />
         </>

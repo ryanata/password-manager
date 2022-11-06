@@ -111,7 +111,7 @@ const LoginModal = ({ opened, closed, openSignupModal }) => {
         onClose();
         // Open Register Modal
         openSignupModal();
-    };  
+    };
 
     if (form.values.loggedIn) {
         return <Navigate to="/dashboard" />;

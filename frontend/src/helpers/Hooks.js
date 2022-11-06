@@ -1,6 +1,6 @@
-import { createContext } from "react";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
+import { createContext } from "react";
 
 // Vault state context
 export const VaultContext = createContext(null);
@@ -13,7 +13,5 @@ export const useUser = () => {
     } catch (error) {
         console.log(error);
     }
-    return useQuery(["getUser"], () =>
-        axios.get("/api/user/me", { headers: { Authorization: `Bearer ${token}` } })
-    );
+    return useQuery(["getUser"], () => axios.get("/api/user/me", { headers: { Authorization: `Bearer ${token}` } }));
 };

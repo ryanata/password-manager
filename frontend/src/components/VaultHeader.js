@@ -1,15 +1,15 @@
-import {Grid, Group, Center, Divider, Text, UnstyledButton, createStyles} from '@mantine/core';
+import { Center, Divider, Grid, Group, Text, UnstyledButton, createStyles } from "@mantine/core";
 import { IconChevronDown, IconChevronUp, IconSelector } from "@tabler/icons";
 
 const useStyles = createStyles((theme) => ({
     th: {
-        padding: '0 !important',
+        padding: "0 !important",
     },
     control: {
-        width: '100%',
+        width: "100%",
         padding: `${theme.spacing.xs}px ${theme.spacing.md}px`,
-        '&:hover': {
-            backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[6] : theme.colors.gray[0],
+        "&:hover": {
+            backgroundColor: theme.colorScheme === "dark" ? theme.colors.dark[6] : theme.colors.gray[0],
         },
     },
     icon: {
@@ -45,8 +45,8 @@ const NameHeader = ({ children, sort, onSort }) => {
     );
 };
 
-const VaultHeader = ({sort, toggleSort}) => {
-    return ( 
+const VaultHeader = ({ sort, toggleSort }) => {
+    return (
         <>
             <Grid>
                 <Grid.Col span={5}>
@@ -54,30 +54,31 @@ const VaultHeader = ({sort, toggleSort}) => {
                         sort={sort}
                         onSort={() => {
                             toggleSort();
-                        }}>
+                        }}
+                    >
                         NAME
                     </NameHeader>
                 </Grid.Col>
 
                 <Grid.Col span={4}>
-                    <Group sx={{ height: "100%"}}>
+                    <Group sx={{ height: "100%" }}>
                         <Text weight={500} size="sm" align="left">
                             TAGS
                         </Text>
-                    </Group>      
+                    </Group>
                 </Grid.Col>
 
                 <Grid.Col span={3}>
-                    <Group sx={{ height: "100%"}}>
+                    <Group sx={{ height: "100%" }}>
                         <Text weight={500} size="sm" align="left">
                             PASSWORD
                         </Text>
-                    </Group>      
+                    </Group>
                 </Grid.Col>
             </Grid>
-            <Divider mb="xs"/>
+            <Divider mb="xs" />
         </>
-     );
-}
- 
+    );
+};
+
 export default VaultHeader;

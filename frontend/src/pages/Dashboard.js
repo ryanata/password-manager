@@ -5,8 +5,7 @@ import { useMemo, useState } from "react";
 import VaultTable from "../components/VaultTable";
 import { VaultContext, useUser } from "../helpers/Hooks";
 
-const useStyles = createStyles((theme) => ({
-}));
+const useStyles = createStyles((theme) => ({}));
 
 const initialVault = {
     name: "Personal",
@@ -58,11 +57,7 @@ const Dashboard = () => {
         <VaultProvider>
             <AppShell
                 padding="md"
-                navbar={
-                    isTablet ? null : 
-                    <Navbar width={{ base: 250 }}>
-                    </Navbar>
-                }
+                navbar={isTablet ? null : <Navbar width={{ base: 250 }}></Navbar>}
                 header={
                     <Header height={60} p="xs">
                         {
