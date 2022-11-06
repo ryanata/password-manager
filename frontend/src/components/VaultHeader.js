@@ -1,4 +1,4 @@
-import {Grid, Group, Center, Text, UnstyledButton, createStyles} from '@mantine/core';
+import {Grid, Group, Center, Divider, Text, UnstyledButton, createStyles} from '@mantine/core';
 import { IconChevronDown, IconChevronUp, IconSelector } from "@tabler/icons";
 
 const useStyles = createStyles((theme) => ({
@@ -47,33 +47,36 @@ const NameHeader = ({ children, sort, onSort }) => {
 
 const VaultHeader = ({sort, toggleSort}) => {
     return ( 
-        <Grid>
-            <Grid.Col span={5}>
-                <NameHeader
-                    sort={sort}
-                    onSort={() => {
-                        toggleSort();
-                    }}>
-                    NAME
-                </NameHeader>
-            </Grid.Col>
+        <>
+            <Grid>
+                <Grid.Col span={5}>
+                    <NameHeader
+                        sort={sort}
+                        onSort={() => {
+                            toggleSort();
+                        }}>
+                        NAME
+                    </NameHeader>
+                </Grid.Col>
 
-            <Grid.Col span={4}>
-                <Group sx={{ height: "100%"}}>
-                    <Text weight={500} size="sm" align="left">
-                        TAGS
-                    </Text>
-                </Group>      
-            </Grid.Col>
+                <Grid.Col span={4}>
+                    <Group sx={{ height: "100%"}}>
+                        <Text weight={500} size="sm" align="left">
+                            TAGS
+                        </Text>
+                    </Group>      
+                </Grid.Col>
 
-            <Grid.Col span={3}>
-                <Group sx={{ height: "100%"}}>
-                    <Text weight={500} size="sm" align="left">
-                        PASSWORD
-                    </Text>
-                </Group>      
-            </Grid.Col>
-        </Grid>
+                <Grid.Col span={3}>
+                    <Group sx={{ height: "100%"}}>
+                        <Text weight={500} size="sm" align="left">
+                            PASSWORD
+                        </Text>
+                    </Group>      
+                </Grid.Col>
+            </Grid>
+            <Divider mb="xs"/>
+        </>
      );
 }
  

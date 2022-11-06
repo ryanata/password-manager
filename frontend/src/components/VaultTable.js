@@ -1,6 +1,7 @@
-import { Box, Center, Divider, Loader, ScrollArea, Text, createStyles } from "@mantine/core";
+import { Box, Center, Loader, Text, createStyles } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
-import { useQuery } from "@tanstack/react-query";
+import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 
 import MasterPasswordModal from "./MasterPasswordModal";
@@ -15,8 +16,8 @@ const useStyles = createStyles((theme) => ({
     },
 }));
 
-
-const getVaultData = () => {
+// TODO: DELETE ALL THESE FUNCTIONS WHEN API IS READY
+const createVaultData = () => {
     const data = {
         sites: [
             {
@@ -128,11 +129,33 @@ const getVaultData = () => {
             },
         ],
     };
+    // Set local storage for testing
+    localStorage.setItem("vault", JSON.stringify(data));
+};
+
+const getVaultData = () => {
+    let data = [];
+    try {
+        data = JSON.parse(localStorage.getItem("vault"));
+    } catch (error) {
+        console.log(error);
+    }
     // create a promise that resolves after 1 second
     return new Promise((resolve) => {
         setTimeout(() => {
             resolve(data);
-        }, 1000);
+        }
+        , 2000);
+    });
+};
+
+const updateVaultData = (data) => {
+    localStorage.setItem("vault", JSON.stringify(data));
+    // create a promise that resolves after 1 second
+    return new Promise((resolve) => {
+        setTimeout(() => {
+            resolve(data);
+        }, 100);
     });
 };
 
@@ -140,6 +163,27 @@ const VaultTable = () => {
     const { classes, theme } = useStyles();
     const [sort, setSort] = useState("unsorted");
     const { data, isLoading, error } = useQuery(["vault"], getVaultData);
+    const queryClient = new useQueryClient();
+    const { mutate } = useMutation(updateVaultData, {
+        onMutate: async (newData) => {
+            // Cancel any outgoing refetches (so they don't overwrite our optimistic update)
+            await queryClient.cancelQueries(["vault"]);
+            // Snapshot the previous value
+            const previousData = queryClient.getQueryData(["vault"]);
+            // Optimistically update to the new value
+            queryClient.setQueryData(["vault"], newData);
+            // Return a context object with the snapshotted value
+            return { previousData };
+        },
+        // If the mutation fails, use the context returned from onMutate to roll back
+        onError: (err, newData, context) => {
+            queryClient.setQueryData(["vault"], context.previousData);
+        },
+        // Always refetch after error or success:
+        onSettled: () => {
+            queryClient.invalidateQueries(["vault"]);
+        },
+    });
     const [masterPassModalOpened, { toggle: toggleMasterPassModal }] = useDisclosure(false);
 
     // Cycle through sort states
@@ -165,6 +209,19 @@ const VaultTable = () => {
         }
     };
 
+    const onDragEnd = (result) => {
+        // dropped outside the list
+        if (!result.destination) {
+            return;
+        }
+        // Update data
+        const items = Array.from(data.sites);
+        const [reorderedItem] = items.splice(result.source.index, 1);
+        items.splice(result.destination.index, 0, reorderedItem);
+        mutate({ sites: items });
+    };
+
+
     if (isLoading) {
         return (
             <Center style={{ width: "100%", height: "100%" }}>
@@ -181,16 +238,40 @@ const VaultTable = () => {
         );
     }
 
-    console.log(sort);
     return (
         <>
             <Box className={classes.noSpacing}>
                 <VaultHeader sort={sort} toggleSort={toggleSort}/>
-                <Divider mb="xs"/>
-                {/* Map through data and create a VaultRow component for each */}
-                {sortByState().map((site, index) => (
-                    <VaultRow key={index} site={site} toggleModal={toggleMasterPassModal} />
-                ))}
+                {sort === "unsorted" ?
+                <DragDropContext onDragEnd={onDragEnd}>
+                    <Droppable droppableId="sites">
+                        {(provided) => (
+                            <Box {...provided.droppableProps} ref={provided.innerRef}>
+                                {/* Map through data and create a VaultRow component for each */}
+                                {data.sites.map((site, index) => (
+                                    <Draggable key={site.name} draggableId={site.name} index={index}>
+                                        {(provided) => (
+                                            <Box
+                                                {...provided.draggableProps}
+                                                {...provided.dragHandleProps}
+                                                ref={provided.innerRef}
+                                                id={site.name}
+                                            >
+                                                <VaultRow site={site} provided={provided} toggleModal={toggleMasterPassModal} />
+                                            </Box>
+                                        )}
+                                    </Draggable>
+                                ))}
+                                {provided.placeholder}
+                            </Box>
+                        )}
+                    </Droppable>
+                </DragDropContext>
+                :
+                sortByState().map((site, index) => (
+                    <VaultRow key={index} site={site} toggleModal={toggleMasterPassModal}/>
+                ))
+                } 
             </Box>
             <MasterPasswordModal opened={masterPassModalOpened} closed={toggleMasterPassModal} />
         </>

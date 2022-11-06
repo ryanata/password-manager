@@ -5,6 +5,12 @@ import { useMediaQuery } from "@mantine/hooks";
 import PasswordData from "./PasswordData";
 
 const useStyles = createStyles((theme) => ({
+    root: {
+        // On hover of the row, change the background color to the lightest shade of gray
+        "&:hover": {
+            backgroundColor: theme.colors.gray[3],
+        },
+    },
     siteHeader: {
         flexWrap: "nowrap",
         textOverflow: "ellipsis",
@@ -58,7 +64,7 @@ const badgeHeights = {
     "lg": 26,
 };
 
-const VaultRow = ({ site, toggleModal }) => {
+const VaultRow = ({ site, provided, toggleModal }) => {
     const { classes, theme } = useStyles();
     const isMobile = useMediaQuery(`(max-width: ${theme.breakpoints.sm - 1}px)`);
     const isTablet = useMediaQuery(`(max-width: ${theme.breakpoints.md - 1}px)`);
@@ -67,7 +73,7 @@ const VaultRow = ({ site, toggleModal }) => {
     const iconSize = isMobile ? 16 : 32;
     const badgeSize = isMobile ? "sm" : (isTablet ? "md" : "lg");
     return (
-        <Box pl="sm"> 
+        <Box pl="sm" className={classes.root}>
             {/* Give the site header its own row */}
             <Grid justify="flex-start">
                 <Grid.Col span={5}>
@@ -101,22 +107,30 @@ const VaultRow = ({ site, toggleModal }) => {
                             
                     </Grid.Col>
                     <Grid.Col span={4}>
-                        <ScrollArea offsetScrollbars>
-                            <Group
-                                key={i}
-                                spacing="sm"
-                                className={classes.tagsWrapper}
-                            >
-                                {account.tags.length == 0 && (
-                                    <Box sx={{ width: "12px", height: badgeHeights[badgeSize]}}/>
-                                )}
-                                {account.tags.map((tag, j) => (
-                                    <Badge key={j} size={badgeSize}>
-                                        {tag}
-                                    </Badge>
-                                ))}
-                            </Group>
-                        </ScrollArea>
+                        <div
+                            data-rbd-drag-handle-context-id={provided?.dragHandleProps?.["data-rbd-drag-handle-context-id"]}
+                            data-rbd-drag-handle-draggable-id="prevent-drag"
+                            style={{
+                                cursor: "auto"
+                            }}
+                        >
+                            <ScrollArea offsetScrollbars>
+                                <Group
+                                    key={i}
+                                    spacing="sm"
+                                    className={classes.tagsWrapper}
+                                >
+                                    {account.tags.length == 0 && (
+                                        <Box sx={{ width: "12px", height: badgeHeights[badgeSize]}}/>
+                                    )}
+                                    {account.tags.map((tag, j) => (
+                                        <Badge key={j} radius="sm" size={badgeSize}>
+                                            {tag}
+                                        </Badge>
+                                    ))}
+                                </Group>
+                            </ScrollArea>
+                        </div>
                     </Grid.Col>
                     <Grid.Col span={3}>
                         <PasswordData 

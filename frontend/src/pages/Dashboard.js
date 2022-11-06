@@ -1,11 +1,9 @@
 import { Anchor, AppShell, Center, Group, Header, Loader, Navbar, Text, createStyles } from "@mantine/core";
 import { useMediaQuery } from "@mantine/hooks";
-import { useQuery } from "@tanstack/react-query";
-import axios from "axios";
 import { useMemo, useState } from "react";
 
 import VaultTable from "../components/VaultTable";
-import { VaultContext } from "../contexts/VaultContext";
+import { VaultContext, useUser } from "../helpers/Hooks";
 
 const useStyles = createStyles((theme) => ({
 }));
@@ -32,17 +30,7 @@ const Dashboard = () => {
     const { classes, theme } = useStyles();
     // Hooks
     const isTablet = useMediaQuery(`(max-width: ${theme.breakpoints.md - 1}px)`);
-
-    // Get jwt token to authenticate
-    let token = "none";
-    try {
-        token = JSON.parse(localStorage.getItem("pwdlyToken"));
-    } catch (error) {
-        console.log(error);
-    }
-    const { data, isLoading, error } = useQuery(["getUser"], () =>
-        axios.get("/api/user/me", { headers: { Authorization: `Bearer ${token}` } })
-    );
+    const { data, isLoading, error } = useUser();
 
     if (isLoading) {
         return (
@@ -65,6 +53,7 @@ const Dashboard = () => {
     }
 
     const user = data.data;
+    console.log(user);
     return (
         <VaultProvider>
             <AppShell

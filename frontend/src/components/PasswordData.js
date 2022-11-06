@@ -3,7 +3,7 @@ import { useMediaQuery } from "@mantine/hooks";
 import { IconCopy, IconEye, IconEyeOff } from "@tabler/icons";
 import { useContext, useState } from "react";
 
-import { VaultContext } from "../contexts/VaultContext";
+import { VaultContext } from "../helpers/Hooks";
 
 const useStyles = createStyles((theme) => ({
     input: {
