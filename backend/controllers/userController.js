@@ -2,6 +2,7 @@ const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const User = require('../models/user');
 const asyncHandler = require('express-async-handler');
+const user = require('../models/user');
 
 // @desc    Create new user
 // @route   GET /api/users/register
@@ -94,7 +95,56 @@ const loginUser = asyncHandler(async (req, res) => {
 const getMe = asyncHandler(async (req, res) => {
     res.status(200).json(req.user)
 })
-  
+    
+//@desc     Create a Vault          FIXME : !WIP/unsure!
+//@route    GET /api/users/addVault    
+const addVault = asyncHandler(async (req, res) => {
+    const {vName, vPass, initSite, initLogin, initPass/*, 2FAEnabled*/} = req.body;
+
+    if(!vName || !vPass || !initSite || !initLogin || !initPass/*, || !2FAEnabled*/) {
+        res.status(400);
+        throw new Error('All Vault fields must be filled');
+    }
+
+    const vaultExists =  await User.findOne({ vName });
+    if(vaultExists) {
+        res.status(400);
+        throw new Error('Vault names cannot be repeated');
+    }
+
+    //Hash password
+    const salt = await bcrypt.genSalt(10)
+    const hashPassword = await bcrypt.hash(vPass, salt)
+
+    const pepper = await bcrypt.genSalt(10)
+    const hashbrownPassword = await bcrypt .hash(initPass, pepper)
+
+    const vault = await User.addVault({
+        vaultName: vName,
+        vaultPassword: vPass,
+        firstSite: {
+            startinglogin: initSite,
+            startingName: initLogin,
+            startingPass: initPass
+         },
+    });
+
+    if(vault) {
+        res.status(201).json({
+            message: 'Vault created!',
+            vault:{
+                vName: vault.vaultName,
+                initLogin: vault.firstSite.startinglogin,
+                initName: vault.firstSite.startingName,
+            },
+        });
+    } else {
+        res.status(400);
+        throw new Error('Invalid vault data');
+    }
+
+});
+
 // Generate JWT
 const generateToken = (id) => {
     return jwt.sign({ id }, process.env.JWT_KEY, {
@@ -106,4 +156,5 @@ module.exports = {
     registerUser,
     loginUser,
     getMe,
+    addVault,
   }
