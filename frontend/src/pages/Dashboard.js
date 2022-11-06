@@ -1,26 +1,27 @@
+import { Anchor, AppShell, Center, Group, Header, Loader, Navbar, Text } from "@mantine/core";
 import { useQuery } from "@tanstack/react-query";
-import { AppShell, Center, Loader, Group, Navbar, Header, Text, Anchor } from "@mantine/core";
 import axios from "axios";
+import { useMemo, useState } from "react";
+
 import VaultTable from "../components/VaultTable";
 import { VaultContext } from "../contexts/VaultContext";
-import { useState, useMemo } from "react";
 
 const initialVault = {
     name: "Personal",
-    unlocked: false
+    unlocked: false,
 };
 
 const VaultProvider = ({ children }) => {
     const [vault, setVault] = useState(initialVault);
-    const value = useMemo(() => ({
-        vault, setVault
-    }), [vault]);
-
-    return (
-        <VaultContext.Provider value={value}>
-            {children}
-        </VaultContext.Provider>
+    const value = useMemo(
+        () => ({
+            vault,
+            setVault,
+        }),
+        [vault]
     );
+
+    return <VaultContext.Provider value={value}>{children}</VaultContext.Provider>;
 };
 
 const Dashboard = () => {

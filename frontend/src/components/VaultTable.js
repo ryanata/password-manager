@@ -1,23 +1,8 @@
-import {
-    createStyles,
-    Anchor,
-    Avatar,
-    Box,
-    Grid,
-    Icon,
-    Center,
-    Chip,
-    Loader,
-    UnstyledButton,
-    Group,
-    Text,
-    Table,
-    ScrollArea,
-    Stack,
-} from "@mantine/core";
-import { IconSelector, IconChevronDown, IconChevronUp, IconEyeOff, IconEye, IconCopy } from "@tabler/icons";
+import { Center, Group, Loader, ScrollArea, Table, Text, UnstyledButton, createStyles } from "@mantine/core";
+import { IconChevronDown, IconChevronUp, IconSelector } from "@tabler/icons";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
+
 import VaultRows from "./VaultRows";
 
 const useStyles = createStyles((theme) => ({

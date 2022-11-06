@@ -1,6 +1,7 @@
-import { createStyles, Group, UnstyledButton } from "@mantine/core";
+import { Group, UnstyledButton, createStyles } from "@mantine/core";
 import { IconCopy, IconEye, IconEyeOff } from "@tabler/icons";
-import { useState, useContext } from "react";
+import { useContext, useState } from "react";
+
 import { VaultContext } from "../contexts/VaultContext";
 
 const useStyles = createStyles((theme) => ({
@@ -29,7 +30,7 @@ const PasswordData = ({ account, i, toggleModal }) => {
 
     // Hooks
     const [showPassword, setShowPassword] = useState(false);
-    const {vault, setVault} = useContext(VaultContext);
+    const { vault, setVault } = useContext(VaultContext);
 
     // Handlers
     const showPasswordHandler = () => {
@@ -41,7 +42,7 @@ const PasswordData = ({ account, i, toggleModal }) => {
             setShowPassword(true);
             toggleModal();
         }
-    }
+    };
 
     const copyHandler = () => {
         if (vault.unlocked) {
@@ -49,19 +50,14 @@ const PasswordData = ({ account, i, toggleModal }) => {
         } else {
             toggleModal();
         }
-    }
-
+    };
 
     return (
-        <Group 
-            pt={i == 0 ? 32 + theme.spacing.sm : theme.spacing.sm} 
-            spacing="xl" 
-            className={classes.passwordWrapper}
-        >
-            <HiddenInput value={(showPassword && vault.unlocked) ? account.password : "•••••••••••••••"} />
+        <Group pt={i === 0 ? 32 + theme.spacing.sm : theme.spacing.sm} spacing="xl" className={classes.passwordWrapper}>
+            <HiddenInput value={showPassword && vault.unlocked ? account.password : "•••••••••••••••"} />
             <Group spacing="xs" className={classes.passwordWrapper}>
                 <UnstyledButton onClick={showPasswordHandler}>
-                    {(showPassword && vault.unlocked) ? <IconEye stroke={2} /> : <IconEyeOff stroke={2} />}
+                    {showPassword && vault.unlocked ? <IconEye stroke={2} /> : <IconEyeOff stroke={2} />}
                 </UnstyledButton>
                 <UnstyledButton onClick={copyHandler}>
                     <IconCopy stroke={2} />

@@ -1,5 +1,4 @@
 import {
-    createStyles,
     Anchor,
     Button,
     Checkbox,
@@ -8,15 +7,16 @@ import {
     Modal,
     PasswordInput,
     Stack,
-    Title,
     Text,
     TextInput,
+    Title,
+    createStyles,
 } from "@mantine/core";
-import { useMediaQuery } from "@mantine/hooks";
 import { useForm } from "@mantine/form";
+import { useMediaQuery } from "@mantine/hooks";
+import axios from "axios";
 import { useReducer } from "react";
 import { Navigate } from "react-router-dom";
-import axios from "axios";
 
 const useStyles = createStyles((theme) => ({
     link: {
@@ -35,7 +35,7 @@ const useStyles = createStyles((theme) => ({
     },
 }));
 
-const LoginModal = ({ opened, closed }) => {
+const LoginModal = ({ opened, closed, openSignupModal }) => {
     // Styling
     const { classes, theme } = useStyles();
 
@@ -45,16 +45,6 @@ const LoginModal = ({ opened, closed }) => {
         alert: "",
     });
     const isMobile = useMediaQuery(`(max-width: ${theme.breakpoints.sm - 1}px)`);
-
-    // Form close
-    const onClose = () => {
-        // Triggers css display: none
-        closed();
-        // Waits 0.4 second because of the animation delay
-        setTimeout(() => {
-            setState({ forgotPassword: false, alert: "" });
-        }, 400);
-    };
 
     const form = useForm({
         initialValues: {
@@ -68,6 +58,16 @@ const LoginModal = ({ opened, closed }) => {
             email: (value) => !value.includes("@") && "Invalid email",
         },
     });
+
+    // Modal close handler
+    const onClose = () => {
+        // Triggers css display: none
+        closed();
+        // Waits 0.4 second because of the animation delay
+        setTimeout(() => {
+            setState({ forgotPassword: false, alert: "" });
+        }, 400);
+    };
 
     const formHandler = (values) => {
         // If submitting the login form
@@ -106,6 +106,13 @@ const LoginModal = ({ opened, closed }) => {
         }
     };
 
+    const redirectToRegister = () => {
+        // Close Modal
+        onClose();
+        // Open Register Modal
+        openSignupModal();
+    };  
+
     if (form.values.loggedIn) {
         return <Navigate to="/dashboard" />;
     }
@@ -132,7 +139,7 @@ const LoginModal = ({ opened, closed }) => {
                 {state.forgotPassword
                     ? "Enter your account's email address and we'll send you a link to reset your password."
                     : "Don’t have an account yet?"}{" "}
-                {!state.forgotPassword && <Anchor>Create account</Anchor>}
+                {!state.forgotPassword && <Anchor onClick={redirectToRegister}>Create account</Anchor>}
             </Text>
             <form onSubmit={form.onSubmit(formHandler)}>
                 <Stack>
