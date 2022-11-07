@@ -12,7 +12,55 @@ import React, { Component, useState } from 'react';
 const Register = ({ navigation }) => {
     return (
         <View style={styles.container}>
-            <Text>Register</Text>
+            <Image style={styles.image} source = {require("../assets/logo.png")} />
+                <View style={styles.inputView}>
+                    <TextInput
+                        required={true}
+                        //value={this.state.email}
+                        style={styles.TextInput}
+                        placeholder="First name"
+                        placeholderTextColor={"#003f5c"}
+                    />
+                </View>
+
+                <View style={styles.inputView}>
+                    <TextInput
+                        required={true}
+                        //value={this.state.email}
+                        style={styles.TextInput}
+                        placeholder="Last name"
+                        placeholderTextColor={"#003f5c"}
+                    />
+                </View>
+                <View style={styles.inputView}>
+                    <TextInput
+                        required={true}
+                        //value={this.state.email}
+                        style={styles.TextInput}
+                        placeholder="Email"
+                        placeholderTextColor={"#003f5c"}
+                    />
+                </View>
+
+                <View style={styles.inputView}>
+                    <TextInput
+                        required={true}
+                        //value={this.state.email}
+                        style={styles.TextInput}
+                        placeholder="Password"
+                        placeholderTextColor={"#003f5c"}
+                    />
+                </View>
+
+                <View style={styles.inputView}>
+                    <TextInput
+                        required={true}
+                        //value={this.state.email}
+                        style={styles.TextInput}
+                        placeholder="Password"
+                        placeholderTextColor={"#003f5c"}
+                    />
+                </View>
             <Button
                 title="Already have an account? Log in"
                 onPress={() => navigation.navigate('Login')}
@@ -24,7 +72,7 @@ const Register = ({ navigation }) => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#fff',
+        backgroundColor: '#4681D0',
         alignItems: 'center',
         justifyContent: 'center',
     },
