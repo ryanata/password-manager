@@ -1,4 +1,13 @@
-import { StyleSheet, Button, Text, View } from 'react-native';
+import { 
+    StyleSheet, 
+    Button, 
+    Text, 
+    View,
+    Image,
+    TextInput } 
+from 'react-native';
+
+import React, { Component, useState } from 'react';
 
 const styles = StyleSheet.create({
     container: {
