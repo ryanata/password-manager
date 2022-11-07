@@ -3,6 +3,7 @@ import {
     Button, 
     Text, 
     View,
+    TouchableOpacity,
     Image,
     TextInput } 
 from 'react-native';
@@ -61,10 +62,9 @@ const Register = ({ navigation }) => {
                         placeholderTextColor={"#003f5c"}
                     />
                 </View>
-            <Button
-                title="Already have an account? Log in"
-                onPress={() => navigation.navigate('Login')}
-            />
+            <TouchableOpacity onPress={() => navigation.navigate('Login')}>
+                <Text style={styles.Already_button}>Already have an account? Log in</Text>
+            </TouchableOpacity>
         </View>
      );
 }
@@ -118,6 +118,11 @@ const styles = StyleSheet.create({
         color: '#db2828',
         textAlign: 'center',
         fontSize: 12,
+    },
+
+    Already_button: {
+        height: 30,
+        marginBottom: 30,
     },
 });
 
