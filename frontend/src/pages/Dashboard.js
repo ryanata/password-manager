@@ -4,6 +4,7 @@ import axios from "axios";
 import { useMemo, useState } from "react";
 
 import VaultTable from "../components/VaultTable";
+import DashboardHeader from "../components/DashboardHeader";
 import { VaultContext } from "../contexts/VaultContext";
 
 const initialVault = {
@@ -67,22 +68,7 @@ const Dashboard = () => {
                     </Navbar>
                 }
                 header={
-                    <Header height={60} p="xs">
-                        {
-                            <Group position="apart">
-                                <Text>{`Welcome ${user.name.firstName} ${user.name.lastName}!`}</Text>
-
-                                <Anchor
-                                    onClick={() => {
-                                        localStorage.removeItem("pwdlyToken");
-                                    }}
-                                    href="/"
-                                >
-                                    Log out
-                                </Anchor>
-                            </Group>
-                        }
-                    </Header>
+                    <DashboardHeader />
                 }
                 styles={(theme) => ({
                     main: {
