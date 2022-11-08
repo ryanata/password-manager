@@ -20,6 +20,7 @@ const vaultSchema = new mongoose.Schema({
             name: {
                 type: String,
                 required: true,
+                unique: true
             },
             colorHEX: {
                 type: String,
