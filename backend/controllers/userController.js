@@ -1,11 +1,13 @@
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const User = require('../models/user');
+const Vault = require('../models/vault');
 const asyncHandler = require('express-async-handler');
 const user = require('../models/user');
 
+
 // @desc    Create new user
-// @route   GET /api/users/register
+// @route   POST /api/user/register
 const registerUser = asyncHandler(async (req, res) => {
     const { firstName, lastName, email, phoneNumber, password } = req.body;
 
@@ -56,7 +58,7 @@ const registerUser = asyncHandler(async (req, res) => {
 });
 
 // @desc    Login user
-// @route   GET /api/users/login
+// @route   POST /api/user/login
 const loginUser = asyncHandler(async (req, res) => {
     const { email, password } = req.body;
 
@@ -91,23 +93,25 @@ const loginUser = asyncHandler(async (req, res) => {
 });
 
 // @desc    Get user data
-// @route   GET /api/users/me
+// @route   GET /api/user/me
 const getMe = asyncHandler(async (req, res) => {
     res.status(200).json(req.user)
 })
-    
-//@desc     Create a Vault          FIXME : !WIP/unsure!
-//@route    GET /api/users/addVault    
-const addVault = asyncHandler(async (req, res) => {
-    const {vName, vPass, initSite, initLogin, initPass/*, 2FAEnabled*/} = req.body;
 
-    if(!vName || !vPass || !initSite || !initLogin || !initPass/*, || !2FAEnabled*/) {
+// Change this such that it adds a vault to the vault array in a specific user object
+//@desc     Create a Vault          FIXME : !WIP/unsure!
+//@route    POST /api/user/addVault    
+const addVault = asyncHandler(async (req, res) => {
+    const {vName, vPass} = req.body;
+
+    if(!vName || !vPass) {
         res.status(400);
         throw new Error('All Vault fields must be filled');
     }
 
-    const vaultExists =  await User.findOne({ vName });
-    if(vaultExists) {
+    const name = vName;
+    const vaultExists =  await Vault.findOne({ name });
+    if (vaultExists) {
         res.status(400);
         throw new Error('Vault names cannot be repeated');
     }
@@ -116,34 +120,27 @@ const addVault = asyncHandler(async (req, res) => {
     const salt = await bcrypt.genSalt(10)
     const hashPassword = await bcrypt.hash(vPass, salt)
 
-    const pepper = await bcrypt.genSalt(10)
-    const hashbrownPassword = await bcrypt .hash(initPass, pepper)
-
-    const vault = await User.addVault({
-        vaultName: vName,
-        vaultPassword: vPass,
-        firstSite: {
-            startinglogin: initSite,
-            startingName: initLogin,
-            startingPass: initPass
-         },
+    // Phone should come from existing user?
+    const vault = await Vault.create({
+        name: vName,
+        masterPassword: hashPassword,
+        mfa: {
+            phone: true
+        },
     });
 
     if(vault) {
         res.status(201).json({
             message: 'Vault created!',
             vault:{
-                vName: vault.vaultName,
-                initLogin: vault.firstSite.startinglogin,
-                initName: vault.firstSite.startingName,
+                vaultName: vault.name
             },
         });
     } else {
         res.status(400);
         throw new Error('Invalid vault data');
     }
-
-});
+}); 
 
 // Generate JWT
 const generateToken = (id) => {
