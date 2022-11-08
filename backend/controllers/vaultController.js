@@ -108,7 +108,47 @@ const updateVault = asyncHandler(async (req, res) => {
     }
 });
 
+// @desc    Update vault
+// @route   PUT /api/vault/{vaultID}
+// can be used to update name, masterPassword, or phone
+const createTag = asyncHandler(async (req, res) => {
+    const vaultID = req.params.vaultID;
+    const { name, colorHEX } = req.body;
+
+    const vaultExists = await Vault.findById(vaultID);
+
+    if (!vaultExists) {
+        res.status(400);
+        throw new Error('This vault does not exist');
+    }
+
+    if (!name || !colorHEX) {
+        res.status(400);
+        throw new Error('Please enter all fields');
+    }
+
+    const vault = await Vault.findOneAndUpdate(
+        { _id: vaultID }, 
+        { $push: { 
+            tags: {
+                name: name,
+                colorHEX: colorHEX, 
+            }
+        }
+    }, {new: true});
+
+    if (vault) {
+        res.status(200);
+        res.send(vault);
+    }
+    else {
+        res.status(400);
+        throw new Error('Vault could not be updated');
+    }
+});
+
 module.exports = {
     createVault,
     updateVault,
+    createTag
 }
