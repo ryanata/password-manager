@@ -34,8 +34,6 @@ const createVault = asyncHandler(async (req, res) => {
         userID: userID
     });
 
-    console.log(vault);
-
     if (vault) {
         const user = await User.findOneAndUpdate(
             { _id: userID }, 
