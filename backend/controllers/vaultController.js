@@ -2,8 +2,11 @@ const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const Vault = require('../models/vault');
 const User = require('../models/user');
-const asyncHandler = require('express-async-handler');
 const Tag = require('../models/tag');
+const Site = require('../models/site');
+const Account = require('../models/account');
+
+const asyncHandler = require('express-async-handler');
 
 // @desc    Create new vault
 // @route   POST /api/vault/
@@ -229,10 +232,161 @@ const updateTag = asyncHandler(async (req, res) => {
     }
 });
 
+// @desc    Create site
+// @route   POST /api/vault/{vaultID}/site
+const createSite = asyncHandler(async (req, res) => {
+    const vaultID = req.params.vaultID;
+    const { name, url } = req.body;
+
+    const vaultExists = await Vault.findById(vaultID);
+
+    if (!vaultExists) {
+        res.status(400);
+        throw new Error('This vault does not exist');
+    }
+
+    if (!name || !url) {
+        res.status(400);
+        throw new Error('Please enter all fields');
+    }
+
+    const site = await Site.create({
+        name: name,
+        url: url
+    });
+
+    if (!site) {
+        res.status(400);
+        throw new Error('Could not create the site');
+    }
+
+    const vault = await Vault.findOneAndUpdate(
+        { _id: vaultID }, 
+        { $push: { 
+            sites: site
+        }
+    }, {new: true});
+
+    if (vault) {
+        res.status(200);
+        res.send(vault);
+    }
+    else {
+        res.status(400);
+        throw new Error('Tag could not be updated');
+    }
+});
+
+// @desc    Update site
+// @route   PUT /api/vault/{vaultID}/site/{siteID}
+const updateSite = asyncHandler(async (req, res) => {
+    const vaultID = req.params.vaultID;
+    const siteID = req.params.siteID;
+    const { name, url } = req.body;
+    let update = {}
+
+    const vaultExists = await Vault.findById(vaultID);
+
+    if (!vaultExists) {
+        res.status(400);
+        throw new Error('This vault does not exist');
+    }
+
+    const siteExists = await Site.findById(siteID);
+
+    if (!siteExists) {
+        res.status(400);
+        throw new Error('This site does not exist');
+    }
+
+    if (!name && !url) {
+        res.status(400);
+        throw new Error('Please enter a field to update');
+    }
+
+    // gather all the fields in which we want to update
+    if (name) {
+        update["name"] = name;
+    }
+
+    if (url) {
+        update["url"] = url;
+    }
+
+    const site = await Site.findByIdAndUpdate(siteID, update, {new: true});
+
+    if (site) {
+        res.status(200);
+        res.send(site);
+    }
+    else {
+        res.status(400);
+        throw new Error('Site could not be updated');
+    }
+});
+
+// @desc    Create account
+// @route   POST /api/vault/{vaultID}/site/{siteID}/account
+const createAccount = asyncHandler(async (req, res) => {
+    const vaultID = req.params.vaultID;
+    const siteID = req.params.siteID;
+    const { username, password } = req.body;
+
+    const vaultExists = await Vault.findById(vaultID);
+
+    if (!vaultExists) {
+        res.status(400);
+        throw new Error('This vault does not exist');
+    }
+
+    const siteExists = await Site.findById(siteID);
+
+    if (!siteExists) {
+        res.status(400);
+        throw new Error('This site does not exist');
+    }
+
+    if (!username || !password) {
+        res.status(400);
+        throw new Error('Please enter all fields');
+    }
+
+
+
+    const account = await Account.create({
+        username: username,
+        password: password
+    });
+
+    if (!account) {
+        res.status(400);
+        throw new Error('Could not create the account');
+    }
+
+    const site = await Site.findOneAndUpdate(
+        { _id: siteID }, 
+        { $push: { 
+            accounts: account
+        }
+    }, {new: true});
+
+    if (site) {
+        res.status(200);
+        res.send(site);
+    }
+    else {
+        res.status(400);
+        throw new Error('Site could not be updated');
+    }
+});
+
 module.exports = {
     createVault,
     getVaults,
     updateVault,
     createTag,
     updateTag,
+    createSite,
+    updateSite,
+    createAccount
 }
