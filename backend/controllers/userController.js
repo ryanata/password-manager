@@ -34,6 +34,7 @@ const registerUser = asyncHandler(async (req, res) => {
             firstName: firstName,
             lastName: lastName,
         },
+        twoFactorAuthEnabled: false,
     });
 
     if (user) {
@@ -46,6 +47,7 @@ const registerUser = asyncHandler(async (req, res) => {
                 email: user.email,
                 phoneNumber: user.phone,
                 emailVerified: user.emailVerified,
+                twoFactorAuthEnabled: user.twoFactorAuthEnabled,
                 token: generateToken(user._id),
             },
         });
@@ -81,6 +83,7 @@ const loginUser = asyncHandler(async (req, res) => {
                 email: user.email,
                 phoneNumber: user.phone,
                 emailVerified: user.emailVerified,
+                twoFactorAuthEnabled: user.twoFactorAuthEnabled,
                 token: generateToken(user._id),
             },
         });

@@ -29,6 +29,10 @@ const userSchema = new mongoose.Schema({
             required: true,
         },
     },
+    twoFactorAuthEnabled: {
+        type: Boolean,
+        required: true,
+    },
     vaults: {
         type: [{
             type: mongoose.Schema.Types.ObjectId,
