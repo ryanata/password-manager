@@ -62,6 +62,34 @@ const createVault = asyncHandler(async (req, res) => {
     }
 });
 
+// @desc    Gets all vaults
+// @route   GET /api/vault/
+const getVaults = asyncHandler(async (req, res) => {
+    const { userID } = req.body;
+
+    if (!userID) {
+        res.status(400);
+        throw new Error('Please enter the user ID');
+    }
+
+    // Check for user with this userID
+    const userExists = await User.findOne({ userID });
+    if (!userExists) {
+        res.status(400);
+        throw new Error('User does not exist');
+    }
+
+    const vaults = await userExists.populate({path: 'vaults'});
+
+    if (vaults) {
+        res.status(200).json({
+            vaults: vaults["vaults"]
+        });
+    } else {
+        res.status(400);
+        throw new Error('Could not get the vaults');
+    }
+});
 
 // @desc    Update vault
 // @route   PUT /api/vault/{vaultID}
@@ -203,7 +231,8 @@ const updateTag = asyncHandler(async (req, res) => {
 
 module.exports = {
     createVault,
+    getVaults,
     updateVault,
     createTag,
-    updateTag
+    updateTag,
 }
