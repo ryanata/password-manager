@@ -83,7 +83,7 @@ const SignupModal = ({ opened, closed, openLoginModal }) => {
         closed();
         // Open Login Modal
         openLoginModal();
-    };  
+    };
 
     if (form.values.loggedIn) {
         return <Navigate to="/dashboard" />;

@@ -2,7 +2,7 @@ import { Button, Group, Modal, PasswordInput, Text, createStyles } from "@mantin
 import { useForm } from "@mantine/form";
 import { useContext, useState } from "react";
 
-import { VaultContext } from "../contexts/VaultContext";
+import { VaultContext } from "../helpers/Hooks";
 
 const useStyles = createStyles((theme) => ({}));
 const MasterPasswordModal = ({ opened, closed }) => {
