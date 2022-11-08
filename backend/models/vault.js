@@ -17,15 +17,8 @@ const vaultSchema = new mongoose.Schema({
     },
     tags: {
         type: [{
-            name: {
-                type: String,
-                required: true,
-                unique: true
-            },
-            colorHEX: {
-                type: String,
-                required: true,
-            }
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Tag",
         }]
     },
     sites: {

@@ -3,6 +3,7 @@ const bcrypt = require('bcrypt');
 const Vault = require('../models/vault');
 const User = require('../models/user');
 const asyncHandler = require('express-async-handler');
+const Tag = require('../models/tag');
 
 // @desc    Create new vault
 // @route   POST /api/vault/
@@ -31,7 +32,6 @@ const createVault = asyncHandler(async (req, res) => {
         mfa:  {
             phone: phoneNumber
         },
-        userID: userID
     });
 
     if (vault) {
@@ -108,9 +108,8 @@ const updateVault = asyncHandler(async (req, res) => {
     }
 });
 
-// @desc    Update vault
-// @route   PUT /api/vault/{vaultID}
-// can be used to update name, masterPassword, or phone
+// @desc    Create tag
+// @route   POST /api/vault/{vaultID}/tag
 const createTag = asyncHandler(async (req, res) => {
     const vaultID = req.params.vaultID;
     const { name, colorHEX } = req.body;
@@ -127,13 +126,20 @@ const createTag = asyncHandler(async (req, res) => {
         throw new Error('Please enter all fields');
     }
 
+    const tag = await Tag.create({
+        name: name,
+        colorHEX: colorHEX
+    });
+
+    if (!tag) {
+        res.status(400);
+        throw new Error('Could not create the tag');
+    }
+
     const vault = await Vault.findOneAndUpdate(
         { _id: vaultID }, 
         { $push: { 
-            tags: {
-                name: name,
-                colorHEX: colorHEX, 
-            }
+            tags: tag
         }
     }, {new: true});
 
@@ -143,12 +149,61 @@ const createTag = asyncHandler(async (req, res) => {
     }
     else {
         res.status(400);
-        throw new Error('Vault could not be updated');
+        throw new Error('Tag could not be updated');
+    }
+});
+
+// @desc    Update tag
+// @route   PUT /api/vault/{vaultID}/tag/{tagID}
+const updateTag = asyncHandler(async (req, res) => {
+    const vaultID = req.params.vaultID;
+    const tagID = req.params.tagID;
+    const { name, colorHEX } = req.body;
+    let update = {}
+
+    const vaultExists = await Vault.findById(vaultID);
+
+    if (!vaultExists) {
+        res.status(400);
+        throw new Error('This vault does not exist');
+    }
+
+    const tagExists = await Tag.findById(tagID);
+
+    if (!tagExists) {
+        res.status(400);
+        throw new Error('This tag does not exist');
+    }
+
+    if (!name && !colorHEX) {
+        res.status(400);
+        throw new Error('Please enter a field to update');
+    }
+
+    // gather all the fields in which we want to update
+    if (name) {
+        update["name"] = name;
+    }
+
+    if (colorHEX) {
+        update["colorHEX"] = colorHEX;
+    }
+
+    const tag = await Tag.findByIdAndUpdate(tagID, update, {new: true});
+
+    if (tag) {
+        res.status(200);
+        res.send(tag);
+    }
+    else {
+        res.status(400);
+        throw new Error('Tag could not be updated');
     }
 });
 
 module.exports = {
     createVault,
     updateVault,
-    createTag
+    createTag,
+    updateTag
 }
