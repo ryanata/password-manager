@@ -9,7 +9,8 @@ const {
     updateTag,
     createSite,
     updateSite,
-    createAccount
+    createAccount,
+    updateAccount
 } = require('../controllers/vaultController');
 
 router.post('', createVault);
@@ -20,6 +21,7 @@ router.put('/:vaultID/tag/:tagID', updateTag);
 router.post('/:vaultID/site', createSite);
 router.put('/:vaultID/site/:siteID', updateSite);
 router.post('/:vaultID/site/:siteID/account', createAccount);
+router.post('/:vaultID/site/:siteID/account/:accountID', updateAccount);
 
 
 

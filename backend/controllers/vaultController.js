@@ -380,6 +380,63 @@ const createAccount = asyncHandler(async (req, res) => {
     }
 });
 
+// @desc    Update account
+// @route   PUT /api/vault/{vaultID}/site/{siteID}/account/{accountID}
+const updateAccount = asyncHandler(async (req, res) => {
+    const vaultID = req.params.vaultID;
+    const siteID = req.params.siteID;
+    const accountID = req.params.siteID;
+
+    const { username, password } = req.body;
+    let update = {}
+
+    const vaultExists = await Vault.findById(vaultID);
+
+    if (!vaultExists) {
+        res.status(400);
+        throw new Error('This vault does not exist');
+    }
+
+    const siteExists = await Site.findById(siteID);
+
+    if (!siteExists) {
+        res.status(400);
+        throw new Error('This site does not exist');
+    }
+
+    const accountExists = await Account.findById(accountID);
+
+    if (!accountExists) {
+        res.status(400);
+        throw new Error('This account does not exist');
+    }
+
+    if (!username && !password) {
+        res.status(400);
+        throw new Error('Please enter a field to update');
+    }
+
+    // gather all the fields in which we want to update
+    if (username) {
+        update["username"] = username;
+    }
+
+    if (password) {
+        update["password"] = password;
+    }
+
+    const account = await Account.findByIdAndUpdate(accountID, update, {new: true});
+
+    if (account) {
+        res.status(200);
+        res.send(account);
+    }
+    else {
+        res.status(400);
+        throw new Error('Account could not be updated');
+    }
+});
+
 module.exports = {
     createVault,
     getVaults,
@@ -388,5 +445,6 @@ module.exports = {
     updateTag,
     createSite,
     updateSite,
-    createAccount
+    createAccount,
+    updateAccount,
 }
