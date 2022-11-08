@@ -1,3 +1,4 @@
+const { ObjectId } = require("mongodb");
 const mongoose = require("mongoose");
 
 const vaultSchema = new mongoose.Schema({
@@ -13,6 +14,10 @@ const vaultSchema = new mongoose.Schema({
         phone: {
             type: Number,
         },
+    },
+    userID: {
+        type: ObjectId,
+        required: true,
     },
     sites: {
         type: [{
