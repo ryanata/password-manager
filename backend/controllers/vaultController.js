@@ -56,7 +56,8 @@ const createVault = asyncHandler(async (req, res) => {
                 name: vault.name,
                 masterPassword: vault.masterPassword,
                 mfa: vault.mfa,
-                userID: vault.userID
+                userID: vault.userID,
+                vaultID: vault.id
             },
         });
     } else {
@@ -76,7 +77,7 @@ const getVaults = asyncHandler(async (req, res) => {
     }
 
     // Check for user with this userID
-    const userExists = await User.findOne({ userID });
+    const userExists = await User.findById(userID);
     if (!userExists) {
         res.status(400);
         throw new Error('User does not exist');
@@ -139,6 +140,33 @@ const updateVault = asyncHandler(async (req, res) => {
     }
 });
 
+// @desc    Delete vault
+// @route   DELETE /api/vault/{vaultID}
+const deleteVault = asyncHandler(async (req, res) => {
+    const vaultID = req.params.vaultID;
+
+    const vaultExists = await Vault.findById(vaultID);
+
+    if (!vaultExists) {
+        res.status(400);
+        throw new Error('This vault does not exist');
+    }
+
+    const vault = await Vault.findByIdAndDelete(vaultID);
+
+    if (vault) {
+        res.status(200);
+        res.json({
+            message: "Vault was deleted"
+        });
+    }
+    else {
+        res.status(400);
+        throw new Error('Vault could not be deleted');
+    }
+});
+
+
 // @desc    Create tag
 // @route   POST /api/vault/{vaultID}/tag
 const createTag = asyncHandler(async (req, res) => {
@@ -181,6 +209,32 @@ const createTag = asyncHandler(async (req, res) => {
     else {
         res.status(400);
         throw new Error('Tag could not be updated');
+    }
+});
+
+// @desc    Gets all tags
+// @route   GET /api/vault/{vaultID}/tag
+const getTags = asyncHandler(async (req, res) => {
+    const { vaultID } = req.params.vaultID;
+
+    // Check for vault with this vaultID
+    const vaultExists = await Vault.findOne({ vaultID });
+    if (!vaultExists) {
+        res.status(400);
+        throw new Error('Vault does not exist');
+    }
+
+    const tags = await vaultExists.populate({path: 'tags'});
+    console.log(tags);
+
+
+    if (tags) {
+        res.status(200).json({
+            tags: tags["tags"]
+        });
+    } else {
+        res.status(400);
+        throw new Error('Could not get the tags');
     }
 });
 
@@ -232,6 +286,40 @@ const updateTag = asyncHandler(async (req, res) => {
     }
 });
 
+// @desc    Delete tag
+// @route   DELETE /api/vault/{vaultID}/tag/{tagID}
+const deleteTag = asyncHandler(async (req, res) => {
+    const vaultID = req.params.vaultID;
+    const tagID = req.params.tagID;
+
+    const vaultExists = await Vault.findById(vaultID);
+
+    if (!vaultExists) {
+        res.status(400);
+        throw new Error('This vault does not exist');
+    }
+
+    const tagExists = await Tag.findById(tagID);
+
+    if (!tagExists) {
+        res.status(400);
+        throw new Error('This tag does not exist');
+    }
+
+    const tag = await Tag.findByIdAndDelete(tagID);
+
+    if (tag) {
+        res.status(200);
+        res.json({
+            message: "Tag was deleted"
+        });
+    }
+    else {
+        res.status(400);
+        throw new Error('Tag could not be deleted');
+    }
+});
+
 // @desc    Create site
 // @route   POST /api/vault/{vaultID}/site
 const createSite = asyncHandler(async (req, res) => {
@@ -274,6 +362,30 @@ const createSite = asyncHandler(async (req, res) => {
     else {
         res.status(400);
         throw new Error('Tag could not be updated');
+    }
+});
+
+// @desc    Gets all sites
+// @route   GET /api/vault/{vaultID}/site
+const getSites = asyncHandler(async (req, res) => {
+    const { vaultID } = req.params.vaultID;
+
+    // Check for vault with this vaultID
+    const vaultExists = await Vault.findOne({ vaultID });
+    if (!vaultExists) {
+        res.status(400);
+        throw new Error('Vault does not exist');
+    }
+
+    const sites = await vaultExists.populate({path: 'sites'});
+
+    if (sites) {
+        res.status(200).json({
+            sites: sites["sites"]
+        });
+    } else {
+        res.status(400);
+        throw new Error('Could not get the sites');
     }
 });
 
@@ -322,6 +434,40 @@ const updateSite = asyncHandler(async (req, res) => {
     else {
         res.status(400);
         throw new Error('Site could not be updated');
+    }
+});
+
+// @desc    Delete site
+// @route   DELETE /api/vault/{vaultID}/site/{siteID}
+const deleteSite = asyncHandler(async (req, res) => {
+    const vaultID = req.params.vaultID;
+    const siteID = req.params.siteID;
+
+    const vaultExists = await Vault.findById(vaultID);
+
+    if (!vaultExists) {
+        res.status(400);
+        throw new Error('This vault does not exist');
+    }
+
+    const siteExists = await Site.findById(siteID);
+
+    if (!siteExists) {
+        res.status(400);
+        throw new Error('This site does not exist');
+    }
+
+    const site = await Site.findByIdAndDelete(siteID);
+
+    if (site) {
+        res.status(200);
+        res.json({
+            message: "Site was deleted"
+        });
+    }
+    else {
+        res.status(400);
+        throw new Error('Site could not be deleted');
     }
 });
 
@@ -377,6 +523,40 @@ const createAccount = asyncHandler(async (req, res) => {
     else {
         res.status(400);
         throw new Error('Site could not be updated');
+    }
+});
+
+// @desc    Gets all accounts
+// @route   GET /api/vault/{vaultID}/site/{siteID}/account
+const getAccounts = asyncHandler(async (req, res) => {
+    const vaultID = req.params.vaultID;
+    const siteID = req.params.siteID;
+
+    // Check for vault with this vaultID
+    const vaultExists = await Vault.findOne({ vaultID });
+
+    if (!vaultExists) {
+        res.status(400);
+        throw new Error('Vault does not exist');
+    }
+
+    // Check for vault with this vaultID
+    const siteExists = await Site.findOne({ siteID });
+
+    if (!siteExists) {
+        res.status(400);
+        throw new Error('Site does not exist');
+    }
+    
+    const accounts = await siteExists.populate({path: 'accounts'});
+
+    if (accounts) {
+        res.status(200).json({
+            accounts: accounts["accounts"]
+        });
+    } else {
+        res.status(400);
+        throw new Error('Could not get the accounts');
     }
 });
 
@@ -437,14 +617,63 @@ const updateAccount = asyncHandler(async (req, res) => {
     }
 });
 
+// @desc    Delete account
+// @route   DELETE /api/vault/{vaultID}/site/{siteID}/account/{accountID}
+const deleteAccount = asyncHandler(async (req, res) => {
+    const vaultID = req.params.vaultID;
+    const siteID = req.params.siteID;
+    const accountID = req.params.siteID;
+
+    const vaultExists = await Vault.findById(vaultID);
+
+    if (!vaultExists) {
+        res.status(400);
+        throw new Error('This vault does not exist');
+    }
+
+    const siteExists = await Site.findById(siteID);
+
+    if (!siteExists) {
+        res.status(400);
+        throw new Error('This site does not exist');
+    }
+
+    const accountExists = await Account.findById(accountID);
+
+    if (!accountExists) {
+        res.status(400);
+        throw new Error('This account does not exist');
+    }
+
+    const account = await Account.findByIdAndDelete(accountID);
+
+    if (account) {
+        res.status(200);
+        res.json({
+            message: "Account was deleted"
+        });
+    }
+    else {
+        res.status(400);
+        throw new Error('Account could not be deleted');
+    }
+});
+
 module.exports = {
     createVault,
     getVaults,
     updateVault,
+    deleteVault,
     createTag,
+    getTags,
     updateTag,
+    deleteTag,
     createSite,
+    getSites,
     updateSite,
+    deleteSite,
     createAccount,
+    getAccounts,
     updateAccount,
+    deleteAccount
 }
