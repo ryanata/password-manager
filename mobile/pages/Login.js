@@ -7,131 +7,104 @@ import {
     Image, 
     TextInput
 } from 'react-native';
-import React, { Component, useState } from 'react';
-import APIKit, {setClientToken} from '../APIKit';
-//import axios from "axios";
-//import { useForm } from "@mantine/form";
 
-const initialState = {
-    email: '',        // Store `username` when user enters their username
-    password: '',        // Store `password` when user enters their password
-    errors: {},          // Store error data from the backend here
-    isAuthorized: false, // If auth is successful, set this to `true`
-    isLoading: false,    // Set this to `true` if You want to show spinner
-};
+import { useForm } from "@mantine/form";
+import axios from "axios";
+import {SecureStore} from 'expo';
 
-class Login extends Component {
+
+console.log("1");
+const Login = (values) => {
+    const form = useForm({
+        initialValues: {
+            email: "",
+            password: "",
+            remember: false,
+            submittingLogin: null,
+            loggedIn: null,
+        },
+        validate: {
+            email: (value) => !value.includes("@") && "Invalid email",
+        },
+    });
     
-    state = initialState;
-
-    componentWillUnmount() {}
+    console.log("4");
     
-    onEmailChange = email => {
-        this.setState({email});
-    };
-
-    onPasswordChange = email => {
-        this.setState({password});
-    };
+    //const {email, password} = this.state;
+    const onPressLogin = () => {
+        //const {email, password} = this.state;
+        //const payload = {email, password};
+        console.log("5")
+        axios
+            .post("/api/user/login", {
+                email: values.email,
+                password: values.password,
+            })
+            .then((res) => {
+                // If login successful
+                if (res.status === 200) {
+                    // Redirect to dashboard
+                    iiSecureStore.setItemAsync('pwdlyToken', res.data.user.token);
+                    //localStorage.setItem("pwdlyToken", JSON.stringify(res.data.user.token));
+                    form.setFieldValue("loggedIn", true);
+                }
+            })
+            .catch((err) => {
+                // If login failed
+                if (err.response.status === 401) {
+                    // Set alert message
+                    setState({ alert: err.response.data.message });
+                } else {
+                    // Set alert message
+                    setState({ alert: "An error occured" });
+                }
+            })
+            console.log("6")
+    }
     
-    onPressLogin(){
-        const {email, password} = this.state;
-        const payload = {email, password};
+    
+    return (
+        <View style={styles.container}>
+            <Image style={styles.image} source = {require("../assets/logo.png")} />
+
+                <View style={styles.inputView}>
+                    <TextInput
+                        required={true}
+                        value={form.values.email}
+                        style={styles.TextInput}
+                        placeholder="Email"
+                        autoCapitalize='none'
+                        placeholderTextColor="#003f5c"
+                        onSubmitEditing={event =>
+                            this.passwordInput.wrappedInstance.focus()
+                        }
+                        onChange={(event) => form.setFieldValue("email", event.currentTarget.value)}
+                    />
+                </View>
+
+                <View style={styles.inputView}>
+                    <TextInput
+                        style={styles.TextInput}
+                        value = {form.values.password}
+                        placeholder="Password"
+                        placeholderTextColor="#003f5c"
+                        secureTextEntry={true}
+                        autoCapitalize='none'
+                        onChange={(event) => form.setFieldValue("password", event.currentTarget.value)}
+                        error={form.errors.password && "Invalid password"}
+                    />
+                </View>
+
+                <TouchableOpacity>
+                    <Text style={styles.forgot_button}>Forgot Password?</Text>
+                </TouchableOpacity>
         
-        const onSuccess = ({data}) => {
-            // Set JSON Web Token on success
-            setClientToken(data.token);
-            this.setState({isLoading: false, isAuthorized: true});
-        };
+                <TouchableOpacity style={styles.loginBtn} onPress = {onPressLogin(form.values)}> 
+                    <Text style={styles.loginText}>LOGIN</Text>
+                </TouchableOpacity>
+        </View>
+    );
     
-        const onFailure = error => {
-            console.log(error && error.response);
-            this.setState({errors: error.response.data, isLoading: false});
-        };
-    
-        // Show spinner when call is made
-        this.setState({isLoading: true});
-    
-        APIKit.post('/api-token-auth/', payload)
-        .then(onSuccess)
-        .catch(onFailure);
-    }
-    getNonFieldErrorMessage() {
-        // Return errors that are served in `non_field_errors`
-        let message = null;
-        const {errors} = this.state;
-        if (errors.non_field_errors) {
-          message = (
-            <View style={styles.errorMessageContainerStyle}>
-              {errors.non_field_errors.map(item => (
-                <Text style={styles.errorMessageTextStyle} key={item}>
-                  {item}
-                </Text>
-              ))}
-            </View>
-          );
-        }
-        return message;
-    }
-    
-    getErrorMessageByField(field) {
-        // Checks for error message in specified field
-        // Shows error message from backend
-        let message = null;
-        if (this.state.errors[field]) {
-            message = (
-            <View style={styles.errorMessageContainerStyle}>
-                {this.state.errors[field].map(item => (
-                <Text style={styles.errorMessageTextStyle} key={item}>
-                    {item}
-                </Text>
-                ))}
-            </View>
-            );
-        }
-        return message;
-    }
-
-    render() {
-        const{isLoading} = this.state;
-        return (
-            <View style={styles.container}>
-                <Image style={styles.image} source = {require("../assets/logo.png")} />
-
-                    <View style={styles.inputView}>
-                        <TextInput
-                            required={true}
-                            value={this.state.email}
-                            style={styles.TextInput}
-                            placeholder="Email"
-                            placeholderTextColor="#003f5c"
-                            onSubmitEditing={event =>
-                                this.passwordInput.wrappedInstance.focus()
-                            }
-                            onChangeText={this.onEmailChange}
-                        />
-                    </View>
-
-                    <View style={styles.inputView}>
-                        <TextInput
-                            style={styles.TextInput}
-                            placeholder="Password"
-                            placeholderTextColor="#003f5c"
-                            secureTextEntry={true}
-                            onChangeText={this.PasswordChange}
-                        />
-                    </View>
-
-                    <TouchableOpacity>
-                        <Text style={styles.forgot_button}>Forgot Password?</Text>
-                    </TouchableOpacity>
-            
-                    <TouchableOpacity style={styles.loginBtn} onPress = {this.onPressLogin.bind(this)}> 
-                        <Text style={styles.loginText}>LOGIN</Text>
-                    </TouchableOpacity>
-            </View>
-        );
-    }
 }
 
 const styles = StyleSheet.create({
@@ -194,5 +167,7 @@ const styles = StyleSheet.create({
 });
 
 export default Login;
+
+  
 
   
