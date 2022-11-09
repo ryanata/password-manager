@@ -17,6 +17,10 @@ const Login = ({ navigation }) => {
                 title="Don't have an account? Sign Up"
                 onPress={() => navigation.navigate('Signup')}
             />
+            <Button
+                title="Dashboard"
+                onPress={() => navigation.navigate('Dashboard')}
+            />
         </View>
      );
 }
