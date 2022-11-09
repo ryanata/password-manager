@@ -76,7 +76,7 @@ const getVaults = asyncHandler(async (req, res) => {
         throw new Error('Please enter the user ID');
     }
 
-    // Populate the vaults with their tags
+    // Populate the vaults with all the sites, accounts, and tags
     const userDeeplyPopulated = await User
         .findById(userID)
         .populate({
