@@ -76,23 +76,30 @@ const getVaults = asyncHandler(async (req, res) => {
         throw new Error('Please enter the user ID');
     }
 
-    // Check for user with this userID
-    const userExists = await User.findById(userID);
-    if (!userExists) {
+    // Populate the vaults with their tags
+    const userDeeplyPopulated = await User
+        .findById(userID)
+        .populate({
+            path: 'vaults',
+            populate: [
+                { path: 'tags' },
+                { 
+                    path: 'sites',
+                    populate: { path: 'accounts' }
+                }
+            ]
+        });
+    
+    if (!userDeeplyPopulated) {
         res.status(400);
         throw new Error('User does not exist');
     }
 
-    const vaults = await userExists.populate({path: 'vaults'});
-
-    if (vaults) {
-        res.status(200).json({
-            vaults: vaults["vaults"]
-        });
-    } else {
-        res.status(400);
-        throw new Error('Could not get the vaults');
-    }
+    res.status(200).json({
+        message: 'Vaults retrieved!',
+        userID: userDeeplyPopulated._id,
+        vaults: userDeeplyPopulated.vaults
+    });
 });
 
 // @desc    Update vault
