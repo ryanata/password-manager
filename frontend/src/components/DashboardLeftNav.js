@@ -47,7 +47,7 @@ const useStyles = createStyles((theme) => ({
 
 export function DashboardLeftNav() {
     const { classes } = useStyles();
-    const [opened, setOpened] = useState(false);
+    const [opened, setOpened] = useState(true);
 
     const mockdata = [
         { label: "All Passwords", icon: IconLock },
