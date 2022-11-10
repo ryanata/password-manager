@@ -1,6 +1,6 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Group, Box, Collapse, ThemeIcon, Text, UnstyledButton, createStyles } from '@mantine/core';
-import { TablerIcon, IconCalendarStats, IconChevronLeft, IconChevronRight } from '@tabler/icons';
+import { TablerIcon, IconCalendarStats, IconChevronLeft, IconChevronRight} from "@tabler/icons";
 
 const useStyles = createStyles((theme) => ({
   control: {
@@ -9,7 +9,7 @@ const useStyles = createStyles((theme) => ({
     width: '100%',
     padding: `${theme.spacing.xs}px ${theme.spacing.md}px`,
     color: "white",
-    fontSize: theme.fontSizes.sm,
+    fontSize: theme.fontSizes.md,
 
     '&:hover': {
       backgroundColor: "#3A3A3A",
@@ -24,7 +24,7 @@ const useStyles = createStyles((theme) => ({
     padding: `${theme.spacing.xs}px ${theme.spacing.md}px`,
     paddingLeft: 31,
     marginLeft: 30,
-    fontSize: theme.fontSizes.sm,
+    fontSize: theme.fontSizes.md,
     color: "#D4D4D4",
     borderLeft: `1px solid ${
       theme.colorScheme === 'dark' ? theme.colors.dark[4] : theme.colors.gray[3]
@@ -41,7 +41,7 @@ const useStyles = createStyles((theme) => ({
   },
 }));
 
-export function LinksGroup({ icon: Icon, label, initiallyOpened, links }) {
+export function LinksGroup({ icon: Icon, label, initiallyOpened, links, openSidebar }) {
   const { classes, theme } = useStyles();
   const hasLinks = Array.isArray(links);
   const [opened, setOpened] = useState(initiallyOpened || false);
@@ -58,14 +58,31 @@ export function LinksGroup({ icon: Icon, label, initiallyOpened, links }) {
       {link.label}
     </Text>
   ));
+  
+  useEffect(() => {
+    if (!initiallyOpened && hasLinks) {
+      setOpened(false);
+    }
+  }, [initiallyOpened]);
 
   return (
     <>
-      <UnstyledButton onClick={() => setOpened((o) => !o)} className={classes.control}>
+      <UnstyledButton 
+        onClick={() => {
+          if (!initiallyOpened && hasLinks) {
+            openSidebar(true);
+            setOpened(true);
+          } else {
+            setOpened((o) => !o)
+          }
+        }} 
+        title={label}
+        className={classes.control}
+      >
         <Group position="apart" spacing={0}>
           <Box sx={{ display: 'flex', alignItems: 'center' }}>
             <ThemeIcon variant="filled" size={30} color="transparent">
-              <Icon size={20} />
+              <Icon size={22} />
             </ThemeIcon>
             <Box ml="md">{label}</Box>
           </Box>

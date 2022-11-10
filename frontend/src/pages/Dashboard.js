@@ -4,6 +4,7 @@ import { useMemo, useState } from "react";
 import { DashboardLeftNav } from "../components/DashboardLeftNav"; 
 
 import VaultTable from "../components/VaultTable";
+import DashboardHeader from "../components/DashboardHeader";
 import { VaultContext, useUser } from "../helpers/Hooks";
 
 const useStyles = createStyles((theme) => ({}));
@@ -59,24 +60,7 @@ const Dashboard = () => {
             <AppShell
                 padding="md"
                 navbar={isTablet ? null : <DashboardLeftNav />}
-                header={
-                    <Header height={60} p="xs">
-                        {
-                            <Group position="apart">
-                                <Text>{`Welcome ${user.name.firstName} ${user.name.lastName}!`}</Text>
-
-                                <Anchor
-                                    onClick={() => {
-                                        localStorage.removeItem("pwdlyToken");
-                                    }}
-                                    href="/"
-                                >
-                                    Log out
-                                </Anchor>
-                            </Group>
-                        }
-                    </Header>
-                }
+                header={<DashboardHeader />}
                 styles={(theme) => ({
                     main: {
                         backgroundColor: theme.colorScheme === "dark" ? theme.colors.dark[8] : theme.colors.gray[0],
