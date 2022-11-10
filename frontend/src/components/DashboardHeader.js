@@ -9,7 +9,7 @@ const useStyles = createStyles((theme) => ({
     header: {
         backgroundColor: "#4681D0",
         color: theme.white,
-        borderBottom: `1px solid ${theme.colorScheme === "dark" ? theme.colors.dark[4] : theme.colors.gray[3]}`,
+        borderBottom: "0px",
     },
 }));
 

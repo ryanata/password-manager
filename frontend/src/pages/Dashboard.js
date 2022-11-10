@@ -1,6 +1,7 @@
 import { Anchor, AppShell, Center, Group, Header, Loader, Navbar, Text, createStyles } from "@mantine/core";
 import { useMediaQuery } from "@mantine/hooks";
 import { useMemo, useState } from "react";
+import { DashboardLeftNav } from "../components/DashboardLeftNav"; 
 
 import VaultTable from "../components/VaultTable";
 import DashboardHeader from "../components/DashboardHeader";
@@ -58,7 +59,7 @@ const Dashboard = () => {
         <VaultProvider>
             <AppShell
                 padding="md"
-                navbar={isTablet ? null : <Navbar width={{ base: 250 }}></Navbar>}
+                navbar={isTablet ? null : <DashboardLeftNav />}
                 header={<DashboardHeader />}
                 styles={(theme) => ({
                     main: {
