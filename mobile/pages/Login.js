@@ -1,3 +1,4 @@
+import * as React from 'react';
 import { 
     StyleSheet, 
     Button, 
@@ -8,90 +9,95 @@ import {
     TextInput
 } from 'react-native';
 
-import { useForm } from "@mantine/form";
+import {useForm, Controller} from 'react-hook-form';
 import axios from "axios";
-import {SecureStore} from 'expo';
+import { useReducer } from "react";
+import { useNavigation } from '@react-navigation/native';
 
+    
+const Login = ()  => { 
 
-console.log("1");
-const Login = (values) => {
-    const form = useForm({
-        initialValues: {
-            email: "",
-            password: "",
-            remember: false,
-            submittingLogin: null,
-            loggedIn: null,
-        },
-        validate: {
-            email: (value) => !value.includes("@") && "Invalid email",
-        },
+    const navigation = useNavigation();
+
+    const {setValue, handleSubmit, errors, control} = useForm({
+        defaultValues: {
+            'email': '',
+            'password': ''
+        }
     });
-    
-    console.log("4");
-    
-    //const {email, password} = this.state;
-    const onPressLogin = () => {
-        //const {email, password} = this.state;
-        //const payload = {email, password};
-        console.log("5")
+
+    const [state, setState] = useReducer((state, newState) => ({ ...state, ...newState }), {
+        forgotPassword: false,
+        alert: "",
+    });
+
+    const loggedIn = null;
+    const onPressLogin = (data) => {
+        console.log(data.email);
+        console.log(data.password);
+        
         axios
-            .post("/api/user/login", {
-                email: values.email,
-                password: values.password,
+            .post("https://pwdly.herokuapp.com/api/user/login", {  
+                email: data.email,
+                password: data.password,
             })
             .then((res) => {
-                // If login successful
-                if (res.status === 200) {
-                    // Redirect to dashboard
-                    iiSecureStore.setItemAsync('pwdlyToken', res.data.user.token);
-                    //localStorage.setItem("pwdlyToken", JSON.stringify(res.data.user.token));
-                    form.setFieldValue("loggedIn", true);
+                if (res.status === 200) { 
+                    navigation.navigate('Dashboard')
                 }
             })
             .catch((err) => {
+                console.log("error", err)
                 // If login failed
-                if (err.response.status === 401) {
+                if (err.status === 401) {
                     // Set alert message
+                    console.log("error")
                     setState({ alert: err.response.data.message });
                 } else {
                     // Set alert message
                     setState({ alert: "An error occured" });
                 }
             })
-            console.log("6")
     }
-    
-    
+
     return (
         <View style={styles.container}>
             <Image style={styles.image} source = {require("../assets/logo.png")} />
 
                 <View style={styles.inputView}>
-                    <TextInput
-                        required={true}
-                        value={form.values.email}
-                        style={styles.TextInput}
-                        placeholder="Email"
-                        autoCapitalize='none'
-                        placeholderTextColor="#003f5c"
-                        onSubmitEditing={event =>
-                            this.passwordInput.wrappedInstance.focus()
-                        }
-                        onChange={(event) => form.setFieldValue("email", event.currentTarget.value)}
+                    <Controller
+                        control = {control}
+                        name = "email"
+                        render = {({ field: {onChange, value} }) => (
+                            <TextInput
+                                required={true}
+                                style={styles.TextInput}
+                                placeholder="Email"
+                                autoCapitalize='none'
+                                placeholderTextColor="#003f5c"
+                                onSubmitEditing={event =>
+                                    this.passwordInput.wrappedInstance.focus()
+                                }
+                                onChangeText={value => onChange(value)}
+                            />
+                        )}
                     />
                 </View>
 
                 <View style={styles.inputView}>
-                    <TextInput
-                        style={styles.TextInput}
-                        value = {form.values.password}
-                        placeholder="Password"
-                        placeholderTextColor="#003f5c"
-                        secureTextEntry={true}
-                        autoCapitalize='none'
-                        onChange={(event) => form.setFieldValue("password", event.currentTarget.value)}
-                        error={form.errors.password && "Invalid password"}
+                    <Controller
+                        control={control}
+                        name = "password"
+                        render = {({field: {onChange, value} }) => (
+                            <TextInput
+                                style={styles.TextInput}
+                                placeholder="Password"
+                                placeholderTextColor="#003f5c"
+                                secureTextEntry={true}
+                                autoCapitalize='none'
+                                onChangeText={value => onChange(value)}
+                            />
+                        )}
                     />
                 </View>
 
@@ -99,7 +105,7 @@ const Login = (values) => {
                     <Text style={styles.forgot_button}>Forgot Password?</Text>
                 </TouchableOpacity>
         
-                <TouchableOpacity style={styles.loginBtn} onPress = {onPressLogin(form.values)}> 
+                <TouchableOpacity style={styles.loginBtn} onPress = {handleSubmit(onPressLogin)}> 
                     <Text style={styles.loginText}>LOGIN</Text>
                 </TouchableOpacity>
         </View>
@@ -166,8 +172,8 @@ const styles = StyleSheet.create({
 
 });
 
-export default Login;
 
+export default Login
   
 
   
