@@ -1,17 +1,19 @@
 import * as React from 'react';
-import { Button, View, Image } from 'react-native';
-import { createDrawerNavigator } from '@react-navigation/drawer';
-import { NavigationContainer } from '@react-navigation/native';
+import { StyleSheet, Text, Button, View, Image, Pressable, TouchableOpacity } from 'react-native';
+import { createDrawerNavigator, DrawerContentScrollView, DrawerItemList } from '@react-navigation/drawer';
+import { NavigationContainer, useNavigation } from '@react-navigation/native';
 import Register from './Register';
 import Login from './Login';
 import AllPasswords from './AllPasswords';
+import Vaults from './Vaults';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 
 
 function LogoTitle() {
   return (
     <Image
-      style={{ width: 109, height: 35,  }}
+      style={styles.logo}
       source={require('../assets/pwdly_White_Logo_1.png')}
     />
   );
@@ -19,10 +21,55 @@ function LogoTitle() {
 
 const Drawer = createDrawerNavigator();
 
+
+const CustomDrawer = props => {
+
+  const navigation = useNavigation();
+  return(
+    <View style={{flex: 1}}>
+      <DrawerContentScrollView {...props} >
+        <View
+          style={styles.navDrawerHeader}
+        >
+          <Pressable onPress={() => { 
+              navigation.navigate('Login');
+            }}>
+            <MaterialCommunityIcons
+              name="arrow-left-box"
+              size={40}
+              color={'#625A5A'}
+            />
+          </Pressable>
+          <Image
+            style={{ width: 90, height: 29,  }}
+            source={require('../assets/pwdly_White_Logo_1.png')}
+          />
+        </View>
+        <DrawerItemList {...props}/>
+
+      </DrawerContentScrollView>
+
+      <TouchableOpacity
+        style={styles.navbarFooter}
+        onPress={() => console.log("Account Settings Button")}
+      >
+        <Ionicons
+          name="settings-outline"
+          size={30}
+          color={'#ffffff'}
+        />
+        <Text style={{color: 'white', fontWeight: "500"}}>Account Settings</Text>
+      </TouchableOpacity>
+      
+    </View>
+  );
+};
+
 function Dashboard() {
   return (
     
         <Drawer.Navigator 
+            drawerContent={(props) => <CustomDrawer{...props}/>}
             useLegacyImplementation={true} 
             initialRouteName="Vaults"
             screenOptions={{
@@ -39,6 +86,7 @@ function Dashboard() {
                   fontFamily: ''
                 },
                 headerTintColor: 'white',
+                drawerLabel: (props) => <DrawerHeader/>
             }}
             options={{
               title: 'pwdly'
@@ -64,7 +112,7 @@ function Dashboard() {
           />
           <Drawer.Screen 
             name="Vaults" 
-            component={Register} 
+            component={Vaults} 
             options={{
                   drawerIcon: ({focused, size}) => (
                       <MaterialCommunityIcons
@@ -104,4 +152,38 @@ function Dashboard() {
     
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+      flex: 1,
+      backgroundColor: '#fff',
+      alignItems: 'center',
+      justifyContent: 'center',
+  },
+  logo: {
+    width: 109, 
+    height: 35,
+  },
+  navDrawerHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    padding: 20,
+  },
+  navbarFooter: {
+    flexDirection: 'row',
+    position: 'absolute',
+    right: 0,
+    left: 0,
+    bottom: 0,
+    backgroundColor: '#363535',
+    padding: 20,
+    alignItems: 'center',
+    borderTopColor: 'white',
+    borderTopWidth: 0.19,
+  },
+  navDrawerStyle: {
+    backgroundColor: '#363535',
+    width: 240,
+  }
+});
 export default Dashboard;
