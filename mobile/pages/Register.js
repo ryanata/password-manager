@@ -14,9 +14,7 @@ import {useForm, Controller} from 'react-hook-form';
 
 const Register = () => {
 
-    const [state, setState] = useReducer((state, newState) => ({ ...state, ...newState}), {
-        alert: ""
-    })
+    const [state, setState] = useState('')
 
     const {setValue, handleSubmit, errors, control} = useForm({
         defaultValues:{
