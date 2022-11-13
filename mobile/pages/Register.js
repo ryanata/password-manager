@@ -29,11 +29,6 @@ const Register = () => {
     })
 
     const formHandler = (data) => {
-        console.log(data.firstName);
-        console.log(data.lastName);
-        console.log(data.email);
-        console.log(data.phoneNumber);
-        console.log(data.password);
         axios
             .post("https://pwdly.herokuapp.com/api/user/register",{
                 firstName: data.firstName,
