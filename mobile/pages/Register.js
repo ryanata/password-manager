@@ -24,17 +24,48 @@ const Register = () => {
         }
     })
 
+    const formHandler = (data) => {
+        console.log(data.firstName);
+        console.log(data.lastName);
+        console.log(data.email);
+        console.log(data.phoneNumber);
+        console.log(data.password);
+        axios
+            .post("https://pwdly.herokuapp.com/api/user/register",{
+                firstName: data.firstName,
+                lastName: data.lastName,
+                email: data.email,
+                phoneNumber: data.phoneNumber,
+                password: data.password,
+            }).then((res) => {
+                
+            }).catch((err) => {
+                console.log("error", err)
+            })
+    }
+
     return (
         <View style={styles.container}>
             <Image style={styles.image} source = {require("../assets/logo.png")} />
                 <View style={styles.inputView}>
-                    <TextInput
-                        required={true}
-                        //value={this.state.email}
-                        style={styles.TextInput}
-                        placeholder="First name"
-                        placeholderTextColor={"#003f5c"}
+                    <Controller
+                        control= {control}
+                        name="firstName"
+                        render={({field: {onChange, value} }) =>(
+                            <TextInput
+                                required={true}
+                                style={styles.TextInput}
+                                placeholder="First name"
+                                autoCapitalize='none'
+                                placeholderTextColor={"#003f5c"}
+                                onSubmitEditing={event =>
+                                    this.passwordInput.wrappedInstance.focus()
+                                }
+                                onChangeText={value => onChange(value)}
+                            />
+                        )}
                     />
+                    
                 </View>
 
                 <View style={styles.inputView}>
@@ -79,7 +110,7 @@ const Register = () => {
                 <Text style={styles.Already_button}>Already have an account? Log in</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity style={styles.SignBtn}>
+            <TouchableOpacity style={styles.SignBtn} onPress = {handleSubmit(formHandler)}>
                 <Text style={styles.loginText}>Sign Up</Text>
             </TouchableOpacity>
         </View>
