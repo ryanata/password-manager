@@ -9,8 +9,21 @@ import {
 from 'react-native';
 
 import React, { Component, useState } from 'react';
+import axios from 'axios';
+import {useForm, Controller} from 'react-hook-form'; 
 
-const Register = ({ navigation }) => {
+const Register = () => {
+
+    const {setValue, handleSubmit, errors, control} = useForm({
+        defaultValues:{
+            firstName: '',
+            lastName: '',
+            email: '',
+            phoneNumber: '',
+            password: ''
+        }
+    })
+
     return (
         <View style={styles.container}>
             <Image style={styles.image} source = {require("../assets/logo.png")} />
@@ -48,7 +61,7 @@ const Register = ({ navigation }) => {
                         required={true}
                         //value={this.state.email}
                         style={styles.TextInput}
-                        placeholder="Password"
+                        placeholder="Phone Number"
                         placeholderTextColor={"#003f5c"}
                     />
                 </View>
