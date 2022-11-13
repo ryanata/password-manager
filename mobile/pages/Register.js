@@ -69,41 +69,72 @@ const Register = () => {
                 </View>
 
                 <View style={styles.inputView}>
-                    <TextInput
-                        required={true}
-                        //value={this.state.email}
-                        style={styles.TextInput}
-                        placeholder="Last name"
-                        placeholderTextColor={"#003f5c"}
+                    <Controller
+                        control= {control}
+                        name="lastName"
+                        render={({field: {onChange, value} }) =>(
+                            <TextInput
+                                required={true}
+                                style={styles.TextInput}
+                                placeholder="Last name"
+                                autoCapitalize='none'
+                                placeholderTextColor={"#003f5c"}
+                                onChangeText={value => onChange(value)}
+                            />
+                        )}
                     />
+                    
                 </View>
                 <View style={styles.inputView}>
-                    <TextInput
-                        required={true}
-                        //value={this.state.email}
-                        style={styles.TextInput}
-                        placeholder="Email"
-                        placeholderTextColor={"#003f5c"}
+                    <Controller
+                        control= {control}
+                        name="email"
+                        render={({field: {onChange, value} }) =>(
+                            <TextInput
+                                required={true}
+                                style={styles.TextInput}
+                                placeholder="Email"
+                                autoCapitalize='none'
+                                placeholderTextColor={"#003f5c"}
+                                onChangeText={value => onChange(value)}
+                            />
+                        )}
+                    />
+                    
+                </View>
+
+                <View style={styles.inputView}>
+                    <Controller
+                        control= {control}
+                        name="phoneNumber"
+                        render={({field: {onChange, value} }) =>(
+                            <TextInput
+                                required={true}
+                                style={styles.TextInput}
+                                placeholder="Phone Number"
+                                autoCapitalize='none'
+                                placeholderTextColor={"#003f5c"}
+                                onChangeText={value => onChange(value)}
+                            />
+                        )}
                     />
                 </View>
 
                 <View style={styles.inputView}>
-                    <TextInput
-                        required={true}
-                        //value={this.state.email}
-                        style={styles.TextInput}
-                        placeholder="Phone Number"
-                        placeholderTextColor={"#003f5c"}
-                    />
-                </View>
-
-                <View style={styles.inputView}>
-                    <TextInput
-                        required={true}
-                        //value={this.state.email}
-                        style={styles.TextInput}
-                        placeholder="Password"
-                        placeholderTextColor={"#003f5c"}
+                    <Controller
+                        control= {control}
+                        name="password"
+                        render={({field: {onChange, value} }) =>(
+                            <TextInput
+                                required={true}
+                                style={styles.TextInput}
+                                placeholder="Password"
+                                secureTextEntry={true}
+                                autoCapitalize='none'
+                                placeholderTextColor={"#003f5c"}
+                                onChangeText={value => onChange(value)}
+                            />
+                        )}
                     />
                 </View>
             <TouchableOpacity onPress={() => navigation.navigate('Login')}>
