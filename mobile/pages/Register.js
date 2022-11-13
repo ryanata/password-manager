@@ -8,11 +8,15 @@ import {
     TextInput } 
 from 'react-native';
 
-import React, { Component, useState } from 'react';
+import React, { Component, useReducer, useState } from 'react';
 import axios from 'axios';
 import {useForm, Controller} from 'react-hook-form'; 
 
 const Register = () => {
+
+    const [state, setState] = useReducer((state, newState) => ({ ...state, ...newState}), {
+        alert: ""
+    })
 
     const {setValue, handleSubmit, errors, control} = useForm({
         defaultValues:{
@@ -41,6 +45,12 @@ const Register = () => {
                 
             }).catch((err) => {
                 console.log("error", err)
+                if (err.status === 400){
+                    console.log("error")
+                    setState({ alert: err.response.data.message});
+                } else {
+                    setState({ alert: "an error occured"});
+                }
             })
     }
 
