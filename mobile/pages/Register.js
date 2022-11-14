@@ -11,6 +11,7 @@ from 'react-native';
 import React, { Component, useReducer, useState } from 'react';
 import axios from 'axios';
 import {useForm, Controller} from 'react-hook-form'; 
+import * as SecureStore from 'expo-secure-store';
 
 const Register = () => {
 
@@ -26,6 +27,10 @@ const Register = () => {
         }
     })
 
+    async function save(key, value) {
+        await SecureStore.setItemAsync(key, value);
+    }
+
     const formHandler = (data) => {
         axios
             .post("https://pwdly.herokuapp.com/api/user/register",{
@@ -35,7 +40,7 @@ const Register = () => {
                 phoneNumber: data.phoneNumber,
                 password: data.password,
             }).then((res) => {
-                
+                save("pwdlyToken", res.data.user.token)
             }).catch((err) => {
                 console.log("error", err)
                 if (err.status === 400){
