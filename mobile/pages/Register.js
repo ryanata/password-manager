@@ -11,19 +11,23 @@ from 'react-native';
 import React, { Component, useReducer, useState } from 'react';
 import axios from 'axios';
 import {useForm, Controller} from 'react-hook-form'; 
+import { useNavigation } from '@react-navigation/native'
 import * as SecureStore from 'expo-secure-store';
 
 const Register = () => {
 
     const [state, setState] = useState('')
 
-    const {setValue, handleSubmit, errors, control} = useForm({
+    const navigation = useNavigation();
+
+    const {setValue, handleSubmit, errors, control, getValues} = useForm({
         defaultValues:{
             firstName: '',
             lastName: '',
             email: '',
             phoneNumber: '',
-            password: ''
+            password: '',
+            loggedIn: false
         }
     })
 
@@ -40,7 +44,11 @@ const Register = () => {
                 phoneNumber: data.phoneNumber,
                 password: data.password,
             }).then((res) => {
-                save("pwdlyToken", res.data.user.token)
+                if (res.status === 201) {
+                    // Redirect to dashboard
+                    save("pwdlyToken", res.data.user.token);
+                    navigation.navigate('Dashboard');
+                }
             }).catch((err) => {
                 console.log("error", err)
                 if (err.status === 400){
@@ -52,6 +60,9 @@ const Register = () => {
             })
     }
 
+    // if (getValues('loggedIn')){
+    //     console.log("hi")
+    // }
     return (
         <View style={styles.container}>
             <Image style={styles.image} source = {require("../assets/logo.png")} />
@@ -208,6 +219,7 @@ const styles = StyleSheet.create({
     },
 
     Already_button: {
+        color: '#ffffffr',
         height: 30,
         marginBottom: 30,
     },
