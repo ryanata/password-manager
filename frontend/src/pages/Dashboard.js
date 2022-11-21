@@ -52,7 +52,6 @@ const Dashboard = () => {
     }
 
     const user = data.data;
-    console.log(user);
     return (
         <VaultProvider>
             <AppShell

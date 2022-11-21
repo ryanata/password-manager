@@ -69,7 +69,7 @@ const createVault = asyncHandler(async (req, res) => {
 // @desc    Gets all vaults
 // @route   GET /api/vault/
 const getVaults = asyncHandler(async (req, res) => {
-    const { userID } = req.body;
+    const userID = req.query.userID;
 
     if (!userID) {
         res.status(400);
@@ -107,7 +107,7 @@ const getVaults = asyncHandler(async (req, res) => {
 // can be used to update name, masterPassword, or phone
 const updateVault = asyncHandler(async (req, res) => {
     const vaultID = req.params.vaultID;
-    const { name, masterPassword, phone } = req.body;
+    const { name, masterPassword, phone, sites } = req.body;
     let update = {}
 
     const vaultExists = await Vault.findById(vaultID);
@@ -117,7 +117,7 @@ const updateVault = asyncHandler(async (req, res) => {
         throw new Error('This vault does not exist');
     }
 
-    if (!name && !masterPassword && !phone) {
+    if (!name && !masterPassword && !phone && !sites) {
         res.status(400);
         throw new Error('Please enter a field to update');
     }
@@ -133,6 +133,10 @@ const updateVault = asyncHandler(async (req, res) => {
 
     if (phone) {
         update["mfa.phone"] = phone;
+    }
+
+    if (sites) {
+        update["sites"] = sites;
     }
 
     const vault = await Vault.findByIdAndUpdate(vaultID, update, {new: true});
@@ -508,7 +512,8 @@ const createAccount = asyncHandler(async (req, res) => {
 
     const account = await Account.create({
         username: username,
-        password: password
+        password: password,
+        tags: []
     });
 
     if (!account) {

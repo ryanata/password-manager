@@ -1,5 +1,5 @@
-const { ObjectId } = require("mongodb");
 const mongoose = require("mongoose");
+const Account = require("./account");
 
 const siteSchema = new mongoose.Schema({
     name: {
@@ -11,10 +11,7 @@ const siteSchema = new mongoose.Schema({
         required: true,
     },
     accounts: {
-        type: [{
-            type: mongoose.Schema.Types.ObjectId,
-            ref: "Account"
-        }]
+        type: [Account]
     },
 });
 

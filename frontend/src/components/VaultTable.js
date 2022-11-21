@@ -1,12 +1,14 @@
 import { Box, Center, Loader, Text, createStyles } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useState } from "react";
+import { useState, useContext } from "react";
 import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
 
 import MasterPasswordModal from "./MasterPasswordModal";
 import VaultHeader from "./VaultHeader";
 import VaultRow from "./VaultRow";
+import { VaultContext } from "../helpers/Hooks";
+import axios from "axios";
 
 const useStyles = createStyles((theme) => ({
     noSpacing: {
@@ -16,153 +18,41 @@ const useStyles = createStyles((theme) => ({
     },
 }));
 
-// TODO: DELETE ALL THESE FUNCTIONS WHEN API IS READY
-const createVaultData = () => {
-    const data = {
-        sites: [
-            {
-                name: "google.com",
-                url: "https://google.com",
-                account: [
-                    {
-                        username: "john.doe",
-                        password: "password",
-                        tags: ["work", "finance"],
-                    },
-                    {
-                        username: "rambo41",
-                        password: "password41asdjqwodjqwodjqiwodjqwoi",
-                        tags: ["work"],
-                    },
-                ],
-            },
-            {
-                name: "facebook.com",
-                url: "https://facebook.com",
-                account: [
-                    {
-                        username: "john.doe2",
-                        password: "password2",
-                        tags: ["social media"],
-                    },
-                    {
-                        username: "rambo42",
-                        password: "password42",
-                        tags: ["social media"],
-                    },
-                ],
-            },
-            {
-                name: "github.com",
-                url: "https://github.com",
-                account: [
-                    {
-                        username: "john.doe3",
-                        password: "password3",
-                        tags: [],
-                    },
-                ],
-            },
-            {
-                name: "amazon.com",
-                url: "https://amazon.com",
-                account: [
-                    {
-                        username: "john.doe4",
-                        password: "password4",
-                        tags: [
-                            "work",
-                            "finance",
-                            "shopping",
-                            "social media",
-                            "work",
-                            "finance",
-                            "shopping",
-                            "social media",
-                        ],
-                    },
-                ],
-            },
-            {
-                name: "reddit.com",
-                url: "https://reddit.com",
-                account: [
-                    {
-                        username: "john.doe5",
-                        password: "password5",
-                        tags: ["social media"],
-                    },
-                ],
-            },
-            {
-                name: "twitter.com",
-                url: "https://twitter.com",
-                account: [
-                    {
-                        username: "john.doe6",
-                        password: "password6",
-                        tags: ["social media"],
-                    },
-                ],
-            },
-            {
-                name: "youtube.com",
-                url: "https://youtube.com",
-                account: [
-                    {
-                        username: "john.doe7",
-                        password: "password7",
-                        tags: ["social media"],
-                    },
-                ],
-            },
-            {
-                name: "netflix.com",
-                url: "https://netflix.com",
-                account: [
-                    {
-                        username: "john.doe8",
-                        password: "password8",
-                        tags: ["social media"],
-                    },
-                ],
-            },
-        ],
-    };
-    // Set local storage for testing
-    localStorage.setItem("vault", JSON.stringify(data));
-};
-
-const getVaultData = () => {
-    let data = [];
+const getVaultData = async (currentVault, userID) => {
     try {
-        data = JSON.parse(localStorage.getItem("vault"));
+        const data =  await axios.get("/api/vault", { 
+            params: {
+                userID: userID,
+            }}
+        );
+        return new Promise((resolve, reject) => {
+            const vault = data.data.vaults.find((vault) => vault.name === currentVault.name);
+            if (vault) {
+                resolve(vault);
+            } else {
+                reject("No vault found");
+            }
+        });
     } catch (error) {
-        console.log(error);
+        return new Promise((resolve, reject) => {
+            reject(error);
+        });
     }
-    // create a promise that resolves after 1 second
-    return new Promise((resolve) => {
-        setTimeout(() => {
-            resolve(data);
-        }, 2000);
-    });
 };
 
 const updateVaultData = (data) => {
-    localStorage.setItem("vault", JSON.stringify(data));
-    // create a promise that resolves after 1 second
-    return new Promise((resolve) => {
-        setTimeout(() => {
-            resolve(data);
-        }, 100);
-    });
+    // Grab new order of sites
+    const newSiteOrder = data.sites.map((site) => site._id);
+    return axios.put(`/api/vault/${data.vaultID}`, {sites: newSiteOrder});
 };
 
 const VaultTable = () => {
     const { classes, theme } = useStyles();
     const [sort, setSort] = useState("unsorted");
-    const { data, isLoading, error } = useQuery(["vault"], getVaultData);
+    const { vault } = useContext(VaultContext);
     const queryClient = new useQueryClient();
+    const userID = queryClient.getQueryData(["getUser"]).data._id;
+    const { data, isLoading, error } = useQuery(["vault"], () => {return getVaultData(vault, userID)});
     const { mutate } = useMutation(updateVaultData, {
         onMutate: async (newData) => {
             // Cancel any outgoing refetches (so they don't overwrite our optimistic update)
@@ -217,7 +107,7 @@ const VaultTable = () => {
         const items = Array.from(data.sites);
         const [reorderedItem] = items.splice(result.source.index, 1);
         items.splice(result.destination.index, 0, reorderedItem);
-        mutate({ sites: items });
+        mutate({ sites: items, vaultID: data._id });
     };
 
     if (isLoading) {
@@ -229,6 +119,7 @@ const VaultTable = () => {
     }
 
     if (error) {
+        console.log(error);
         return (
             <Center style={{ width: "100%", height: "100%" }}>
                 <Text>Something went wrong, please refresh the page.</Text>
@@ -236,6 +127,8 @@ const VaultTable = () => {
         );
     }
 
+    // const vaultData = data.data.vaults.find((vault) => vault.name === vault);
+    console.log(data);
     return (
         <>
             <Box className={classes.noSpacing}>
@@ -246,7 +139,7 @@ const VaultTable = () => {
                             {(provided) => (
                                 <Box {...provided.droppableProps} ref={provided.innerRef}>
                                     {/* Map through data and create a VaultRow component for each */}
-                                    {data.sites.map((site, index) => (
+                                    {data?.sites.map((site, index) => (
                                         <Draggable key={site.name} draggableId={site.name} index={index}>
                                             {(provided) => (
                                                 <Box
