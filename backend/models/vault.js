@@ -23,8 +23,38 @@ const vaultSchema = new mongoose.Schema({
     },
     sites: {
         type: [{
-            type: mongoose.Schema.Types.ObjectId,
-            ref: "Site"
+            name: {
+                type: String,
+                required: true,
+            },
+            url: {
+                type: String,
+                required: true,
+            },
+            accounts: {
+                type: [{
+                    username: {
+                        type: String,
+                        required: true,
+                    },
+                    password: {
+                        type: String,
+                        required: true,
+                    },
+                    tags: {
+                        type: [{
+                            name: {
+                                type: String,
+                                required: true,
+                            },
+                            colorHEX: {
+                                type: String,
+                                required: true,
+                            }
+                        }]
+                    }
+                }]
+            }
         }]
     },
 });

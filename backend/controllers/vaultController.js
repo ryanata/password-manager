@@ -51,7 +51,7 @@ const createVault = asyncHandler(async (req, res) => {
         }
 
         res.status(201).json({
-            message: 'Vault created!',
+            message: 'Vault created',
             vault: {
                 name: vault.name,
                 masterPassword: vault.masterPassword,
@@ -327,159 +327,165 @@ const deleteTag = asyncHandler(async (req, res) => {
     }
 });
 
-// @desc    Create site
-// @route   POST /api/vault/{vaultID}/site
-const createSite = asyncHandler(async (req, res) => {
-    const vaultID = req.params.vaultID;
-    const { name, url } = req.body;
+// deprecated
 
-    const vaultExists = await Vault.findById(vaultID);
+// // @desc    Create site
+// // @route   POST /api/vault/{vaultID}/site
+// const createSite = asyncHandler(async (req, res) => {
+//     const vaultID = req.params.vaultID;
+//     const { name, url } = req.body;
 
-    if (!vaultExists) {
-        res.status(400);
-        throw new Error('This vault does not exist');
-    }
+//     const vaultExists = await Vault.findById(vaultID);
 
-    if (!name || !url) {
-        res.status(400);
-        throw new Error('Please enter all fields');
-    }
+//     if (!vaultExists) {
+//         res.status(400);
+//         throw new Error('This vault does not exist');
+//     }
 
-    const site = await Site.create({
-        name: name,
-        url: url
-    });
+//     if (!name || !url) {
+//         res.status(400);
+//         throw new Error('Please enter all fields');
+//     }
 
-    if (!site) {
-        res.status(400);
-        throw new Error('Could not create the site');
-    }
+//     const site = await Site.create({
+//         name: name,
+//         url: url
+//     });
 
-    const vault = await Vault.findOneAndUpdate(
-        { _id: vaultID }, 
-        { $push: { 
-            sites: site
-        }
-    }, {new: true});
+//     if (!site) {
+//         res.status(400);
+//         throw new Error('Could not create the site');
+//     }
 
-    if (vault) {
-        res.status(200);
-        res.send(vault);
-    }
-    else {
-        res.status(400);
-        throw new Error('Tag could not be updated');
-    }
-});
+//     const vault = await Vault.findOneAndUpdate(
+//         { _id: vaultID }, 
+//         { $push: { 
+//             sites: site
+//         }
+//     }, {new: true});
 
-// @desc    Gets all sites
-// @route   GET /api/vault/{vaultID}/site
-const getSites = asyncHandler(async (req, res) => {
-    const { vaultID } = req.params.vaultID;
+//     if (vault) {
+//         res.status(200);
+//         res.send(vault);
+//     }
+//     else {
+//         res.status(400);
+//         throw new Error('Tag could not be updated');
+//     }
+// });
 
-    // Check for vault with this vaultID
-    const vaultExists = await Vault.findOne({ vaultID });
-    if (!vaultExists) {
-        res.status(400);
-        throw new Error('Vault does not exist');
-    }
+// // @desc    Gets all sites
+// // @route   GET /api/vault/{vaultID}/site
+// const getSites = asyncHandler(async (req, res) => {
+//     const { vaultID } = req.params.vaultID;
 
-    const sites = await vaultExists.populate({path: 'sites'});
+//     // Check for vault with this vaultID
+//     const vaultExists = await Vault.findOne({ vaultID });
+//     if (!vaultExists) {
+//         res.status(400);
+//         throw new Error('Vault does not exist');
+//     }
 
-    if (sites) {
-        res.status(200).json({
-            sites: sites["sites"]
-        });
-    } else {
-        res.status(400);
-        throw new Error('Could not get the sites');
-    }
-});
+//     const sites = await vaultExists.populate({path: 'sites'});
 
-// @desc    Update site
-// @route   PUT /api/vault/{vaultID}/site/{siteID}
-const updateSite = asyncHandler(async (req, res) => {
-    const vaultID = req.params.vaultID;
-    const siteID = req.params.siteID;
-    const { name, url } = req.body;
-    let update = {}
+//     if (sites) {
+//         res.status(200).json({
+//             sites: sites["sites"]
+//         });
+//     } else {
+//         res.status(400);
+//         throw new Error('Could not get the sites');
+//     }
+// });
 
-    const vaultExists = await Vault.findById(vaultID);
+// // @desc    Update site
+// // @route   PUT /api/vault/{vaultID}/site/{siteID}
+// const updateSite = asyncHandler(async (req, res) => {
+//     const vaultID = req.params.vaultID;
+//     const siteID = req.params.siteID;
+//     const { name, url } = req.body;
+//     let update = {}
 
-    if (!vaultExists) {
-        res.status(400);
-        throw new Error('This vault does not exist');
-    }
+//     const vaultExists = await Vault.findById(vaultID);
 
-    const siteExists = await Site.findById(siteID);
+//     if (!vaultExists) {
+//         res.status(400);
+//         throw new Error('This vault does not exist');
+//     }
 
-    if (!siteExists) {
-        res.status(400);
-        throw new Error('This site does not exist');
-    }
+//     const siteExists = await Site.findById(siteID);
 
-    if (!name && !url) {
-        res.status(400);
-        throw new Error('Please enter a field to update');
-    }
+//     if (!siteExists) {
+//         res.status(400);
+//         throw new Error('This site does not exist');
+//     }
 
-    // gather all the fields in which we want to update
-    if (name) {
-        update["name"] = name;
-    }
+//     if (!name && !url) {
+//         res.status(400);
+//         throw new Error('Please enter a field to update');
+//     }
 
-    if (url) {
-        update["url"] = url;
-    }
+//     // gather all the fields in which we want to update
+//     if (name) {
+//         update["name"] = name;
+//     }
 
-    const site = await Site.findByIdAndUpdate(siteID, update, {new: true});
+//     if (url) {
+//         update["url"] = url;
+//     }
 
-    if (site) {
-        res.status(200);
-        res.send(site);
-    }
-    else {
-        res.status(400);
-        throw new Error('Site could not be updated');
-    }
-});
+//     const site = await Site.findByIdAndUpdate(siteID, update, {new: true});
 
-// @desc    Delete site
-// @route   DELETE /api/vault/{vaultID}/site/{siteID}
-const deleteSite = asyncHandler(async (req, res) => {
-    const vaultID = req.params.vaultID;
-    const siteID = req.params.siteID;
+//     if (site) {
+//         res.status(200);
+//         res.send(site);
+//     }
+//     else {
+//         res.status(400);
+//         throw new Error('Site could not be updated');
+//     }
+// });
 
-    const vaultExists = await Vault.findById(vaultID);
+// // @desc    Delete site
+// // @route   DELETE /api/vault/{vaultID}/site/{siteID}
+// const deleteSite = asyncHandler(async (req, res) => {
+//     const vaultID = req.params.vaultID;
+//     const siteID = req.params.siteID;
 
-    if (!vaultExists) {
-        res.status(400);
-        throw new Error('This vault does not exist');
-    }
+//     const vaultExists = await Vault.findById(vaultID);
 
-    const siteExists = await Site.findById(siteID);
+//     if (!vaultExists) {
+//         res.status(400);
+//         throw new Error('This vault does not exist');
+//     }
 
-    if (!siteExists) {
-        res.status(400);
-        throw new Error('This site does not exist');
-    }
+//     const siteExists = await Site.findById(siteID);
 
-    const site = await Site.findByIdAndDelete(siteID);
+//     if (!siteExists) {
+//         res.status(400);
+//         throw new Error('This site does not exist');
+//     }
 
-    if (site) {
-        res.status(200);
-        res.json({
-            message: "Site was deleted"
-        });
-    }
-    else {
-        res.status(400);
-        throw new Error('Site could not be deleted');
-    }
-});
+//     const site = await Site.findByIdAndDelete(siteID);
+
+//     if (site) {
+//         res.status(200);
+//         res.json({
+//             message: "Site was deleted"
+//         });
+//     }
+//     else {
+//         res.status(400);
+//         throw new Error('Site could not be deleted');
+//     }
+// });
+
+/// When accounts are created, they decide whether to create a new 'site' or to append to an existing one
+// if the 'site' already exists
 
 // @desc    Create account
 // @route   POST /api/vault/{vaultID}/site/{siteID}/account
+// should:   POST /api/vault/{vaultID}/account
 const createAccount = asyncHandler(async (req, res) => {
     const vaultID = req.params.vaultID;
     const siteID = req.params.siteID;
@@ -535,6 +541,7 @@ const createAccount = asyncHandler(async (req, res) => {
 
 // @desc    Gets all accounts
 // @route   GET /api/vault/{vaultID}/site/{siteID}/account
+// should:   GET /api/vault/{vaultID}/account
 const getAccounts = asyncHandler(async (req, res) => {
     const vaultID = req.params.vaultID;
     const siteID = req.params.siteID;
@@ -569,6 +576,7 @@ const getAccounts = asyncHandler(async (req, res) => {
 
 // @desc    Update account
 // @route   PUT /api/vault/{vaultID}/site/{siteID}/account/{accountID}
+// should:   PUT /api/vault/{vaultID}/account/{accountID}
 const updateAccount = asyncHandler(async (req, res) => {
     const vaultID = req.params.vaultID;
     const siteID = req.params.siteID;
