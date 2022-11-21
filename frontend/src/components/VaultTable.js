@@ -255,7 +255,7 @@ const VaultTable = () => {
                             {(provided) => (
                                 <Box {...provided.droppableProps} ref={provided.innerRef}>
                                     {/* Map through data and create a VaultRow component for each */}
-                                    {data?.sites.map((site, index) => (
+                                    {data?.sites?.map((site, index) => (
                                         <Draggable key={site.name} draggableId={site.name} index={index}>
                                             {(provided) => (
                                                 <Box
@@ -279,7 +279,7 @@ const VaultTable = () => {
                         </Droppable>
                     </DragDropContext>
                 ) : (
-                    sortByState().map((site, index) => (
+                    sortByState()?.map((site, index) => (
                         <VaultRow key={index} site={site} toggleModal={toggleMasterPassModal} />
                     ))
                 )}
