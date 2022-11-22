@@ -86,7 +86,7 @@ const VaultRow = ({ site, provided, toggleModal }) => {
                     </Group>
                 </Grid.Col>
             </Grid>
-            {site.account.map((account, i) => (
+            {site?.account?.map((account, i) => (
                 <Grid key={i}>
                     <Grid.Col span={5}>
                         <Group>
