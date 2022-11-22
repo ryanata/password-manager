@@ -5,6 +5,7 @@ import { DashboardLeftNav } from "../components/DashboardLeftNav";
 
 import VaultTable from "../components/VaultTable";
 import DashboardHeader from "../components/DashboardHeader";
+import { Routes, Route } from "react-router-dom";
 import { VaultContext, useUser } from "../helpers/Hooks";
 
 const useStyles = createStyles((theme) => ({}));
@@ -54,7 +55,6 @@ const Dashboard = () => {
     }
 
     const user = data.data;
-    console.log(user);
     return (
         <VaultProvider>
             <AppShell
@@ -67,7 +67,13 @@ const Dashboard = () => {
                     },
                 })}
             >
-                <VaultTable />
+                <Routes>
+                    <Route exact path="/" element={<VaultTable/>} />
+                    <Route path=":id" element={<VaultTable/>} />
+                    <Route path="all-passwords" element={<> <p>all passwords</p> </>} />
+                    <Route path="password-generator" element={<> <p>password generator</p> </>} />
+                    <Route path="settings" element={<> <p>settings</p></>} />
+                </Routes>
             </AppShell>
         </VaultProvider>
     );
