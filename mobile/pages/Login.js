@@ -59,6 +59,9 @@ const Login = ()  => {
                 }
             })
     }
+    const onPressSignup = () => {
+        navigation.navigate('Signup')
+    }
 
     return (
         <View style={styles.container}>
@@ -101,8 +104,8 @@ const Login = ()  => {
                     />
                 </View>
 
-                <TouchableOpacity>
-                    <Text style={styles.forgot_button}>Forgot Password?</Text>
+                <TouchableOpacity style ={styles.forgot_button} onPress = {handleSubmit(onPressSignup)}>
+                    <Text style = {styles.signUpText}>New User? Sign Up</Text>
                 </TouchableOpacity>
         
                 <TouchableOpacity style={styles.loginBtn} onPress = {handleSubmit(onPressLogin)}> 
@@ -126,6 +129,9 @@ const styles = StyleSheet.create({
       alignItems: "center",
       
    
+    },
+    signUpText :{
+        color: '#ffffff'
     },
     inputView: {
         backgroundColor: "#ffffff",
@@ -174,6 +180,5 @@ const styles = StyleSheet.create({
 
 
 export default Login
-  
 
   
