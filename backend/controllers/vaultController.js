@@ -7,6 +7,7 @@ const Site = require('../models/site');
 const Account = require('../models/account');
 
 const asyncHandler = require('express-async-handler');
+const vault = require('../models/vault');
 
 // @desc    Create new vault
 // @route   POST /api/vault/
@@ -329,6 +330,7 @@ const deleteTag = asyncHandler(async (req, res) => {
 
 // deprecated
 
+
 // // @desc    Create site
 // // @route   POST /api/vault/{vaultID}/site
 // const createSite = asyncHandler(async (req, res) => {
@@ -486,56 +488,58 @@ const deleteTag = asyncHandler(async (req, res) => {
 // @desc    Create account
 // @route   POST /api/vault/{vaultID}/site/{siteID}/account
 // should:   POST /api/vault/{vaultID}/account
+
 const createAccount = asyncHandler(async (req, res) => {
     const vaultID = req.params.vaultID;
-    const siteID = req.params.siteID;
-    const { username, password } = req.body;
+    const { username, password, siteName } = req.body;
 
-    const vaultExists = await Vault.findById(vaultID);
+    const vaultExists = await Vault.find({"_id": vaultID});
 
     if (!vaultExists) {
         res.status(400);
         throw new Error('This vault does not exist');
     }
 
-    const siteExists = await Site.findById(siteID);
+    const siteExists = await Vault.find({"_id": vaultID, "sites": { "$elemMatch": { "name": siteName} }})
 
-    if (!siteExists) {
-        res.status(400);
-        throw new Error('This site does not exist');
-    }
+    // if (!siteExists) {
+    //     res.status(400);
+    //     throw new Error('This site does not exist');
+    // }
 
-    if (!username || !password) {
-        res.status(400);
-        throw new Error('Please enter all fields');
-    }
+    // if (!username || !password) {
+    //     res.status(400);
+    //     throw new Error('Please enter all fields');
+    // }
 
 
 
-    const account = await Account.create({
-        username: username,
-        password: password
-    });
+    // const account = await Account.create({
+    //     username: username,
+    //     password: password
+    // });
 
-    if (!account) {
-        res.status(400);
-        throw new Error('Could not create the account');
-    }
+    // if (!account) {
+    //     res.status(400);
+    //     throw new Error('Could not create the account');
+    // }
 
-    const site = await Site.findOneAndUpdate(
-        { _id: siteID }, 
-        { $push: { 
-            accounts: account
-        }
-    }, {new: true});
+    // const site = await Site.findOneAndUpdate(
+    //     { _id: siteID }, 
+    //     { $push: { 
+    //         accounts: account
+    //     }
+    // }, {new: true});
 
-    if (site) {
+    console.log(siteExists);
+
+    if (vaultExists) {
         res.status(200);
-        res.send(site);
+        res.send(vaultExists);
     }
     else {
         res.status(400);
-        throw new Error('Site could not be updated');
+        throw new Error('Site does not exist');
     }
 });
 
@@ -683,10 +687,6 @@ module.exports = {
     getTags,
     updateTag,
     deleteTag,
-    createSite,
-    getSites,
-    updateSite,
-    deleteSite,
     createAccount,
     getAccounts,
     updateAccount,

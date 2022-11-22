@@ -32,17 +32,11 @@ router.get('/:vaultID/tag', getTags);
 router.put('/:vaultID/tag/:tagID', updateTag);
 router.delete('/:vaultID/tag/:tagID', deleteTag);
 
-// sites
-router.post('/:vaultID/site', createSite);
-router.get('/:vaultID/site', getSites);
-router.put('/:vaultID/site/:siteID', updateSite);
-router.delete('/:vaultID/site/:siteID', deleteSite);
-
 // accounts
-router.post('/:vaultID/site/:siteID/account', createAccount);
-router.get('/:vaultID/site/:siteID/account', getAccounts);
-router.put('/:vaultID/site/:siteID/account/:accountID', updateAccount);
-router.delete('/:vaultID/site/:siteID/account/:accountID', deleteAccount);
+router.post('/:vaultID/account', createAccount);
+router.get('/:vaultID/account', getAccounts);
+router.put('/:vaultID/account/:accountname', updateAccount);
+router.delete('/:vaultID/account/:accountname', deleteAccount);
 
 
 module.exports = router;
