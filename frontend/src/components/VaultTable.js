@@ -137,8 +137,17 @@ const getVaultData = () => {
     let data = [];
     try {
         data = JSON.parse(localStorage.getItem("vault"));
+        if (!data) {
+            throw new Error("No vault set");
+        }
     } catch (error) {
-        console.log(error);
+        createVaultData();
+        // Create a promise that rejects after 1 second
+        return new Promise((resolve, reject) => {
+            setTimeout(() => {
+                reject(error);
+            }, 1000);
+        })
     }
     // create a promise that resolves after 1 second
     return new Promise((resolve) => {
@@ -246,7 +255,7 @@ const VaultTable = () => {
                             {(provided) => (
                                 <Box {...provided.droppableProps} ref={provided.innerRef}>
                                     {/* Map through data and create a VaultRow component for each */}
-                                    {data.sites.map((site, index) => (
+                                    {data?.sites?.map((site, index) => (
                                         <Draggable key={site.name} draggableId={site.name} index={index}>
                                             {(provided) => (
                                                 <Box
@@ -270,7 +279,7 @@ const VaultTable = () => {
                         </Droppable>
                     </DragDropContext>
                 ) : (
-                    sortByState().map((site, index) => (
+                    sortByState()?.map((site, index) => (
                         <VaultRow key={index} site={site} toggleModal={toggleMasterPassModal} />
                     ))
                 )}
