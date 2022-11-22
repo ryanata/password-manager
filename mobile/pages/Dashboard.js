@@ -2,7 +2,6 @@ import * as React from 'react';
 import { StyleSheet, Text, Button, View, Image, Pressable, TouchableOpacity } from 'react-native';
 import { createDrawerNavigator, DrawerContentScrollView, DrawerItemList } from '@react-navigation/drawer';
 import { NavigationContainer, useNavigation } from '@react-navigation/native';
-import Register from './Register';
 import Login from './Login';
 import AllPasswords from './AllPasswords';
 import Vaults from './Vaults';
