@@ -30,6 +30,7 @@ const CustomDrawer = props => {
         <View
           style={styles.navDrawerHeader}
         >
+          {/*Hamburger menu header backarrow pressable*/}
           <Pressable onPress={() => { 
               navigation.navigate('Login');
             }}>
@@ -39,6 +40,7 @@ const CustomDrawer = props => {
               color={'#625A5A'}
             />
           </Pressable>
+          {/* Hamburger menu header pwdly icon*/}
           <Image
             style={{ width: 90, height: 29,  }}
             source={require('../assets/pwdly_White_Logo_1.png')}
