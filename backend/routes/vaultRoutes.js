@@ -35,8 +35,8 @@ router.delete('/:vaultID/tag/:tagID', deleteTag);
 // accounts
 router.post('/:vaultID/account', createAccount);
 router.get('/:vaultID/account', getAccounts);
-router.put('/:vaultID/account/:accountname', updateAccount);
-router.delete('/:vaultID/account/:accountname', deleteAccount);
+router.put('/:vaultID/account/:accountID', updateAccount);
+router.delete('/:vaultID/account/:accountID', deleteAccount);
 
 
 module.exports = router;
