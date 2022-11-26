@@ -1,5 +1,6 @@
 const { ObjectId } = require("mongodb");
 const mongoose = require("mongoose");
+const Tag = require("./tag");
 
 const accountSchema = new mongoose.Schema({
     username: {
@@ -11,10 +12,7 @@ const accountSchema = new mongoose.Schema({
         required: true,
     },
     tags: {
-        type: [{
-            type: mongoose.Schema.Types.ObjectId,
-            ref: "Tag"
-        }]
+        type: [Tag],
     }
 });
 
