@@ -523,44 +523,66 @@ const updateAccount = asyncHandler(async (req, res) => {
 });
 
 // @desc    Delete account
-// @route   DELETE /api/vault/{vaultID}/site/account/{accountID}
+// @route   DELETE /api/vault/{vaultID}/site/{siteID}/account/{accountID}
 const deleteAccount = asyncHandler(async (req, res) => {
     const vaultID = req.params.vaultID;
+    const siteID = req.params.siteID;
     const accountID= req.params.accountID;
 
-    const vaultExists = await checkVaultExists(vaultID, res);
+    const vault = await checkVaultExists(vaultID, res);
 
-    if (!vaultExists) {
+    // Find site with matching siteID
+    const siteIndex = vault.sites.findIndex(site => site._id == siteID);
+    if (siteIndex === -1) {
         res.status(400);
-        throw new Error('This vault does not exist');
+        throw new Error('Site does not exist');
     }
 
-    const accountExists = await Vault.findOne({"_id": vaultID, "sites.accounts._id": accountID});
-
-    if (!accountExists) {
+    // Find account with matching accountID
+    const accountIndex = vault.sites[siteIndex].accounts.findIndex(account => account._id == accountID);
+    if (accountIndex === -1) {
         res.status(400);
-        throw new Error('This account does not exist');
+        throw new Error('Account does not exist');
     }
 
-    const deletedAccount = await Vault.findOneAndUpdate(
-        { _id: vaultID, "sites.accounts._id": accountID}, 
-        { 
-            "$pull": {
-                "sites.$.accounts": {_id: accountID},
+    let deleted;
+    // If site has only 1 account, remove the whole site
+    if (vault.sites[siteIndex].accounts.length === 1) {
+        // findOneAndUpdate should be faster than save()
+        const deletedSite = await Vault.findOneAndUpdate(
+            { _id: vaultID, "sites._id": siteID},
+            {
+                "$pull": {
+                    "sites": { "_id": siteID }
+                },
             },
-        }, 
-    {new: true});
+        {new: true});
+        if (!deletedSite) {
+            res.status(400);
+            throw new Error('Error deleting site because it has only 1 account');
+        }
+        deleted = deletedSite;
+    } else {
+        // Remove account from site
+        const deletedAccount = await Vault.findOneAndUpdate(
+            { _id: vaultID, "sites.accounts._id": accountID}, 
+            { 
+                "$pull": {
+                    "sites.$.accounts": {_id: accountID},
+                },
+            }, 
+        {new: true});
+        if (!deletedAccount) {
+            res.status(400);
+            throw new Error('Error deleting account');
+        }
+        deleted = deletedAccount;
+    }
 
-    if (deletedAccount) {
-        res.status(200).json({
-            message: 'Account deleted',
-            vault: deletedAccount
-        });
-    }
-    else {
-        res.status(400);
-        throw new Error('Account could not be deleted');
-    }
+    res.status(200).json({
+        message: 'Account deleted',
+        vault: deleted
+    });
 });
 
 // @desc Helper function to check if user exists

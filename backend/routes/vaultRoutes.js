@@ -55,7 +55,7 @@ router.delete('/:vaultID/site/:siteID', deleteSite);
 
 // accounts
 router.post('/:vaultID/site/account', createAccount);
-router.delete('/:vaultID/site/account/:accountID', deleteAccount);
+router.delete('/:vaultID/site/:siteID/account/:accountID', deleteAccount);
 router.put('/:vaultID/site/account/:accountID', updateAccount);
 
 module.exports = router;
