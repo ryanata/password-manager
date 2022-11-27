@@ -1,6 +1,5 @@
 const { ObjectId } = require("mongodb");
 const mongoose = require("mongoose");
-const Site = require("../models/site");
 
 const vaultSchema = new mongoose.Schema({
     name: {
@@ -16,7 +15,42 @@ const vaultSchema = new mongoose.Schema({
             type: Number,
         },
     },
-    sites: [Site],
+    sites: {
+        type: [{
+            name: {
+                type: String,
+                required: true,
+            },
+            url: {
+                type: String,
+                required: true,
+            },
+            accounts: {
+                type: [{
+                    username: {
+                        type: String,
+                        required: true,
+                    },
+                    password: {
+                        type: String,
+                        required: true,
+                    },
+                    tags: {
+                        type: [{
+                            name: {
+                                type: String,
+                                required: true,
+                            },
+                            colorHEX: {
+                                type: String,
+                                required: true,
+                            }
+                        }]
+                    }
+                }]
+            }
+        }]
+    },
 });
 
 module.exports = mongoose.model("Vault", vaultSchema);

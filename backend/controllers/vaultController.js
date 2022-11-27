@@ -2,110 +2,99 @@ const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const Vault = require('../models/vault');
 const User = require('../models/user');
-const Tag = require('../models/tag');
-const Site = require('../models/site');
-const Account = require('../models/account');
+const mongoose = require('mongoose');
 
 const asyncHandler = require('express-async-handler');
-const vault = require('../models/vault');
 
-// @desc    Create new vault
-// @route   POST /api/vault/
+// @desc Create new vault
+// @route POST /api/vault
 const createVault = asyncHandler(async (req, res) => {
-    const { userID, vaultName, masterPassword, phoneNumber } = req.body;
+    const { userId, name, masterPassword } = req.body;
 
-    if (!userID || !vaultName || !masterPassword || !phoneNumber) {
+    if (!name || !masterPassword || !userId) {
         res.status(400);
-        throw new Error('Please enter all fields');
+        throw new Error('Please provide a name, master password, and user ID');
     }
 
-    // Check for user with this userID
-    const userExists = await User.findOne({ userID });
-    if (!userExists) {
-        res.status(400);
-        throw new Error('User does not exist');
-    }
+    await checkUserExists(userId, res);
 
-    // // Hash password
-    // const salt = await bcrypt.genSalt(10)
-    // const hashedPassword = await bcrypt.hash(password, salt)
-
+    const userPhone = await User
+        .findById(userId)
+        .select('phone');
+    
     const vault = await Vault.create({
-        name: vaultName,
+        name: name,
         masterPassword: masterPassword,
-        mfa:  {
-            phone: phoneNumber
+        mfa: {
+            phone: userPhone.phone,
         },
     });
 
+    // Add vault to user's vaults
     if (vault) {
-        const user = await User.findOneAndUpdate(
-            { _id: userID }, 
-            { $push: { 
-                vaults: vault
-            } 
-        });
-
-        if (!user) {
+        console.log(vault);
+        const updatedUser = await User.findByIdAndUpdate(
+            { _id: userId },
+            { $push: { vaults: vault._id } },
+            { new: true }
+        );
+        if (!updatedUser) {
             res.status(400);
-            throw new Error('Vault could not be added to user');
+            throw new Error('Error adding vault to user');
         }
-
-        res.status(201).json({
-            message: 'Vault created',
-            vault: {
-                name: vault.name,
-                masterPassword: vault.masterPassword,
-                mfa: vault.mfa,
-                userID: vault.userID,
-                vaultID: vault.id
-            },
-        });
     } else {
         res.status(400);
-        throw new Error('Vault was not created');
+        throw new Error('Error creating vault');
     }
+
+    res.status(201).json({
+        message: 'Vault created',
+        vault: vault,
+    });
 });
 
-// @desc    Gets all vaults
-// @route   GET /api/vault/
+// @desc Get rudimentary vault data (name and id) to populate navbar.
+// @route GET /api/vault
 const getVaults = asyncHandler(async (req, res) => {
-    const { userID } = req.body;
-
-    if (!userID) {
-        res.status(400);
-        throw new Error('Please enter the user ID');
-    }
-
-    // Populate the vaults with all the sites, accounts, and tags
-    const userDeeplyPopulated = await User
-        .findById(userID)
-        .populate({
-            path: 'vaults',
-            populate: [
-                { path: 'tags' },
-                { 
-                    path: 'sites',
-                    populate: { path: 'accounts' }
-                }
-            ]
-        });
-    
-    if (!userDeeplyPopulated) {
-        res.status(400);
-        throw new Error('User does not exist');
-    }
-
-    res.status(200).json({
-        message: 'Vaults retrieved!',
-        userID: userDeeplyPopulated._id,
-        vaults: userDeeplyPopulated.vaults
+    const userVaults = req.user.vaults;
+    const unresolvedVaults = userVaults.map(async (vaultId) => {
+        const vault = await Vault.findById(vaultId);
+        if (vault) {
+            return {
+                id: vault._id,
+                name: vault.name,
+            };
+        }
     });
+    const resolvedVaults = await Promise.all(unresolvedVaults);
+    res.status(200).json({
+        message: 'Vaults retrieved',
+        vaults: resolvedVaults,
+    });
+});
+
+// @desc Get vault data
+// @route GET /api/vault/:vaultID
+const getVault = asyncHandler(async (req, res) => {
+    // We are using params because we are not reducing or sorting 
+    // GET /api/vault data; this is completely different data.
+    const vaultId = req.params.vaultID;
+    const vault = mongoose.Types.ObjectId.isValid(vaultId) ? await Vault.findById(vaultId) : false;
+
+    if (!vault) {
+        res.status(400);
+        throw new Error('Vault does not exist');
+    } else {
+        res.status(200).json({
+            message: 'Vault retrieved',
+            vault: vault,
+        });
+    }
 });
 
 // @desc    Update vault
 // @route   PUT /api/vault/{vaultID}
-// can be used to update name, masterPassword, or phone
+// Can be used to update name, masterPassword, or phone
 const updateVault = asyncHandler(async (req, res) => {
     const vaultID = req.params.vaultID;
     const { name, masterPassword, phone } = req.body;
@@ -327,90 +316,155 @@ const deleteTag = asyncHandler(async (req, res) => {
     }
 });
 
-// @desc    Create account
-// @route   POST /api/vault/{vaultID}/account
-const createAccount = asyncHandler(async (req, res) => {
-    const vaultID = req.params.vaultID;
-    const { username, password, siteName, siteURL } = req.body;
+// @desc Update a site
+// @route PUT /api/vault/?vaultID/site/
+const updateSite = asyncHandler(async (req, res) => {
+    const vaultId = req.params.vaultID;
 
-    const vaultExists = await Vault.find({"_id": vaultID});
+    const { oldName, name, url } = req.body;
 
-    if (!vaultExists) {
+    if (!vaultId || !oldName || (!name && !url)) {
         res.status(400);
-        throw new Error('This vault does not exist');
+        throw new Error('Please provide a vault ID, old site name, and new site name or url');
     }
 
-    const siteExists = await Vault.findOne({"_id": vaultID, "sites.name": siteName})
+    const vault = await checkVaultExists(vaultId, res);
 
-    let updatedVault = undefined;
-
-    if (!siteExists) {
-        updatedVault = await Vault.findOneAndUpdate(
-            { _id: vaultID }, 
-            { $push: { 
-                sites: [{
-                    name: siteName,
-                    url: siteURL,
-                    accounts: [{
-                        username: username,
-                        password: password,
-                        tags: {}
-                    }]
-                }]
-            }
-        }, {new: true});    
-    } else {
-        updatedVault = await Vault.findOneAndUpdate(
-            { _id: vaultID, "sites.name": siteName }, 
-            { $push: { 
-                "sites.$.accounts": [{
-                    username: username,
-                    password: password,
-                    tags: {}
-                }]
-            }
-        }, {new: true});
-    }
-
-    if (updatedVault) {
-        res.status(200);
-        res.send(updatedVault);
-    }
-    else {
+    // Since name is unique, check if a site already exists with that name
+    const allSites = await Vault.findById(vaultId).select('sites');
+    // Find site with matching name's index (if it exists) else return -1
+    const siteIndex = allSites.sites.findIndex(site => site.name === oldName);
+    if (siteIndex === -1) {
         res.status(400);
-        throw new Error('Vault could not be updated');
+        throw new Error('Site does not exist');
     }
+
+    const existingSite = vault.sites[siteIndex];
+    if (name) {
+        existingSite.name = name;
+    }
+    if (url) {
+        existingSite.url = url;
+    }
+
+    const updatedVault = await vault.save();
+    if (!updatedVault) {
+        res.status(400);
+        throw new Error('Error updating site');
+    }
+    res.status(200).json({
+        message: 'Site updated',
+        vault: updatedVault
+    });
 });
 
-// @desc    Gets all accounts
-// @route   GET /api/vault/{vaultID}/account
-const getAccounts = asyncHandler(async (req, res) => {
-    const vaultID = req.params.vaultID;
+// @desc Delete a site
+// @route DELETE /api/vault/?vaultID/site/?siteID
+const deleteSite = asyncHandler(async (req, res) => {
+    const vaultId = req.params.vaultID;
+    const siteId = req.params.siteID;
 
-    // Check for vault with this vaultID
-    const vaultExists = await Vault.findOne({"_id": vaultID});
-
-    if (!vaultExists) {
+    if (!vaultId || !siteId) {
         res.status(400);
-        throw new Error('Vault does not exist');
+        throw new Error('Please provide a vault ID and site ID');
     }
 
-    const accounts = vaultExists.sites
+    await checkVaultExists(vaultId, res);
+    const siteExists = await Vault.findOne({"_id": vaultId, "sites._id": siteId});
+    if (!siteExists) {
+        res.status(400);
+        throw new Error('Site does not exist');
+    }
 
-    console.log(vaultExists);
-    
-    if (accounts) {
-        res.status(200).json({
-            "sites": accounts
-        });
+    const deletedSite = await Vault.findOneAndUpdate(
+        { _id: vaultId, "sites._id": siteId}, 
+        { 
+            "$pull": {
+                "sites": { "_id": siteId }
+            },
+        }, 
+    {new: true});
+
+    if (!deletedSite) {
+        res.status(400);
+        throw new Error('Error deleting site');
+    }
+
+    res.status(200).json({
+        message: 'Site deleted',
+        vault: deletedSite
+    });
+});
+
+// @desc Create new account
+// @route POST /api/vault/?vaultID/site/account
+const createAccount = asyncHandler(async (req, res) => {
+    const vaultId = req.params.vaultID;
+    // tags are optional
+    // name is unique
+    const { name, url, username, password, tags } = req.body;
+
+    if (!vaultId || !name || !url || !username || !password) {
+        res.status(400);
+        throw new Error('Please provide a vault ID, name, url, username, and password');
+    }
+
+    const vault = await checkVaultExists(vaultId, res);
+
+    // Just assume frontend deals with tags correctly
+    const resolvedTags = tags ? tags : [];
+    const account = {
+        username: username,
+        password: password,
+        tags: resolvedTags,
+    };
+    // Since name is unique, check if a site already exists with that name
+    const allSites = await Vault.findById(vaultId).select('sites');
+    // Find site with matching name's index (if it exists) else return -1
+    const siteIndex = allSites.sites.findIndex(site => site.name === name);
+    if (siteIndex !== -1) {
+        const existingSite = vault.sites[siteIndex];
+        if (existingSite.url !== url) {
+            res.status(400);
+            throw new Error('Site name already exists with a different URL');
+        }
+
+        // Add account to existing site
+        existingSite.accounts.push(account);
+        const updatedSite = await vault.save();
+
+        if (!updatedSite) {
+            res.status(400);
+            throw new Error('Error adding account to site');
+        }
     } else {
-        res.status(400);
-        throw new Error('Could not get the accounts');
+        const newSite = {
+            name: name,
+            url: url,
+            accounts: [account],
+        }
+        
+        vault.sites.push(newSite);
+        const updatedVault = await vault.save();
+        if (!updatedVault) {
+            res.status(400);
+            throw new Error('Error adding site to vault');
+        }
     }
+
+    const newVault = await Vault.findById(vaultId);
+    if (!newVault) {
+        res.status(400);
+        throw new Error('Error retrieving updated vault');
+    }
+    res.status(201).json({
+        message: 'Account created',
+        vault: newVault
+    });
 });
 
 // @desc    Update account
-// @route   PUT /api/vault/{vaultID}/account/{accountID}
+// @route   PUT /api/vault/{vaultID}/site/account/{accountID}
 const updateAccount = asyncHandler(async (req, res) => {
     const vaultID = req.params.vaultID;
     const accountID = req.params.accountID;
@@ -469,12 +523,12 @@ const updateAccount = asyncHandler(async (req, res) => {
 });
 
 // @desc    Delete account
-// @route   DELETE /api/vault/{vaultID}/account/{accountID}
+// @route   DELETE /api/vault/{vaultID}/site/account/{accountID}
 const deleteAccount = asyncHandler(async (req, res) => {
     const vaultID = req.params.vaultID;
-    const accountID = req.params.accountID;
+    const accountID= req.params.accountID;
 
-    const vaultExists = await Vault.findById(vaultID);
+    const vaultExists = await checkVaultExists(vaultID, res);
 
     if (!vaultExists) {
         res.status(400);
@@ -497,11 +551,11 @@ const deleteAccount = asyncHandler(async (req, res) => {
         }, 
     {new: true});
 
-    console.log("deleted");
-
     if (deletedAccount) {
-        res.status(200);
-        res.send(deletedAccount);
+        res.status(200).json({
+            message: 'Account deleted',
+            vault: deletedAccount
+        });
     }
     else {
         res.status(400);
@@ -509,9 +563,31 @@ const deleteAccount = asyncHandler(async (req, res) => {
     }
 });
 
+// @desc Helper function to check if user exists
+const checkUserExists = asyncHandler(async (userId, res) => {
+    // Make sure userId is valid ObjectId and user exists
+    const userExists = mongoose.Types.ObjectId.isValid(userId) ? await User.findById(userId) : false;
+    if (!userExists) {
+        res.status(400);
+        throw new Error('User does not exist');
+    }
+});
+
+// @desc Helper function to check if vaultexists
+const checkVaultExists = asyncHandler(async (vaultId, res) => {
+    // Make sure vaultId is valid ObjectId and vault exists
+    const vaultExists = mongoose.Types.ObjectId.isValid(vaultId) ? await Vault.findById(vaultId) : false;
+    if (!vaultExists) {
+        res.status(400);
+        throw new Error('Vault does not exist');
+    }
+    return vaultExists;
+});
+
 module.exports = {
     createVault,
     getVaults,
+    getVault,
     updateVault,
     deleteVault,
     createTag,
@@ -519,7 +595,8 @@ module.exports = {
     updateTag,
     deleteTag,
     createAccount,
-    getAccounts,
+    updateSite,
+    deleteSite,
     updateAccount,
     deleteAccount
 }

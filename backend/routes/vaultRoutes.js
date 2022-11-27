@@ -4,42 +4,58 @@ const router = express.Router();
 const {
     createVault,
     getVaults,
+    getVault,
     updateVault,
     deleteVault,
     createTag,
     getTags,
     updateTag,
     deleteTag,
-    createSite,
-    getSites,
     updateSite,
     deleteSite,
     createAccount,
-    getAccounts,
     updateAccount,
     deleteAccount,
 } = require('../controllers/vaultController');
 
-// vaults
-router.post('', createVault);
-router.get('', getVaults);
-router.put('/:vaultID', updateVault);
-router.delete('/:vaultID', deleteVault);
+const { protect } = require('../middleware/authMiddleware');
 
-// tags
-router.post('/:vaultID/tag', createTag);
-router.get('/:vaultID/tag', getTags);
-router.put('/:vaultID/tag/:tagID', updateTag);
-router.delete('/:vaultID/tag/:tagID', deleteTag);
+// // vaults
+router.post('', createVault);
+router.get('', protect, getVaults);
+router.get('/:vaultID', getVault);
+
+/** 
+ * TODO: update vault
+ * PRIORITY: low
+ * Comments: We will use updateVault ONLY for changing name, master password, and mfa. Not very critical 
+ */
+// router.put('/:vaultID', updateVault);
+/**
+ * TODO: delete vault
+ * PRIORITY: low
+ * Comments: Delete vault, self-explanatory.
+ */
+// router.delete('/:vaultID', deleteVault);
+
+/**
+ * TODO: all tag api calls
+ * PRIORITY: medium
+ * Comments: We will need to create, get, update, and delete tags.
+ */
+// // tags
+// router.post('/:vaultID/tag', createTag);
+// router.get('/:vaultID/tag', getTags);
+// router.put('/:vaultID/tag/:tagID', updateTag);
+// router.delete('/:vaultID/tag/:tagID', deleteTag);
+
+// sites
+router.put('/:vaultID/site', updateSite);
+router.delete('/:vaultID/site/:siteID', deleteSite);
 
 // accounts
-router.post('/:vaultID/account', createAccount);
-router.get('/:vaultID/account', getAccounts);
-router.put('/:vaultID/account/:accountID', updateAccount);
-router.delete('/:vaultID/account/:accountID', deleteAccount);
-
-router.post('/', createVault);
-router.get('/', protect, getVaults);
-router.get('/:vaultId', getVault);
+router.post('/:vaultID/site/account', createAccount);
+router.delete('/:vaultID/site/account/:accountID', deleteAccount);
+router.put('/:vaultID/site/account/:accountID', updateAccount);
 
 module.exports = router;
