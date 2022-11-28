@@ -378,8 +378,8 @@ export function LandingNav() {
                     </Group>
                 </ScrollArea>
             </Drawer>
-            <LoginModal opened={loginModalOpened} closed={toggleLoginModal} openSignupModal={toggleSignupModal}/>
-            <SignupModal opened={signupModalOpened} closed={toggleSignupModal} openLoginModal={toggleLoginModal}/>
+            <LoginModal opened={loginModalOpened} closed={toggleLoginModal} openSignupModal={toggleSignupModal} />
+            <SignupModal opened={signupModalOpened} closed={toggleSignupModal} openLoginModal={toggleLoginModal} />
         </Box>
     );
 }
