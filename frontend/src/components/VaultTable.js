@@ -3,7 +3,7 @@ import { useDisclosure } from "@mantine/hooks";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
-import { useParams } from 'react-router-dom';
+import { useParams } from "react-router-dom";
 
 import MasterPasswordModal from "./MasterPasswordModal";
 import VaultHeader from "./VaultHeader";
@@ -148,7 +148,7 @@ const getVaultData = () => {
             setTimeout(() => {
                 reject(error);
             }, 1000);
-        })
+        });
     }
     // create a promise that resolves after 1 second
     return new Promise((resolve) => {
