@@ -6,6 +6,7 @@ import { DashboardLeftNav } from "../components/DashboardLeftNav";
 import VaultTable from "../components/VaultTable";
 import DashboardHeader from "../components/DashboardHeader";
 import { VaultContext, useUser } from "../helpers/Hooks";
+import { TagCarousel } from "../components/TagCarousel";
 
 const useStyles = createStyles((theme) => ({}));
 
@@ -67,6 +68,7 @@ const Dashboard = () => {
                     },
                 })}
             >
+                <TagCarousel />
                 <VaultTable />
             </AppShell>
         </VaultProvider>
