@@ -6,7 +6,6 @@ import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
 import { useParams } from "react-router-dom";
 
 import MasterPasswordModal from "./MasterPasswordModal";
-import { TagCarousel } from "../components/TagCarousel";
 import VaultHeader from "./VaultHeader";
 import VaultRow from "./VaultRow";
 
@@ -253,7 +252,6 @@ const VaultTable = () => {
     return (
         <>
             <Box className={classes.noSpacing}>
-                <TagCarousel />
                 <VaultHeader sort={sort} toggleSort={toggleSort} />
                 {sort === "unsorted" ? (
                     <DragDropContext onDragEnd={onDragEnd}>
