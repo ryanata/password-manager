@@ -28,7 +28,7 @@ const MasterPasswordModal = ({ opened, closed, password }) => {
                 ...vaultStates,
                 id: {
                     unlocked: true,
-                }
+                },
             });
             // Close modal
             closed();

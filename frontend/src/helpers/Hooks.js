@@ -33,13 +33,11 @@ export const useVault = (vaultId) => {
                 .get(`/api/vault/${vaultId}`)
                 .then((res) => {
                     resolve(res.data);
-                }
-                )
+                })
                 .catch((err) => {
                     reject(err);
-                }
-                );
-            });
+                });
+        });
     });
 };
 
@@ -59,5 +57,4 @@ export const setSites = (vaultId, sites) => {
                 reject(err);
             });
     });
-}
-
+};

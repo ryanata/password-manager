@@ -2,9 +2,9 @@ import { Group, UnstyledButton, createStyles } from "@mantine/core";
 import { useMediaQuery } from "@mantine/hooks";
 import { IconCopy, IconEye, IconEyeOff } from "@tabler/icons";
 import { useContext, useState } from "react";
+import { useParams } from "react-router-dom";
 
 import { VaultContext } from "../helpers/Hooks";
-import { useParams } from "react-router-dom";
 
 const useStyles = createStyles((theme) => ({
     input: {
@@ -32,7 +32,6 @@ const useStyles = createStyles((theme) => ({
 const HiddenInput = ({ children, value, passwordHandler }) => {
     const { classes, theme } = useStyles();
     const { id } = useParams();
-
 
     return (
         <input

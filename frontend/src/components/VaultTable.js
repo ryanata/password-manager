@@ -4,8 +4,8 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
 import { useParams } from "react-router-dom";
-import { useVault, setSites } from "../helpers/Hooks";
 
+import { setSites, useVault } from "../helpers/Hooks";
 import MasterPasswordModal from "./MasterPasswordModal";
 import VaultHeader from "./VaultHeader";
 import VaultRow from "./VaultRow";
@@ -44,7 +44,7 @@ const VaultTable = () => {
                 },
             };
             // Optimistically update to the new value
-            queryClient.setQueryData([queryId], formattedData);;
+            queryClient.setQueryData([queryId], formattedData);
             // Return a context object with the snapshotted value
             return { previousData };
         },
@@ -86,7 +86,7 @@ const VaultTable = () => {
             </Center>
         );
     }
-    
+
     console.log(data);
     const vault = data.vault;
 
@@ -153,7 +153,11 @@ const VaultTable = () => {
                     ))
                 )}
             </Box>
-            <MasterPasswordModal opened={masterPassModalOpened} closed={toggleMasterPassModal} password={vault.masterPassword} />
+            <MasterPasswordModal
+                opened={masterPassModalOpened}
+                closed={toggleMasterPassModal}
+                password={vault.masterPassword}
+            />
         </>
     );
 };
