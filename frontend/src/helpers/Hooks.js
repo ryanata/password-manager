@@ -27,9 +27,37 @@ export const useVaults = () => {
 };
 
 export const useVault = (vaultId) => {
-    return useQuery([`getVault_${vaultId}`], () => axios.get(`/api/vault/${vaultId}`));
+    return useQuery([`getVault_${vaultId}`], () => {
+        return new Promise((resolve, reject) => {
+            axios
+                .get(`/api/vault/${vaultId}`)
+                .then((res) => {
+                    resolve(res.data);
+                }
+                )
+                .catch((err) => {
+                    reject(err);
+                }
+                );
+            });
+    });
 };
 
 export const createVault = (userId, name, masterPassword) => {
-    return axios.post(`/api/vault`, { userId, name, masterPassword });
+    return axios.post("/api/vault", { userId, name, masterPassword });
 };
+
+export const setSites = (vaultId, sites) => {
+    // Return promise to wrap axios call
+    return new Promise((resolve, reject) => {
+        axios
+            .put(`/api/vault/${vaultId}/setSites`, { sites })
+            .then((res) => {
+                resolve(res.data);
+            })
+            .catch((err) => {
+                reject(err);
+            });
+    });
+}
+

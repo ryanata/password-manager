@@ -4,7 +4,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
 import { useParams } from "react-router-dom";
-import { useVault } from "../helpers/Hooks";
+import { useVault, setSites } from "../helpers/Hooks";
 
 import MasterPasswordModal from "./MasterPasswordModal";
 import VaultHeader from "./VaultHeader";
@@ -19,13 +19,7 @@ const useStyles = createStyles((theme) => ({
 }));
 
 const updateVaultData = (data) => {
-    localStorage.setItem("vault", JSON.stringify(data));
-    // create a promise that resolves after 1 second
-    return new Promise((resolve) => {
-        setTimeout(() => {
-            resolve(data);
-        }, 100);
-    });
+    return setSites(data.vaultId, data.sites);
 };
 
 const VaultTable = () => {
@@ -34,7 +28,7 @@ const VaultTable = () => {
     const { id } = useParams();
     // Get vault data should take in id
     const { data, isLoading, error } = useVault(id);
-    const queryId = `vault_${id}`;
+    const queryId = `getVault_${id}`;
     const queryClient = new useQueryClient();
     const { mutate } = useMutation(updateVaultData, {
         onMutate: async (newData) => {
@@ -42,13 +36,21 @@ const VaultTable = () => {
             await queryClient.cancelQueries([queryId]);
             // Snapshot the previous value
             const previousData = queryClient.getQueryData([queryId]);
+            const formattedData = {
+                message: previousData.message,
+                vault: {
+                    ...previousData.vault,
+                    sites: newData.sites,
+                },
+            };
             // Optimistically update to the new value
-            queryClient.setQueryData([queryId], newData);
+            queryClient.setQueryData([queryId], formattedData);;
             // Return a context object with the snapshotted value
             return { previousData };
         },
         // If the mutation fails, use the context returned from onMutate to roll back
         onError: (err, newData, context) => {
+            console.log(err);
             queryClient.setQueryData([queryId], context.previousData);
         },
         // Always refetch after error or success:
@@ -69,18 +71,6 @@ const VaultTable = () => {
         }
     };
 
-    const onDragEnd = (result) => {
-        // dropped outside the list
-        if (!result.destination) {
-            return;
-        }
-        // Update data
-        const items = Array.from(data.sites);
-        const [reorderedItem] = items.splice(result.source.index, 1);
-        items.splice(result.destination.index, 0, reorderedItem);
-        mutate({ sites: items });
-    };
-
     if (isLoading) {
         return (
             <Center style={{ width: "100%", height: "100%" }}>
@@ -96,8 +86,21 @@ const VaultTable = () => {
             </Center>
         );
     }
+    
+    console.log(data);
+    const vault = data.vault;
 
-    const vault = data.data.vault;
+    const onDragEnd = (result) => {
+        // dropped outside the list
+        if (!result.destination) {
+            return;
+        }
+        // Update data
+        const items = Array.from(vault.sites);
+        const [reorderedItem] = items.splice(result.source.index, 1);
+        items.splice(result.destination.index, 0, reorderedItem);
+        mutate({ vaultId: id, sites: items });
+    };
 
     // Sort data by state in 'sort'
     const sortByState = () => {

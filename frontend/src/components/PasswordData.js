@@ -4,6 +4,7 @@ import { IconCopy, IconEye, IconEyeOff } from "@tabler/icons";
 import { useContext, useState } from "react";
 
 import { VaultContext } from "../helpers/Hooks";
+import { useParams } from "react-router-dom";
 
 const useStyles = createStyles((theme) => ({
     input: {
@@ -30,6 +31,8 @@ const useStyles = createStyles((theme) => ({
 
 const HiddenInput = ({ children, value, passwordHandler }) => {
     const { classes, theme } = useStyles();
+    const { id } = useParams();
+
 
     return (
         <input
@@ -47,16 +50,17 @@ const HiddenInput = ({ children, value, passwordHandler }) => {
 
 const PasswordData = ({ account, toggleModal }) => {
     const { classes, theme } = useStyles();
+    const { id } = useParams();
 
     // Hooks
     const [showPassword, setShowPassword] = useState(false);
-    const { vault, setVault } = useContext(VaultContext);
+    const { vaultStates, setVaultStates } = useContext(VaultContext);
     const isMobile = useMediaQuery(`(max-width: ${theme.breakpoints.sm - 1}px)`);
     const isTablet = useMediaQuery(`(max-width: ${theme.breakpoints.md - 1}px)`);
 
     // Handlers
     const showPasswordHandler = () => {
-        if (vault.unlocked) {
+        if (vaultStates.id?.unlocked) {
             setShowPassword(!showPassword);
         } else {
             // Remmber that user wants to show password. This is important because
@@ -72,7 +76,7 @@ const PasswordData = ({ account, toggleModal }) => {
     };
 
     const copyHandler = () => {
-        if (vault.unlocked) {
+        if (vaultStates.id?.unlocked) {
             navigator.clipboard.writeText(account.password);
         } else {
             toggleModal();
@@ -84,11 +88,11 @@ const PasswordData = ({ account, toggleModal }) => {
         <Group spacing="xl" className={classes.root}>
             <HiddenInput
                 passwordHandler={inputPasswordHandler}
-                value={showPassword && vault.unlocked ? account.password : "•••••••••••••••"}
+                value={showPassword && vaultStates.id?.unlocked ? account.password : "•••••••••••••••"}
             />
             <Group spacing="xs" className={classes.iconContainer}>
                 <UnstyledButton onClick={showPasswordHandler}>
-                    {showPassword && vault.unlocked ? (
+                    {showPassword && vaultStates.id?.unlocked ? (
                         <IconEye size={iconSize} stroke={2} />
                     ) : (
                         <IconEyeOff size={iconSize} stroke={2} />
