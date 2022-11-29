@@ -1,4 +1,3 @@
-const { ObjectId } = require("mongodb");
 const mongoose = require("mongoose");
 
 const vaultSchema = new mongoose.Schema({
@@ -36,19 +35,10 @@ const vaultSchema = new mongoose.Schema({
                         required: true,
                     },
                     tags: {
-                        type: [{
-                            name: {
-                                type: String,
-                                required: true,
-                            },
-                            colorHEX: {
-                                type: String,
-                                required: true,
-                            }
-                        }]
+                        type: [String],
                     }
-                }]
-            }
+                }],
+            },
         }]
     },
 });

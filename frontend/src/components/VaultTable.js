@@ -3,7 +3,6 @@ import { useDisclosure } from "@mantine/hooks";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
-import { useParams } from "react-router-dom";
 
 import MasterPasswordModal from "./MasterPasswordModal";
 import VaultHeader from "./VaultHeader";
@@ -148,7 +147,7 @@ const getVaultData = () => {
             setTimeout(() => {
                 reject(error);
             }, 1000);
-        });
+        })
     }
     // create a promise that resolves after 1 second
     return new Promise((resolve) => {
@@ -171,8 +170,6 @@ const updateVaultData = (data) => {
 const VaultTable = () => {
     const { classes, theme } = useStyles();
     const [sort, setSort] = useState("unsorted");
-    const { id } = useParams();
-    // Get vault data should take in id
     const { data, isLoading, error } = useQuery(["vault"], getVaultData);
     const queryClient = new useQueryClient();
     const { mutate } = useMutation(updateVaultData, {
@@ -248,7 +245,6 @@ const VaultTable = () => {
         );
     }
 
-    console.log(id);
     return (
         <>
             <Box className={classes.noSpacing}>
@@ -259,7 +255,7 @@ const VaultTable = () => {
                             {(provided) => (
                                 <Box {...provided.droppableProps} ref={provided.innerRef}>
                                     {/* Map through data and create a VaultRow component for each */}
-                                    {data?.sites?.map((site, index) => (
+                                    {data?.sites.map((site, index) => (
                                         <Draggable key={site.name} draggableId={site.name} index={index}>
                                             {(provided) => (
                                                 <Box
@@ -283,7 +279,7 @@ const VaultTable = () => {
                         </Droppable>
                     </DragDropContext>
                 ) : (
-                    sortByState()?.map((site, index) => (
+                    sortByState().map((site, index) => (
                         <VaultRow key={index} site={site} toggleModal={toggleMasterPassModal} />
                     ))
                 )}

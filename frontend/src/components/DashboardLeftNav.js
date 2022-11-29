@@ -1,9 +1,17 @@
-import { Code, Group, Navbar, ScrollArea, ThemeIcon, UnstyledButton, createStyles } from "@mantine/core";
-import { IconChevronLeft, IconKey, IconLock, IconMenu2, IconSettings, IconShieldLock } from "@tabler/icons";
+import { Code, Group, Navbar, ScrollArea, createStyles, UnstyledButton, ThemeIcon } from "@mantine/core";
+import {
+    IconLock,
+    IconSettings,
+    IconShieldLock,
+    IconKey,
+    IconMenu2,
+    IconChevronLeft,
+} from "@tabler/icons";
+
+import { LinksGroup } from "./NavbarLinksGroups";
 import { useState } from "react";
 
-import { useVaults } from "../helpers/Hooks";
-import { LinksGroup } from "./NavbarLinksGroups";
+
 
 const useStyles = createStyles((theme) => ({
     navbar: {
@@ -38,55 +46,30 @@ const useStyles = createStyles((theme) => ({
 }));
 
 export function DashboardLeftNav() {
-    // styles
     const { classes } = useStyles();
-
-    // Hooks
     const [opened, setOpened] = useState(true);
-    const { data, isLoading, isError } = useVaults();
 
-    if (isLoading) {
-        return <div>Loading...</div>;
-    }
-
-    if (isError) {
-        return <div>Error</div>;
-    }
-
-    const vaults = data.data.vaults;
-    const navLinks = vaults.map((vault) => ({
-        label: vault.name,
-        link: `/dashboard/${vault.id}`,
-    }));
-
-    const navData = [
-        {
-            label: "All Passwords",
-            icon: IconLock,
-            link: "/dashboard/all-passwords",
-        },
+    const mockdata = [
+        { label: "All Passwords", icon: IconLock },
         {
             label: "Vaults",
             icon: IconKey,
             initiallyOpened: opened,
-            links: navLinks,
+            links: [
+                { label: "Personal", link: "/" },
+                { label: "School", link: "/" },
+                { label: "Club", link: "/" },
+                { label: "Job", link: "/" },
+            ],
         },
-        {
-            label: "Password Generator",
-            icon: IconShieldLock,
-            link: "/dashboard/password-generator",
-        },
-        {
-            label: "Settings",
-            icon: IconSettings,
-            link: "https://www.google.com/",
-        },
+        { label: "Password Generator", icon: IconShieldLock },
+        { label: "Settings", icon: IconSettings },
     ];
 
-    const links = navData.map((item) => <LinksGroup {...item} openSidebar={setOpened} key={item.label} />);
+    const links = mockdata.map((item) => <LinksGroup {...item} openSidebar={setOpened} key={item.label} />);
 
     return (
-        <Navbar height={800} width={{ base: opened ? 250 : 62 }} p="md" className={classes.navbar}>
+        <Navbar height={800} width={{base: opened ? 250 : 62}} p="md" className={classes.navbar}>
             <Navbar.Section className={classes.header}>
                 <Group position="apart">
                     <UnstyledButton onClick={() => setOpened(!opened)}>
@@ -96,7 +79,7 @@ export function DashboardLeftNav() {
                     </UnstyledButton>
                 </Group>
             </Navbar.Section>
-
+            
             <Navbar.Section grow className={classes.links} component={ScrollArea}>
                 <div className={classes.linksInner}>{links}</div>
             </Navbar.Section>

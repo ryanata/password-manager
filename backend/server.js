@@ -21,7 +21,6 @@ app.use(headerMiddleware);
 // Routes
 app.use('/api/user', require('./routes/userRoutes'));
 app.use('/api/verification', require('./routes/verificationRoutes'));
-app.use('/api/vault', require('./routes/vaultRoutes'));
 
 // Heroku deployment
 if (process.env.NODE_ENV === 'production') {

@@ -6,22 +6,18 @@ import { Route, Routes } from "react-router-dom";
 
 import DashboardHeader from "../components/DashboardHeader";
 import { DashboardLeftNav } from "../components/DashboardLeftNav";
+import { TagCarousel } from "../components/TagCarousel";
 import VaultTable from "../components/VaultTable";
 import WelcomeModal from "../components/WelcomeModal";
-import { VaultContext, useUser } from "../helpers/Hooks";
+
 const useStyles = createStyles((theme) => ({}));
 
-const LoadingVaults = ({ vaults }) => {
-    // Redirect to the first vault
-    const firstVault = vaults[0];
-    if (firstVault) {
-        window.location.href = `/dashboard/${firstVault}`;
-    }
-    return <>Welcome to pwdly! Create a vault to begin😄</>;
-
+const initialVault = {
+    name: "Personal",
+    unlocked: false,
 };
 
-const VaultProvider = ({ initialVault = {}, children }) => {
+const VaultProvider = ({ children }) => {
     const [vault, setVault] = useState(initialVault);
     const value = useMemo(
         () => ({
@@ -60,10 +56,8 @@ const Dashboard = () => {
         );
     }
 
-    const vaults = data.data.vaults;
-    // If they have no vaults, open a welcome modal
-    const noVaults = vaults.length === 0;
-    const userId = data.data._id;
+    const user = data.data;
+    console.log(user);
     return (
         <VaultProvider>
             <AppShell
@@ -75,7 +69,8 @@ const Dashboard = () => {
                         backgroundColor: theme.colorScheme === "dark" ? theme.colors.dark[8] : theme.colors.gray[0],
                     },
                 })}
-            >                
+            >
+                <TagCarousel />
                 {noVaults && <WelcomeModal userId={userId} />}
                 <Routes>
                     <Route exact path="/" element={<LoadingVaults vaults={vaults} />} />

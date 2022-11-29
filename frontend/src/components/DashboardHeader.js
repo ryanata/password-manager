@@ -1,10 +1,9 @@
-import { Anchor, Group, Header, Image, Space, Text, Title, createStyles } from "@mantine/core";
-import { useQuery } from "@tanstack/react-query";
-import axios from "axios";
 import React from "react";
-
 import { default as iconUser } from "../assets/iconUser.png";
 import { default as Logo } from "../assets/logo.svg";
+import { Anchor, Group, Header, createStyles, Text, Space, Title, Image } from "@mantine/core";
+import { useQuery } from "@tanstack/react-query";
+import axios from "axios";
 
 const useStyles = createStyles((theme) => ({
     header: {
@@ -37,11 +36,7 @@ export default function DashboardHeader() {
                         <img src={Logo} alt="pwdly logo" />
                     </Group>
                     <Group position="apart" ta="center">
-                        <Title
-                            order={3}
-                            weight={300}
-                            transform="capitalize"
-                        >{`${user.name.firstName} ${user.name.lastName[0]}`}</Title>
+                        <Title order={3} weight={300} transform="capitalize">{`${user.name.firstName} ${user.name.lastName[0]}`}</Title>
                         <Space h="s" />
                         <Anchor
                             onClick={() => {
