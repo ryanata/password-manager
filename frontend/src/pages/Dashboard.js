@@ -1,27 +1,20 @@
 import { Anchor, AppShell, Center, Group, Header, Loader, Navbar, Text, createStyles } from "@mantine/core";
 import { useMediaQuery } from "@mantine/hooks";
 import { useMemo, useState } from "react";
+import { DashboardLeftNav } from "../components/DashboardLeftNav"; 
 
-import { Route, Routes } from "react-router-dom";
-
-import DashboardHeader from "../components/DashboardHeader";
-import { DashboardLeftNav } from "../components/DashboardLeftNav";
 import VaultTable from "../components/VaultTable";
-import WelcomeModal from "../components/WelcomeModal";
+import DashboardHeader from "../components/DashboardHeader";
 import { VaultContext, useUser } from "../helpers/Hooks";
+
 const useStyles = createStyles((theme) => ({}));
 
-const LoadingVaults = ({ vaults }) => {
-    // Redirect to the first vault
-    const firstVault = vaults[0];
-    if (firstVault) {
-        window.location.href = `/dashboard/${firstVault}`;
-    }
-    return <>Welcome to pwdly! Create a vault to begin😄</>;
-
+const initialVault = {
+    name: "Personal",
+    unlocked: false,
 };
 
-const VaultProvider = ({ initialVault = {}, children }) => {
+const VaultProvider = ({ children }) => {
     const [vault, setVault] = useState(initialVault);
     const value = useMemo(
         () => ({
@@ -60,10 +53,8 @@ const Dashboard = () => {
         );
     }
 
-    const vaults = data.data.vaults;
-    // If they have no vaults, open a welcome modal
-    const noVaults = vaults.length === 0;
-    const userId = data.data._id;
+    const user = data.data;
+    console.log(user);
     return (
         <VaultProvider>
             <AppShell
@@ -75,39 +66,8 @@ const Dashboard = () => {
                         backgroundColor: theme.colorScheme === "dark" ? theme.colors.dark[8] : theme.colors.gray[0],
                     },
                 })}
-            >                
-                {noVaults && <WelcomeModal userId={userId} />}
-                <Routes>
-                    <Route exact path="/" element={<LoadingVaults vaults={vaults} />} />
-                    <Route path=":id" element={<VaultTable />} />
-                    <Route
-                        path="all-passwords"
-                        element={
-                            <>
-                                {" "}
-                                <p>all passwords</p>{" "}
-                            </>
-                        }
-                    />
-                    <Route
-                        path="password-generator"
-                        element={
-                            <>
-                                {" "}
-                                <p>password generator</p>{" "}
-                            </>
-                        }
-                    />
-                    <Route
-                        path="settings"
-                        element={
-                            <>
-                                {" "}
-                                <p>settings</p>
-                            </>
-                        }
-                    />
-                </Routes>
+            >
+                <VaultTable />
             </AppShell>
         </VaultProvider>
     );
