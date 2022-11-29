@@ -2,13 +2,11 @@ import { Anchor, AppShell, Center, Group, Header, Loader, Navbar, Text, createSt
 import { useMediaQuery } from "@mantine/hooks";
 import { useMemo, useState } from "react";
 
-import { Route, Routes } from "react-router-dom";
-
 import DashboardHeader from "../components/DashboardHeader";
 import { DashboardLeftNav } from "../components/DashboardLeftNav";
 import { TagCarousel } from "../components/TagCarousel";
 import VaultTable from "../components/VaultTable";
-import WelcomeModal from "../components/WelcomeModal";
+import { VaultContext, useUser } from "../helpers/Hooks";
 
 const useStyles = createStyles((theme) => ({}));
 
@@ -71,38 +69,7 @@ const Dashboard = () => {
                 })}
             >
                 <TagCarousel />
-                {noVaults && <WelcomeModal userId={userId} />}
-                <Routes>
-                    <Route exact path="/" element={<LoadingVaults vaults={vaults} />} />
-                    <Route path=":id" element={<VaultTable />} />
-                    <Route
-                        path="all-passwords"
-                        element={
-                            <>
-                                {" "}
-                                <p>all passwords</p>{" "}
-                            </>
-                        }
-                    />
-                    <Route
-                        path="password-generator"
-                        element={
-                            <>
-                                {" "}
-                                <p>password generator</p>{" "}
-                            </>
-                        }
-                    />
-                    <Route
-                        path="settings"
-                        element={
-                            <>
-                                {" "}
-                                <p>settings</p>
-                            </>
-                        }
-                    />
-                </Routes>
+                <VaultTable />
             </AppShell>
         </VaultProvider>
     );
