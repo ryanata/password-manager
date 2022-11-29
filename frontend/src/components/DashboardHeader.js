@@ -1,9 +1,12 @@
 import React from "react";
 import { default as iconUser } from "../assets/iconUser.png";
 import { default as Logo } from "../assets/logo.svg";
-import { Anchor, Group, Header, createStyles, Text, Space, Title, Image } from "@mantine/core";
+import { Anchor, Group, Header, createStyles, Text, Space, Title, Image, Center } from "@mantine/core";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
+import {
+    IconUserCircle
+} from "@tabler/icons";
 
 const useStyles = createStyles((theme) => ({
     header: {
@@ -35,16 +38,19 @@ export default function DashboardHeader() {
                         <Space h="md" />
                         <img src={Logo} alt="pwdly logo" />
                     </Group>
-                    <Group position="apart" ta="center">
-                        <Title order={3} weight={300} transform="capitalize">{`${user.name.firstName} ${user.name.lastName[0]}`}</Title>
-                        <Space h="s" />
+                    <Group position="apart" align="center">
+                        <Title order={3} transform="capitalize">
+                            {`${user.name.firstName} ${user.name.lastName[0]}`}
+                        </Title>
                         <Anchor
                             onClick={() => {
                                 localStorage.removeItem("pwdlyToken");
                             }}
                             href="/"
                         >
-                            <Image height={20} fit="contain" src={iconUser} />
+                            <Center>
+                                <IconUserCircle size={30} color="white"/>
+                            </Center>
                         </Anchor>
                         <Space h="md" />
                     </Group>
