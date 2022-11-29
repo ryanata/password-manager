@@ -20,14 +20,27 @@ const LoadingVaults = ({ vaults }) => {
     return <>Welcome to pwdly! Create a vault to begin😄</>;
 };
 
-const VaultProvider = ({ initialVault = {}, children }) => {
-    const [vault, setVault] = useState(initialVault);
+const VaultProvider = ({ vaultIds, children }) => {
+    // Go through all vaults Ids and create an object like this:
+    // {
+    //     "vaultId1": {
+    //         "unlocked": false,
+    //      }
+    // }
+    const intialVault = vaultIds.reduce((acc, vaultId) => {
+        acc[vaultId] = {
+            unlocked: false,
+        };
+        return acc;
+    }, {});
+
+    const [vaultStates, setVaultStates] = useState(intialVault);
     const value = useMemo(
         () => ({
-            vault,
-            setVault,
+            vaultStates,
+            setVaultStates,
         }),
-        [vault]
+        [vaultStates]
     );
 
     return <VaultContext.Provider value={value}>{children}</VaultContext.Provider>;
@@ -63,7 +76,7 @@ const Dashboard = () => {
     const noVaults = vaults.length === 0;
     const userId = data.data._id;
     return (
-        <VaultProvider>
+        <VaultProvider vaultIds={vaults}>
             <AppShell
                 padding="md"
                 navbar={isTablet ? null : <DashboardLeftNav />}
