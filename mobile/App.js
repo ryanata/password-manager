@@ -4,6 +4,9 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import Login from './pages/Login';
 import Register from './pages/Register';
+import Dashboard from './pages/Dashboard';
+import * as React from 'react';
+import { createDrawerNavigator } from '@react-navigation/drawer';
 
 const styles = StyleSheet.create({
   container: {
@@ -26,6 +29,7 @@ export default function App() {
       }>
         <Stack.Screen name="Login" component={Login} />
         <Stack.Screen name="Signup" component={Register} />
+        <Stack.Screen name="Dashboard" component={Dashboard} />
       </Stack.Navigator>
     </NavigationContainer>
   );
