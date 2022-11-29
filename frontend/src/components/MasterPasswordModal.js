@@ -5,7 +5,7 @@ import { useContext, useState } from "react";
 import { VaultContext } from "../helpers/Hooks";
 
 const useStyles = createStyles((theme) => ({}));
-const MasterPasswordModal = ({ opened, closed }) => {
+const MasterPasswordModal = ({ opened, closed, password }) => {
     // Styling
     const { classes, theme } = useStyles();
 
@@ -21,10 +21,8 @@ const MasterPasswordModal = ({ opened, closed }) => {
 
     // Handlers
     const formHandler = async (values) => {
-        // TODO: Send request to backend
-
         // This is mocking a successful response
-        if (values.password === "djkhaled") {
+        if (values.password === password) {
             // Set vault.unlocked to true
             setVault({
                 ...vault,
