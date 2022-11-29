@@ -1,12 +1,12 @@
 import { Anchor, AppShell, Center, Group, Header, Loader, Navbar, Text, createStyles } from "@mantine/core";
 import { useMediaQuery } from "@mantine/hooks";
 import { useMemo, useState } from "react";
+import { DashboardLeftNav } from "../components/DashboardLeftNav"; 
 
-import DashboardHeader from "../components/DashboardHeader";
-import { DashboardLeftNav } from "../components/DashboardLeftNav";
-import { TagCarousel } from "../components/TagCarousel";
 import VaultTable from "../components/VaultTable";
+import DashboardHeader from "../components/DashboardHeader";
 import { VaultContext, useUser } from "../helpers/Hooks";
+import { TagCarousel } from "../components/TagCarousel";
 
 const useStyles = createStyles((theme) => ({}));
 
