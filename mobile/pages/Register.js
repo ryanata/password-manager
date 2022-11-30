@@ -50,19 +50,16 @@ const Register = () => {
                     navigation.navigate('Dashboard');
                 }
             }).catch((err) => {
-                console.log("error", err)
-                if (err.status === 400){
+                console.log(err)
+                if (err.response.status === 400){
                     console.log("error")
                     setState({ alert: err.response.data.message});
                 } else {
-                    setState({ alert: "an error occured"});
+                    setState({ alert: "An error occured"});
                 }
             })
     }
 
-    // if (getValues('loggedIn')){
-    //     console.log("hi")
-    // }
     return (
         <View style={styles.container}>
             <Image style={styles.image} source = {require("../assets/logo.png")} />
@@ -85,7 +82,6 @@ const Register = () => {
                         )}
                     />
                 </View>
-                <Text></Text>
                 <View style={styles.inputView}>
                     <Controller
                         control= {control}
@@ -102,7 +98,6 @@ const Register = () => {
                         )}
                     />
                 </View>
-                <Text></Text>
                 <View style={styles.inputView}>
                     <Controller
                         control= {control}
@@ -120,7 +115,6 @@ const Register = () => {
                     />
                     
                 </View>
-                <Text></Text>
                 <View style={styles.inputView}>
                     <Controller
                         control= {control}
@@ -137,7 +131,6 @@ const Register = () => {
                         )}
                     />
                 </View>
-                <Text></Text>
                 <View style={styles.inputView}>
                     <Controller
                         control= {control}
@@ -155,11 +148,12 @@ const Register = () => {
                         )}
                     />
                 </View>
-                <Text></Text>
                 
             <TouchableOpacity onPress={() => navigation.navigate('Login')}>
                 <Text style={styles.Already_button}>Already have an account? Log in</Text>
             </TouchableOpacity>
+            
+            <Text style={styles.errorMessageTextStyle}>{state.alert}</Text>
 
             <TouchableOpacity style={styles.SignBtn} onPress = {handleSubmit(formHandler)}>
                 <Text style={styles.loginText}>Sign Up</Text>
@@ -216,7 +210,7 @@ const styles = StyleSheet.create({
     errorMessageTextStyle: {
         color: '#db2828',
         textAlign: 'center',
-        fontSize: 12,
+        fontSize: 20,
     },
 
     Already_button: {
