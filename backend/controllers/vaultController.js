@@ -396,6 +396,53 @@ const deleteSite = asyncHandler(async (req, res) => {
     });
 });
 
+// @desc Set the site's accounts array
+// @route PUT /api/vault/?vaultID/setSites
+const setSites = asyncHandler(async (req, res) => {
+    const vaultId = req.params.vaultID;
+    const { sites } = req.body;
+   
+    if (!vaultId || !sites) {
+        res.status(400);
+        throw new Error('Please provide a vault ID and sites');
+    }
+    
+    if (!Array.isArray(sites)) {
+        res.status(400);
+        throw new Error('Sites must be an array');
+    }
+
+    const vault = await checkVaultExists(vaultId, res);
+    const oldSites = vault.sites;
+    
+    if (oldSites.length !== sites.length) {
+        res.status(400);
+        throw new Error('Sites array must be the same length as the old sites array');
+    }
+
+    // Use the $set operator to update the sites array
+    const updatedVault = await Vault.findOneAndUpdate(
+        { _id: vaultId },
+        {
+            "$set": {
+                "sites": sites
+            }
+        },
+        { new: true }
+    );
+
+    if (!updatedVault) {
+        res.status(400);
+        throw new Error('Error updating sites');
+    }
+
+    res.status(200).json({
+        message: 'Sites updated',
+        vault: updatedVault
+    });
+});
+
+
 // @desc Create new account
 // @route POST /api/vault/?vaultID/site/account
 const createAccount = asyncHandler(async (req, res) => {
@@ -620,5 +667,6 @@ module.exports = {
     updateSite,
     deleteSite,
     updateAccount,
-    deleteAccount
+    deleteAccount,
+    setSites
 }
