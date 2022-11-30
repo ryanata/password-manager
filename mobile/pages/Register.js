@@ -84,9 +84,8 @@ const Register = () => {
                             />
                         )}
                     />
-                    
                 </View>
-
+                <Text></Text>
                 <View style={styles.inputView}>
                     <Controller
                         control= {control}
@@ -102,8 +101,8 @@ const Register = () => {
                             />
                         )}
                     />
-                    
                 </View>
+                <Text></Text>
                 <View style={styles.inputView}>
                     <Controller
                         control= {control}
@@ -121,7 +120,7 @@ const Register = () => {
                     />
                     
                 </View>
-
+                <Text></Text>
                 <View style={styles.inputView}>
                     <Controller
                         control= {control}
@@ -138,7 +137,7 @@ const Register = () => {
                         )}
                     />
                 </View>
-
+                <Text></Text>
                 <View style={styles.inputView}>
                     <Controller
                         control= {control}
@@ -156,6 +155,8 @@ const Register = () => {
                         )}
                     />
                 </View>
+                <Text></Text>
+                
             <TouchableOpacity onPress={() => navigation.navigate('Login')}>
                 <Text style={styles.Already_button}>Already have an account? Log in</Text>
             </TouchableOpacity>
