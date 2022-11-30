@@ -39,7 +39,7 @@ export default function DashboardHeader() {
                     <Group position="apart" ta="center">
                         <Title
                             order={3}
-                            weight={300}
+                            weight={400}
                             transform="capitalize"
                         >{`${user.name.firstName} ${user.name.lastName[0]}`}</Title>
                         <Space h="s" />

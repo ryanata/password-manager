@@ -108,21 +108,25 @@ const featuresdata = [
         icon: IconShield,
         title: "Multi-factor authentication",
         description: "Secure vaults and account with 2FA",
+        link: "/features",
     },
     {
         icon: IconDiscountCheck,
         title: "Password checking",
         description: "Ensure your passwords are hard to crack",
+        link: "/features",
     },
     {
         icon: IconFolder,
         title: "Password grouping",
         description: "Organize your life into vaults and folders",
+        link: "/features",
     },
     {
         icon: IconPlane,
         title: "Travel mode",
         description: "Hide your passwords when traveling abroad",
+        link: "/features",
     },
 ];
 
@@ -131,25 +135,29 @@ const solutionsdata = [
         icon: IconSchool,
         title: "Students",
         description: "Store your passwords for all your school resources",
+        link: "/solutions",
     },
     {
         icon: IconBook2,
         title: "Teachers",
         description: "Leverage vaults for your classes and students",
+        link: "/solutions",
     },
     {
         icon: IconClipboardList,
         title: "Clubs",
         description: "Save your organization's passwords with MFA",
+        link: "/solutions",
     },
     {
         icon: IconHomeHeart,
         title: "Families",
         description: "Connect your smart home and shared accounts",
+        link: "/solutions",
     },
 ];
 
-export function LandingNav() {
+export function LandingNav({pb=120}) {
     const [drawerOpened, { toggle: toggleDrawer, close: closeDrawer }] = useDisclosure(false);
     const [linksFeaturesOpened, { toggle: toggleFeatures }] = useDisclosure(false);
     const [linksSolutionsOpened, { toggle: toggleSolutions }] = useDisclosure(false);
@@ -165,7 +173,7 @@ export function LandingNav() {
     const { classes, theme } = useStyles();
 
     const links = featuresdata.map((item) => (
-        <UnstyledButton className={classes.subLink} key={item.title}>
+        <UnstyledButton onClick={() => window.location.href=item.link} className={classes.subLink} key={item.title}>
             <Group noWrap align="flex-start">
                 <ThemeIcon size={34} variant="default" radius="md">
                     <item.icon size={22} color="#5481CA" />
@@ -183,7 +191,7 @@ export function LandingNav() {
     ));
 
     const solutionslinks = solutionsdata.map((item) => (
-        <UnstyledButton className={classes.subLink} key={item.title}>
+        <UnstyledButton onClick={() => window.location.href=item.link} className={classes.subLink} key={item.title}>
             <Group noWrap align="flex-start">
                 <ThemeIcon size={34} variant="default" radius="md">
                     <item.icon size={22} color="#5481CA" />
@@ -201,25 +209,27 @@ export function LandingNav() {
     ));
 
     return (
-        <Box pb={120}>
+        <Box pb={pb}>
             <Header withBorder={false} height={60} px="md" className={classes.transparentColor}>
                 <Group position="apart" sx={{ height: "100%" }}>
-                    <Group
+                    <Group 
+                        onClick={() => window.location.href="/"}
                         sx={(theme) => ({
                             [theme.fn.largerThan("sm")]: {
                                 width: groupSize[0],
                                 height: groupSize[1],
                                 paddingLeft: theme.spacing.sm,
                             },
+                            cursor: "pointer",
                         })}
                     >
-                        <img src={Logo} alt="pwdly logo" />
+                        <img href="/" src={Logo} alt="pwdly logo" />
                     </Group>
 
                     <Group sx={{ height: "100%" }} spacing={0} className={classes.hiddenMobile}>
                         <HoverCard width={600} position="bottom" radius="md" shadow="md" withinPortal>
                             <HoverCard.Target>
-                                <Anchor href="/" className={classes.link}>
+                                <Anchor href="/features" className={classes.link}>
                                     <Center inline>
                                         <Box component="span" mr={5}>
                                             Features
@@ -244,7 +254,7 @@ export function LandingNav() {
 
                         <HoverCard width={600} position="bottom" radius="md" shadow="md" withinPortal>
                             <HoverCard.Target>
-                                <a href="/" className={classes.link}>
+                                <a href="/solutions" className={classes.link}>
                                     <Center inline>
                                         <Box component="span" mr={5}>
                                             Solutions
@@ -267,7 +277,7 @@ export function LandingNav() {
                             </HoverCard.Dropdown>
                         </HoverCard>
 
-                        <Anchor href="/" className={classes.link}>
+                        <Anchor href="/about-us" className={classes.link}>
                             About Us
                         </Anchor>
                     </Group>
