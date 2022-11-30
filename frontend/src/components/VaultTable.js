@@ -7,7 +7,7 @@ import { useParams } from "react-router-dom";
 
 import { setSites, useVault } from "../helpers/Hooks";
 import MasterPasswordModal from "./MasterPasswordModal";
-import { TagCarousel } from "../components/TagCarousel";
+import { TagCarousel } from "./TagCarousel";
 import VaultHeader from "./VaultHeader";
 import VaultRow from "./VaultRow";
 

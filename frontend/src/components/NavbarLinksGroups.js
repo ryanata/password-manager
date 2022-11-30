@@ -1,4 +1,4 @@
-import { Box, Collapse, Group, Text, ThemeIcon, UnstyledButton, createStyles } from "@mantine/core";
+import { Box, Collapse, Group, Text, ThemeIcon, UnstyledButton, createStyles, Button } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { IconCalendarStats, IconChevronLeft, IconChevronRight, TablerIcon } from "@tabler/icons";
 import { useEffect, useState } from "react";
@@ -52,12 +52,12 @@ export function LinksGroup({ icon: Icon, label, initiallyOpened, links, link, op
     const items = (hasLinks ? [...links, {}] : []).map((link, index) => {
         if (index === links.length) {
             return (
-                <UnstyledButton key={index} component="a" onClick={toggleVaultModal}>
+                <Button key={index} component="a" onClick={toggleVaultModal}>
                     Add Vault
-                </UnstyledButton>
+                </Button>
             );
         }
-
+        
         // link.link is /dashboard/${vaultId}
         // get the vaultId from the link
         const vaultId = link.link.split("/")[2];

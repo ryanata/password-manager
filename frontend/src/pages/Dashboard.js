@@ -8,6 +8,7 @@ import { DashboardLeftNav } from "../components/DashboardLeftNav";
 import VaultTable from "../components/VaultTable";
 import WelcomeModal from "../components/WelcomeModal";
 import { VaultContext, useUser } from "../helpers/Hooks";
+import PasswordGenerator from "../components/PasswordGenerator";
 
 const useStyles = createStyles((theme) => ({}));
 
@@ -103,10 +104,7 @@ const Dashboard = () => {
                     <Route
                         path="password-generator"
                         element={
-                            <>
-                                {" "}
-                                <p>password generator</p>{" "}
-                            </>
+                            <PasswordGenerator />
                         }
                     />
                     <Route
