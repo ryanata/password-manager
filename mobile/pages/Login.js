@@ -184,21 +184,5 @@ const styles = StyleSheet.create({
     },
 
 });
-
-const Login = ({ navigation }) => {
-    return ( 
-        <View style={styles.container}>
-            <Text>Login</Text>
-            <Button
-                title="Don't have an account? Sign Up"
-                onPress={() => navigation.navigate('Signup')}
-            />
-            <Button
-                title="Go to Dashboard"
-                onPress={() => navigation.navigate('Dashboard')}
-            />
-        </View>
-     );
-}
  
 export default Login;
