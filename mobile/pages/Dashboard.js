@@ -1,12 +1,13 @@
 import * as React from 'react';
 import { StyleSheet, Text, Button, View, Image, Pressable, TouchableOpacity } from 'react-native';
-import { createDrawerNavigator, DrawerContentScrollView, DrawerItemList } from '@react-navigation/drawer';
+import { createDrawerNavigator, DrawerContentScrollView, DrawerItemList, DrawerItem } from '@react-navigation/drawer';
 import { NavigationContainer, useNavigation } from '@react-navigation/native';
 import Login from './Login';
 import AllPasswords from './AllPasswords';
 import Vaults from './Vaults';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import VaultDrawerlabel from '../components/VaultDrawerLabel';
 
 
 function LogoTitle() {
@@ -20,49 +21,52 @@ function LogoTitle() {
 
 const Drawer = createDrawerNavigator();
 
-
+{/*Drawer components are defined here */}
 const CustomDrawer = props => {
+  
+	const navigation = useNavigation();
+	return(
+		<View style={{flex: 1}}>
+			<DrawerContentScrollView {...props} >
+				<View
+				style={styles.navDrawerHeader}
+				>
+					{/*Hamburger menu header backarrow pressable*/}
+					<Pressable onPress={() => { 
+						navigation.navigate('Login');
+						}}>
+						<MaterialCommunityIcons
+						name="arrow-left-box"
+						size={40}
+						color={'#625A5A'}
+						/>
+					</Pressable>
+					{/* Hamburger menu header pwdly icon*/}
+					<Image
+						style={{ width: 90, height: 29,  }}
+						source={require('../assets/pwdly_White_Logo_1.png')}
+					/>
+				</View>
+                
+				<DrawerItemList {...props}/>
 
-  const navigation = useNavigation();
-  return(
-    <View style={{flex: 1}}>
-      <DrawerContentScrollView {...props} >
-        <View
-          style={styles.navDrawerHeader}
-        >
-          {/*Hamburger menu header backarrow pressable*/}
-          <Pressable onPress={() => { 
-              navigation.navigate('Login');
-            }}>
-            <MaterialCommunityIcons
-              name="arrow-left-box"
-              size={40}
-              color={'#625A5A'}
-            />
-          </Pressable>
-          {/* Hamburger menu header pwdly icon*/}
-          <Image
-            style={{ width: 90, height: 29,  }}
-            source={require('../assets/pwdly_White_Logo_1.png')}
-          />
-        </View>
-        <DrawerItemList {...props}/>
-
-      </DrawerContentScrollView>
-
-      <TouchableOpacity
-        style={styles.navbarFooter}
-        onPress={() => console.log("Account Settings Button")}
-      >
-        <Ionicons
-          name="settings-outline"
-          size={30}
-          color={'#ffffff'}
-        />
-        <Text style={{color: 'white', fontWeight: "500"}}>Account Settings</Text>
-      </TouchableOpacity>
-      
-    </View>
+                <VaultDrawerlabel {...navigation}/>
+				
+			</DrawerContentScrollView>
+			
+			<TouchableOpacity
+				style={styles.navbarFooter}
+				onPress={() => console.log("Account Settings Button")}
+			>
+				<Ionicons
+				name="settings-outline"
+				size={30}
+				color={'#ffffff'}
+				/>
+				<Text style={{color: 'white', fontWeight: "500"}}>Account Settings</Text>
+			</TouchableOpacity>
+		
+		</View>
   );
 };
 
@@ -110,7 +114,8 @@ function Dashboard() {
                     color: "white"
                   }
               }}
-          />
+          />         
+          {/*This tab is hidden in place of the VaultDrawerLabel component*/} 
           <Drawer.Screen 
             name="Vaults" 
             component={Vaults} 
@@ -127,9 +132,10 @@ function Dashboard() {
                   drawerLabel: "Vaults",
                   drawerLabelStyle: {
                     color: "white"
-                  }
+                  },
+                  drawerItemStyle: { display: 'none' }
               }}
-          />
+          />  
           <Drawer.Screen 
             name="Password Generator" 
             component={Login} 
