@@ -11,10 +11,10 @@ const charactersList = [
 
   {
     id: 'adam',
-    image: 'https://img.icons8.com/clouds/256/000000/homer-simpson.png',
+    image: 'https://img.icons8.com/clouds/256/000000/spachelor.png',
     label: 'Adam Lei',
     description: 'Database',
-    content: "Carol Miller (born January 30, 2880), better known as Mom, is the evil chief executive officer and shareholder of 99.7% of Momcorp, one of the largest industrial conglomerates in the universe and the source of most of Earth's robots. She is also one of the main antagonists of the Futurama series.",
+    content: "I am a Junior at UCF majoring in Computer Science. I worked on the database and helped out in the frontend and mobile application. I enjoy cooking dishes in my free time.",
   },
 
   {
