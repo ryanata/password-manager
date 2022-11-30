@@ -173,6 +173,8 @@ const getVaultData = () => {
     });
 };
 
+
+
 const VaultTable = () => {
     const { classes, theme } = useStyles();
     const [sort, setSort] = useState("unsorted");
