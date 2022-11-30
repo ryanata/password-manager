@@ -30,7 +30,7 @@ export function TagCarousel({ site, provided, toggleModal }) {
     const badgeSize = isMobile ? "sm" : isTablet ? "md" : "lg";
 
     return (
-        <Group position="left">
+        <Group position="left" mt="lg">
             <>
                 <ScrollArea offsetScrollbars style={{ overflowX: "scroll", width: "90%" }}>
                     <Group spacing="sm" className={classes.tagsWrapper}>
@@ -94,4 +94,3 @@ export function TagCarousel({ site, provided, toggleModal }) {
         </Group>
     );
 }
-

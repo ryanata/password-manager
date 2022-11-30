@@ -442,6 +442,42 @@ const setSites = asyncHandler(async (req, res) => {
     });
 });
 
+// @desc Search the sites array
+// @route GET /api/vault/?vaultID/searchSites/?searchTerm
+const searchSites = asyncHandler(async (req, res) => {
+    const vaultId = req.params.vaultID;
+    const searchTerm = req.params.searchTerm;
+
+    if (!vaultId || !searchTerm) {
+        res.status(400);
+        throw new Error('Please provide a vault ID and search term');
+    }
+
+    await checkVaultExists(vaultId, res);
+
+    // Aggregate the sites array and search for the search term
+    const sites = await Vault.aggregate([
+        { $match: { _id: mongoose.Types.ObjectId(vaultId) } },
+        { $unwind: "$sites" },
+        // Search for the search term in the name or url
+        { $match: { $or: [{ "sites.name": { $regex: searchTerm, $options: 'i' } }, { "sites.url": { $regex: searchTerm, $options: 'i' } }] } },
+        { $project: { _id: 0, sites: 1 } }
+    ]);
+
+    if (!sites) {
+        res.status(400);
+        throw new Error('Error searching sites');
+    }
+
+    res.status(200).json({
+        message: 'Sites searched',
+        // Currently it returns an array of sites like this: [{sites: {name: 'name', url: 'url'}}]
+        // So we need to get the sites object from the array
+        sites: sites.map(site => site.sites)
+    });
+});
+
+
 
 // @desc Create new account
 // @route POST /api/vault/?vaultID/site/account
@@ -668,5 +704,6 @@ module.exports = {
     deleteSite,
     updateAccount,
     deleteAccount,
-    setSites
+    setSites,
+    searchSites,
 }

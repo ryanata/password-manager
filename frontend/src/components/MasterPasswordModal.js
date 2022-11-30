@@ -26,7 +26,7 @@ const MasterPasswordModal = ({ opened, closed, password }) => {
             // Set vault.unlocked to true
             setVaultStates({
                 ...vaultStates,
-                id: {
+                [id]: {
                     unlocked: true,
                 },
             });

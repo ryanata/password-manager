@@ -17,6 +17,7 @@ const {
     updateAccount,
     deleteAccount,
     setSites,
+    searchSites
 } = require('../controllers/vaultController');
 
 const { protect } = require('../middleware/authMiddleware');
@@ -54,6 +55,7 @@ router.get('/:vaultID', getVault);
 router.put('/:vaultID/site', updateSite);
 router.delete('/:vaultID/site/:siteID', deleteSite);
 router.put('/:vaultID/setSites', setSites);
+router.get('/:vaultID/searchSites/:searchTerm', searchSites);
 
 // accounts
 router.post('/:vaultID/site/account', createAccount);
