@@ -1,6 +1,8 @@
 import { Badge, Button, Group, ScrollArea, ThemeIcon, createStyles } from "@mantine/core";
 import { useMediaQuery } from "@mantine/hooks";
 import { IconPlus } from "@tabler/icons";
+import { useTags } from "../helpers/Hooks";
+import { useParams } from "react-router-dom";
 
 const useStyles = createStyles((theme) => ({
     root: {
@@ -21,67 +23,41 @@ const badgeHeights = {
     lg: 26,
 };
 
-export function TagCarousel({ site, provided, toggleModal }) {
+export function TagCarousel() {
     const { classes, theme } = useStyles();
     const isMobile = useMediaQuery(`(max-width: ${theme.breakpoints.sm - 1}px)`);
     const isTablet = useMediaQuery(`(max-width: ${theme.breakpoints.md - 1}px)`);
+    const { id } = useParams();
+    const { data, isLoading, isError } = useTags(id);
 
     // const iconSize = isMobile ? 16 : 32;
     const badgeSize = isMobile ? "sm" : isTablet ? "md" : "lg";
+
+    if (isLoading) {
+        return <p>Loading...</p>;
+    }
+
+    if (isError) {
+        console.log("Error loading tags");
+        return <></>;
+    }
 
     return (
         <Group position="left" mt="lg">
             <>
                 <ScrollArea offsetScrollbars style={{ overflowX: "scroll", width: "90%" }}>
                     <Group spacing="sm" className={classes.tagsWrapper}>
-                        <Badge radius="sm" size={badgeSize}>
-                            WORK
-                        </Badge>
-                        <Badge radius="sm" size={badgeSize}>
-                            FINANCE
-                        </Badge>
-                        <Badge radius="sm" size={badgeSize}>
-                            SOCIAL MEDIA
-                        </Badge>
-                        <Badge radius="sm" size={badgeSize}>
-                            PERSONAL
-                        </Badge>
-                        <Badge radius="sm" size={badgeSize}>
-                            SCHOOL
-                        </Badge>
-                        <Badge radius="sm" size={badgeSize}>
-                            Badge
-                        </Badge>
-                        <Badge radius="sm" size={badgeSize}>
-                            Badge
-                        </Badge>
-                        <Badge radius="sm" size={badgeSize}>
-                            WORK
-                        </Badge>
-                        <Badge radius="sm" size={badgeSize}>
-                            Badge
-                        </Badge>
-                        <Badge radius="sm" size={badgeSize}>
-                            FINANCE
-                        </Badge>
-                        <Badge radius="sm" size={badgeSize}>
-                            SOCIAL MEDIA
-                        </Badge>
-                        <Badge radius="sm" size={badgeSize}>
-                            PERSONAL
-                        </Badge>
-                        <Badge radius="sm" size={badgeSize}>
-                            SCHOOL
-                        </Badge>
-                        <Badge radius="sm" size={badgeSize}>
-                            Badge
-                        </Badge>
-                        <Badge radius="sm" size={badgeSize}>
-                            Badge
-                        </Badge>
-                        <Badge radius="sm" size={badgeSize}>
-                            Badge
-                        </Badge>
+                        {data.tags.map((tag) => (
+                                <Badge
+                                    key={tag.name}
+                                    color={tag.colorHEX}
+                                    variant="filled"
+                                    size={badgeSize}
+                                >
+                                    {tag.name}
+                                </Badge>
+                            )
+                        )}
                     </Group>
                 </ScrollArea>
 

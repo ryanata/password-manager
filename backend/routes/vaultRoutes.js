@@ -46,10 +46,8 @@ router.get('/:vaultID', getVault);
  * Comments: We will need to create, get, update, and delete tags.
  */
 // // tags
-// router.post('/:vaultID/tag', createTag);
-// router.get('/:vaultID/tag', getTags);
-// router.put('/:vaultID/tag/:tagID', updateTag);
-// router.delete('/:vaultID/tag/:tagID', deleteTag);
+router.get('/:vaultID/tags', getTags);
+router.delete('/:vaultID/tag', deleteTag);
 
 // sites
 router.put('/:vaultID/site', updateSite);

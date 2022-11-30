@@ -60,6 +60,21 @@ export const useVaultSearch = (vaultId, searchTerm) => {
     });
 };
 
+export const useTags = (vaultId) => {
+    return useQuery([`getTags_${vaultId}`], () => {
+        return new Promise((resolve, reject) => {
+            axios
+                .get(`/api/vault/${vaultId}/tags`)
+                .then((res) => {
+                    resolve(res.data);
+                })
+                .catch((err) => {
+                    reject(err);
+                });
+        });
+    });
+};
+
 export const createVault = (userId, name, masterPassword) => {
     return axios.post("/api/vault", { userId, name, masterPassword });
 };

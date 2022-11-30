@@ -111,8 +111,13 @@ const VaultRow = ({ site, provided, toggleModal }) => {
                                         <Box sx={{ width: "12px", height: badgeHeights[badgeSize] }} />
                                     )}
                                     {account.tags.map((tag, j) => (
-                                        <Badge key={j} radius="sm" size={badgeSize}>
-                                            {tag}
+                                        <Badge 
+                                            key={j} 
+                                            radius="sm"
+                                            variant="filled"
+                                            color={tag.colorHEX} 
+                                            size={badgeSize}>
+                                            {tag.name}
                                         </Badge>
                                     ))}
                                 </Group>
