@@ -7,6 +7,7 @@ import { useParams } from "react-router-dom";
 
 import { setSites, useVault, useVaultSearch, useDebounce } from "../helpers/Hooks";
 import MasterPasswordModal from "./MasterPasswordModal";
+import { TagCarousel } from "../components/TagCarousel";
 import VaultHeader from "./VaultHeader";
 import VaultRow from "./VaultRow";
 
@@ -125,6 +126,7 @@ const VaultTable = ({searchTerm}) => {
     return (
         <>
             <Box className={classes.noSpacing}>
+                <TagCarousel />
                 <VaultHeader sort={sort} toggleSort={toggleSort} />
                 {sort === "unsorted" ? (
                     <DragDropContext onDragEnd={onDragEnd}>
