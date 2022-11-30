@@ -12,6 +12,8 @@ import { createDrawerNavigator } from '@react-navigation/drawer';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { createContext, useState } from 'react';
 
+import * as React from 'react';
+import { createDrawerNavigator } from '@react-navigation/drawer';
 
 
 

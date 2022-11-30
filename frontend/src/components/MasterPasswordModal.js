@@ -1,13 +1,13 @@
 import { Button, Group, Modal, PasswordInput, Text, createStyles } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { useContext, useState } from "react";
+import { useParams } from "react-router-dom";
 
-import { VaultContext } from "../contexts/VaultContext";
+import { VaultContext } from "../helpers/Hooks";
 
 const useStyles = createStyles((theme) => ({}));
-const MasterPasswordModal = ({ opened, closed }) => {
-    // Styling
-    const { classes, theme } = useStyles();
+const MasterPasswordModal = ({ opened, closed, password }) => {
+    const { id } = useParams();
 
     // Hooks
     const form = useForm({
@@ -16,19 +16,19 @@ const MasterPasswordModal = ({ opened, closed }) => {
             error: "",
         },
     });
-    const { vault, setVault } = useContext(VaultContext);
+    const { vaultStates, setVaultStates } = useContext(VaultContext);
     const [alert, setAlert] = useState("");
 
     // Handlers
     const formHandler = async (values) => {
-        // TODO: Send request to backend
-
         // This is mocking a successful response
-        if (values.password === "djkhaled") {
+        if (values.password === password) {
             // Set vault.unlocked to true
-            setVault({
-                ...vault,
-                unlocked: true,
+            setVaultStates({
+                ...vaultStates,
+                [id]: {
+                    unlocked: true,
+                },
             });
             // Close modal
             closed();

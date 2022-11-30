@@ -1,41 +1,55 @@
-import { Anchor, AppShell, Center, Group, Header, Loader, Navbar, Text } from "@mantine/core";
-import { useQuery } from "@tanstack/react-query";
-import axios from "axios";
+import { Anchor, AppShell, Center, Group, Header, Loader, Navbar, Text, createStyles } from "@mantine/core";
+import { useMediaQuery } from "@mantine/hooks";
 import { useMemo, useState } from "react";
+import { Route, Routes } from "react-router-dom";
 
-import VaultTable from "../components/VaultTable";
-import { VaultContext } from "../contexts/VaultContext";
+import DashboardHeader from "../components/DashboardHeader";
+import { DashboardLeftNav } from "../components/DashboardLeftNav";
+import Vault from "../components/Vault";
+import WelcomeModal from "../components/WelcomeModal";
+import { VaultContext, useUser } from "../helpers/Hooks";
 
-const initialVault = {
-    name: "Personal",
-    unlocked: false,
+const useStyles = createStyles((theme) => ({}));
+
+const LoadingVaults = ({ vaults }) => {
+    // Redirect to the first vault
+    const firstVault = vaults[0];
+    if (firstVault) {
+        window.location.href = `/dashboard/${firstVault}`;
+    }
+    return <>Welcome to pwdly! Create a vault to begin😄</>;
 };
 
-const VaultProvider = ({ children }) => {
-    const [vault, setVault] = useState(initialVault);
+const VaultProvider = ({ vaultIds, children }) => {
+    // Go through all vaults Ids and create an object like this:
+    // {
+    //     "vaultId1": {
+    //         "unlocked": false,
+    //      }
+    // }
+    const intialVault = vaultIds.reduce((acc, vaultId) => {
+        acc[vaultId] = {
+            unlocked: false,
+        };
+        return acc;
+    }, {});
+    const [vaultStates, setVaultStates] = useState(intialVault);
     const value = useMemo(
         () => ({
-            vault,
-            setVault,
+            vaultStates,
+            setVaultStates,
         }),
-        [vault]
+        [vaultStates]
     );
 
     return <VaultContext.Provider value={value}>{children}</VaultContext.Provider>;
 };
 
 const Dashboard = () => {
-    // Get jwt token to authenticate
-    let token = "none";
-    try {
-        token = JSON.parse(localStorage.getItem("pwdlyToken"));
-    } catch (error) {
-        console.log(error);
-    }
-    const { data, isLoading, error } = useQuery(["getUser"], () =>
-        axios.get("/api/user/me", { headers: { Authorization: `Bearer ${token}` } })
-    );
-
+    const { classes, theme } = useStyles();
+    // Hooks
+    const isTablet = useMediaQuery(`(max-width: ${theme.breakpoints.md - 1}px)`);
+    const { data, isLoading, error } = useUser();
     if (isLoading) {
         return (
             <Center style={{ width: "100%", height: "100vh" }}>
@@ -56,41 +70,54 @@ const Dashboard = () => {
         );
     }
 
-    const user = data.data;
+    const vaults = data.data.vaults;
+    // If they have no vaults, open a welcome modal
+    const noVaults = vaults.length === 0;
+    const userId = data.data._id;
     return (
-        <VaultProvider>
+        <VaultProvider vaultIds={vaults}>
             <AppShell
                 padding="md"
-                navbar={
-                    <Navbar width={{ base: 300 }} p="xs">
-                        {/* Navbar content */}
-                    </Navbar>
-                }
-                header={
-                    <Header height={60} p="xs">
-                        {
-                            <Group position="apart">
-                                <Text>{`Welcome ${user.name.firstName} ${user.name.lastName}!`}</Text>
-
-                                <Anchor
-                                    onClick={() => {
-                                        localStorage.removeItem("pwdlyToken");
-                                    }}
-                                    href="/"
-                                >
-                                    Log out
-                                </Anchor>
-                            </Group>
-                        }
-                    </Header>
-                }
+                navbar={isTablet ? null : <DashboardLeftNav />}
+                header={<DashboardHeader />}
                 styles={(theme) => ({
                     main: {
                         backgroundColor: theme.colorScheme === "dark" ? theme.colors.dark[8] : theme.colors.gray[0],
                     },
                 })}
             >
-                <VaultTable />
+                {noVaults && <WelcomeModal userId={userId} />}
+                <Routes>
+                    <Route exact path="/" element={<LoadingVaults vaults={vaults} />} />
+                    <Route path=":id" element={<Vault />} />
+                    <Route
+                        path="all-passwords"
+                        element={
+                            <>
+                                {" "}
+                                <p>all passwords</p>{" "}
+                            </>
+                        }
+                    />
+                    <Route
+                        path="password-generator"
+                        element={
+                            <>
+                                {" "}
+                                <p>password generator</p>{" "}
+                            </>
+                        }
+                    />
+                    <Route
+                        path="settings"
+                        element={
+                            <>
+                                {" "}
+                                <p>settings</p>
+                            </>
+                        }
+                    />
+                </Routes>
             </AppShell>
         </VaultProvider>
     );
