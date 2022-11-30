@@ -208,7 +208,7 @@ const styles = StyleSheet.create({
     },
 
     errorMessageTextStyle: {
-        color: '#db2828',
+        color: '#c62828',
         textAlign: 'center',
         fontSize: 20,
     },
