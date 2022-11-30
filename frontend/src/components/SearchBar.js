@@ -1,24 +1,22 @@
 import { Button, Group, TextInput, createStyles } from "@mantine/core";
 import { IconPlus, IconSearch } from "@tabler/icons";
 
-const SearchBar = ({setSearch}) => {
-
+const SearchBar = ({ setSearch }) => {
     return (
-        <Group 
-            position="apart"
-        >
-            <TextInput 
+        <Group position="apart">
+            <TextInput
                 onChange={(e) => {
                     setSearch(e.target.value);
                 }}
-                size="md" 
+                size="md"
                 icon={<IconSearch size={26} />}
-                placeholder="Search" 
+                placeholder="Search"
                 styles={(theme) => ({
                     root: {
                         flex: 1,
                     },
-                })}/>
+                })}
+            />
             <Button
                 size="md"
                 uppercase
@@ -39,6 +37,6 @@ const SearchBar = ({setSearch}) => {
             </Button>
         </Group>
     );
-}
+};
 
 export default SearchBar;

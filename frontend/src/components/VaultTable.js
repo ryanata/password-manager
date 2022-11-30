@@ -5,9 +5,8 @@ import { useState } from "react";
 import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
 import { useParams } from "react-router-dom";
 
-import { setSites, useVault, useVaultSearch, useDebounce } from "../helpers/Hooks";
+import { setSites, useDebounce, useVault, useVaultSearch } from "../helpers/Hooks";
 import MasterPasswordModal from "./MasterPasswordModal";
-import { TagCarousel } from "../components/TagCarousel";
 import VaultHeader from "./VaultHeader";
 import VaultRow from "./VaultRow";
 
@@ -23,7 +22,7 @@ const updateVaultData = (data) => {
     return setSites(data.vaultId, data.sites);
 };
 
-const VaultTable = ({searchTerm}) => {
+const VaultTable = ({ searchTerm }) => {
     const { classes, theme } = useStyles();
     const [sort, setSort] = useState("unsorted");
     const { id } = useParams();
@@ -91,13 +90,12 @@ const VaultTable = ({searchTerm}) => {
         );
     }
 
-    const vault = (searchData) ? 
-    {
-        ...data.vault,
-        sites: searchData.sites,
-    }
-    :
-    data.vault;
+    const vault = searchData
+        ? {
+              ...data.vault,
+              sites: searchData.sites,
+          }
+        : data.vault;
 
     const onDragEnd = (result) => {
         // dropped outside the list
@@ -126,7 +124,6 @@ const VaultTable = ({searchTerm}) => {
     return (
         <>
             <Box className={classes.noSpacing}>
-                <TagCarousel />
                 <VaultHeader sort={sort} toggleSort={toggleSort} />
                 {sort === "unsorted" ? (
                     <DragDropContext onDragEnd={onDragEnd}>

@@ -71,12 +71,14 @@ export function LinksGroup({ icon: Icon, label, initiallyOpened, links, link, op
             <Text
                 component="a"
                 className={classes.link}
-                onClick={() => { navigate(link.link); }}
+                onClick={() => {
+                    navigate(link.link);
+                }}
                 key={index}
                 align="left"
-                sx={{ 
+                sx={{
                     borderLeft: onVault && `3px solid ${theme.colors.green[5]}`,
-                    cursor: "pointer", 
+                    cursor: "pointer",
                 }}
             >
                 {link.label}
