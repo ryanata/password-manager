@@ -55,8 +55,8 @@ export function ProductDescription() {
                             paddingBottom: 30,
                         }}
                     >
-                        The only password manager you need for all your life chapters. Learn how you can store, share,
-                        and secure your life with{" "}
+                        The only password manager you need for all your life chapters. Learn how you can store,
+                        organize, and secure your life with{" "}
                         <Text weight={600} component="span">
                             pwdly
                         </Text>
@@ -105,7 +105,7 @@ export function ProductDescription() {
                     </Group>
                 </Grid.Col>
                 <Grid.Col span={3} className={classes.hiddenMobile}>
-                    <Image width="110%" src={landingMock} alt="Random unsplash image" />
+                    <Image width="110%" src={landingMock} alt="Mobile and Web Mocks" />
                 </Grid.Col>
             </Grid>
         </>
