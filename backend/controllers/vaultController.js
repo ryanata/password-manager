@@ -167,7 +167,7 @@ const deleteVault = asyncHandler(async (req, res) => {
 // @route   POST /api/vault/{vaultID}/tag
 const createTag = asyncHandler(async (req, res) => {
     const vaultID = req.params.vaultID;
-    const { name, colorHEX } = req.body;
+    const { name, color } = req.body;
 
     const vaultExists = await Vault.findById(vaultID);
 
@@ -176,14 +176,14 @@ const createTag = asyncHandler(async (req, res) => {
         throw new Error('This vault does not exist');
     }
 
-    if (!name || !colorHEX) {
+    if (!name || !color) {
         res.status(400);
         throw new Error('Please enter all fields');
     }
 
     const tag = await Tag.create({
         name: name,
-        colorHEX: colorHEX
+        color: color
     });
 
     if (!tag) {
@@ -218,20 +218,17 @@ const getTags = asyncHandler(async (req, res) => {
     // sites, accounts, and tags are all arrays
     // We need to get all tags from all accounts from all sites in a set
     // Then we can return the set as an array
-    const tags = new Set();
+    let tagsDict = {};
     vault.sites.forEach(site => {
         site.accounts.forEach(account => {
             account.tags.forEach(tag => {
-                tags.add({
-                    name: tag.name,
-                    colorHEX: tag.colorHEX
-                });
+                tagsDict[tag.name] = tag;
             });
         });
     });
 
-    // Convert set to array
-    const tagsArray = Array.from(tags);
+    // Get all the values from the dictionary
+    const tagsArray = Object.values(tagsDict);
 
     
     res.status(200).json({
@@ -245,7 +242,7 @@ const getTags = asyncHandler(async (req, res) => {
 const updateTag = asyncHandler(async (req, res) => {
     const vaultID = req.params.vaultID;
     const tagID = req.params.tagID;
-    const { name, colorHEX } = req.body;
+    const { name, color } = req.body;
     let update = {}
 
     const vaultExists = await Vault.findById(vaultID);
@@ -262,7 +259,7 @@ const updateTag = asyncHandler(async (req, res) => {
         throw new Error('This tag does not exist');
     }
 
-    if (!name && !colorHEX) {
+    if (!name && !color) {
         res.status(400);
         throw new Error('Please enter a field to update');
     }
@@ -272,8 +269,8 @@ const updateTag = asyncHandler(async (req, res) => {
         update["name"] = name;
     }
 
-    if (colorHEX) {
-        update["colorHEX"] = colorHEX;
+    if (color) {
+        update["color"] = color;
     }
 
     const tag = await Tag.findByIdAndUpdate(tagID, update, {new: true});
@@ -506,11 +503,11 @@ const createAccount = asyncHandler(async (req, res) => {
             throw new Error('Tags must be an array');
         }
 
-        // Check if all tags have name and colorHEX prop
-        const tagsValid = tags.every(tag => tag.name && tag.colorHEX);
+        // Check if all tags have name and color prop
+        const tagsValid = tags.every(tag => tag.name && tag.color);
         if (!tagsValid) {
             res.status(400);
-            throw new Error('Tags must have name and colorHEX properties');
+            throw new Error('Tags must have name and color properties');
         }
     }
 

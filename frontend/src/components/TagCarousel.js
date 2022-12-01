@@ -50,7 +50,7 @@ export function TagCarousel() {
                         {data.tags.map((tag) => (
                                 <Badge
                                     key={tag.name}
-                                    color={tag.colorHEX}
+                                    color={tag.color}
                                     variant="filled"
                                     size={badgeSize}
                                 >

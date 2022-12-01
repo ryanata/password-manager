@@ -115,7 +115,7 @@ const VaultRow = ({ site, provided, toggleModal }) => {
                                             key={j} 
                                             radius="sm"
                                             variant="filled"
-                                            color={tag.colorHEX} 
+                                            color={tag.color} 
                                             size={badgeSize}>
                                             {tag.name}
                                         </Badge>

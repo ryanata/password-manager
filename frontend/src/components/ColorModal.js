@@ -5,7 +5,7 @@ const useStyles = createStyles((theme) => ({
 }));
 
 
-const PopoverColors = ({setTag, tag}) => {
+const ColorModal = ({setTag, tag}) => {
     const { classes, theme } = useStyles();
     const [selectedColor, setSelectedColor] = useState("blue");
 
@@ -61,4 +61,4 @@ const PopoverColors = ({setTag, tag}) => {
      );
 }
  
-export default PopoverColors;
+export default ColorModal;
