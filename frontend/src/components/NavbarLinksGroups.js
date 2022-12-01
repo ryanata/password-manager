@@ -2,6 +2,7 @@ import { Box, Collapse, Group, Text, ThemeIcon, UnstyledButton, createStyles, Bu
 import { useDisclosure } from "@mantine/hooks";
 import { IconCalendarStats, IconChevronLeft, IconChevronRight, TablerIcon } from "@tabler/icons";
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 import VaultModal from "./VaultModal";
 
@@ -47,6 +48,8 @@ export function LinksGroup({ icon: Icon, label, initiallyOpened, links, link, op
     const hasLinks = Array.isArray(links);
     const [opened, setOpened] = useState(initiallyOpened || false);
     const [vaultModalOpened, { toggle: toggleVaultModal }] = useDisclosure(false);
+    const navigate = useNavigate();
+
     const ChevronIcon = theme.dir === "ltr" ? IconChevronRight : IconChevronLeft;
 
     const items = (hasLinks ? [...links, {}] : []).map((link, index) => {
@@ -68,10 +71,15 @@ export function LinksGroup({ icon: Icon, label, initiallyOpened, links, link, op
             <Text
                 component="a"
                 className={classes.link}
-                href={link.link}
-                key={link.label}
+                onClick={() => {
+                    navigate(link.link);
+                }}
+                key={index}
                 align="left"
-                sx={{ borderLeft: onVault && `3px solid ${theme.colors.green[5]}` }}
+                sx={{
+                    borderLeft: onVault && `3px solid ${theme.colors.green[5]}`,
+                    cursor: "pointer",
+                }}
             >
                 {link.label}
             </Text>
@@ -96,7 +104,7 @@ export function LinksGroup({ icon: Icon, label, initiallyOpened, links, link, op
                             setOpened((o) => !o);
                         }
                     } else if (link) {
-                        // Redirect to link
+                        // Redirect to link (this is for all non-vault links)
                         window.location.href = link;
                     }
                 }}

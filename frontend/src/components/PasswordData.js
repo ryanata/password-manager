@@ -59,7 +59,7 @@ const PasswordData = ({ account, toggleModal }) => {
 
     // Handlers
     const showPasswordHandler = () => {
-        if (vaultStates.id?.unlocked) {
+        if (vaultStates[id]?.unlocked) {
             setShowPassword(!showPassword);
         } else {
             // Remmber that user wants to show password. This is important because
@@ -75,7 +75,7 @@ const PasswordData = ({ account, toggleModal }) => {
     };
 
     const copyHandler = () => {
-        if (vaultStates.id?.unlocked) {
+        if (vaultStates[id]?.unlocked) {
             navigator.clipboard.writeText(account.password);
         } else {
             toggleModal();
@@ -87,11 +87,11 @@ const PasswordData = ({ account, toggleModal }) => {
         <Group spacing="xl" className={classes.root}>
             <HiddenInput
                 passwordHandler={inputPasswordHandler}
-                value={showPassword && vaultStates.id?.unlocked ? account.password : "•••••••••••••••"}
+                value={showPassword && vaultStates[id]?.unlocked ? account.password : "•••••••••••••••"}
             />
             <Group spacing="xs" className={classes.iconContainer}>
                 <UnstyledButton onClick={showPasswordHandler}>
-                    {showPassword && vaultStates.id?.unlocked ? (
+                    {showPassword && vaultStates[id]?.unlocked ? (
                         <IconEye size={iconSize} stroke={2} />
                     ) : (
                         <IconEyeOff size={iconSize} stroke={2} />

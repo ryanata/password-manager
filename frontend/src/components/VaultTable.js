@@ -5,9 +5,8 @@ import { useState } from "react";
 import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
 import { useParams } from "react-router-dom";
 
-import { setSites, useVault } from "../helpers/Hooks";
+import { setSites, useDebounce, useVault, useVaultSearch } from "../helpers/Hooks";
 import MasterPasswordModal from "./MasterPasswordModal";
-import { TagCarousel } from "./TagCarousel";
 import VaultHeader from "./VaultHeader";
 import VaultRow from "./VaultRow";
 
@@ -23,12 +22,15 @@ const updateVaultData = (data) => {
     return setSites(data.vaultId, data.sites);
 };
 
-const VaultTable = () => {
+const VaultTable = ({ searchTerm }) => {
     const { classes, theme } = useStyles();
     const [sort, setSort] = useState("unsorted");
     const { id } = useParams();
-    // Get vault data should take in id
+    // Get vault data
     const { data, isLoading, error } = useVault(id);
+    // Get vault search data
+    const searchTermDebounced = useDebounce(searchTerm, 500);
+    const { data: searchData, isLoading: searchLoading, error: searchError } = useVaultSearch(id, searchTermDebounced);
     const queryId = `getVault_${id}`;
     const queryClient = new useQueryClient();
     const { mutate } = useMutation(updateVaultData, {
@@ -72,7 +74,7 @@ const VaultTable = () => {
         }
     };
 
-    if (isLoading) {
+    if (isLoading || searchLoading) {
         return (
             <Center style={{ width: "100%", height: "100%" }}>
                 <Loader size="xl" color="steel-blue" />
@@ -88,12 +90,16 @@ const VaultTable = () => {
         );
     }
 
-    console.log(data);
-    const vault = data.vault;
+    const vault = searchData
+        ? {
+              ...data.vault,
+              sites: searchData.sites,
+          }
+        : data.vault;
 
     const onDragEnd = (result) => {
         // dropped outside the list
-        if (!result.destination) {
+        if (!result.destination || searchTerm) {
             return;
         }
         // Update data
@@ -118,7 +124,6 @@ const VaultTable = () => {
     return (
         <>
             <Box className={classes.noSpacing}>
-                <TagCarousel />
                 <VaultHeader sort={sort} toggleSort={toggleSort} />
                 {sort === "unsorted" ? (
                     <DragDropContext onDragEnd={onDragEnd}>

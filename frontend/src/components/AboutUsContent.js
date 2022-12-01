@@ -35,10 +35,10 @@ const charactersList = [
 
   {
     id: 'billy',
-    image: 'https://img.icons8.com/clouds/256/000000/homer-simpson.png',
+    image: 'https://img.icons8.com/clouds/256/000000/music.png',
     label: 'Billy Furie',
     description: 'Backend Developer',
-    content: 'Homer Jay Simpson (born May 12) is the main protagonist and one of the five main characters of The Simpsons series(or show). He is the spouse of Marge Simpson and father of Bart, Lisa and Maggie Simpson.',
+    content: 'I\'m a Junior at UCF majoring in Computer Science. In my free time I like to hang out with my friends, listen to music, and eat lots of food. I worked on the backend of pwdly.',
   },
 
   {
@@ -51,26 +51,26 @@ const charactersList = [
 
   {
     id: 'jason',
-    image: 'https://img.icons8.com/clouds/256/000000/homer-simpson.png',
+    image: 'https://img.icons8.com/clouds/256/000000/strength.png',
     label: 'Jason James',
     description: 'Backend Developer',
-    content: 'Homer Jay Simpson (born May 12) is the main protagonist and one of the five main characters of The Simpsons series(or show). He is the spouse of Marge Simpson and father of Bart, Lisa and Maggie Simpson.',
+    content: 'I’m a Junior at UCF majoring in computer science. In my free time, I like to hang out with friends and work out. I worked on the backend of pwdly.',
   },
 
   {
     id: 'guidarly',
-    image: 'https://img.icons8.com/clouds/256/000000/homer-simpson.png',
+    image: 'https://img.icons8.com/clouds/256/000000/microphone.png',
     label: 'Guidarly Joseph',
     description: 'Mobile Developer',
-    content: 'Homer Jay Simpson (born May 12) is the main protagonist and one of the five main characters of The Simpsons series(or show). He is the spouse of Marge Simpson and father of Bart, Lisa and Maggie Simpson.',
+    content: 'I’m a Junior at UCF majoring in Computer Science. I like to make music and watch anime in my free time. I developed for mobile and frontend of pwdly.',
   },
    
   {
     id: 'khaled',
-    image: 'https://img.icons8.com/clouds/256/000000/homer-simpson.png',
+    image: 'https://img.icons8.com/clouds/256/000000/literature.png',
     label: 'Khaled Tujjar',
     description: 'Mobile Developer',
-    content: 'Homer Jay Simpson (born May 12) is the main protagonist and one of the five main characters of The Simpsons series(or show). He is the spouse of Marge Simpson and father of Bart, Lisa and Maggie Simpson.',
+    content: 'I\'m a Junior at the University of Central Florida majoring in computer science. In my free time I like to read and listen to music. I was a mobile developer for pwdly.',
   },
 ];
 

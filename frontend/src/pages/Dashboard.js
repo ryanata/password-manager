@@ -5,7 +5,7 @@ import { Route, Routes } from "react-router-dom";
 
 import DashboardHeader from "../components/DashboardHeader";
 import { DashboardLeftNav } from "../components/DashboardLeftNav";
-import VaultTable from "../components/VaultTable";
+import Vault from "../components/Vault";
 import WelcomeModal from "../components/WelcomeModal";
 import { VaultContext, useUser } from "../helpers/Hooks";
 import PasswordGenerator from "../components/PasswordGenerator";
@@ -34,7 +34,6 @@ const VaultProvider = ({ vaultIds, children }) => {
         };
         return acc;
     }, {});
-
     const [vaultStates, setVaultStates] = useState(intialVault);
     const value = useMemo(
         () => ({
@@ -91,7 +90,7 @@ const Dashboard = () => {
                 {noVaults && <WelcomeModal userId={userId} />}
                 <Routes>
                     <Route exact path="/" element={<LoadingVaults vaults={vaults} />} />
-                    <Route path=":id" element={<VaultTable />} />
+                    <Route path=":id" element={<Vault />} />
                     <Route
                         path="all-passwords"
                         element={
