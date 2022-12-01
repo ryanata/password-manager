@@ -1,7 +1,11 @@
 import { Button, Group, TextInput, createStyles } from "@mantine/core";
+import { useDisclosure } from "@mantine/hooks";
 import { IconPlus, IconSearch } from "@tabler/icons";
+import AccountModal from "./AccountModal";
 
 const SearchBar = ({ setSearch }) => {
+    const [accountModalOpened, { toggle: toggleAccountModal }] = useDisclosure(false);
+
     return (
         <Group position="apart">
             <TextInput
@@ -21,6 +25,7 @@ const SearchBar = ({ setSearch }) => {
                 size="md"
                 uppercase
                 leftIcon={<IconPlus size={28} />}
+                onClick={toggleAccountModal}
                 styles={(theme) => ({
                     root: {
                         backgroundColor: "#4681D0",
@@ -35,6 +40,11 @@ const SearchBar = ({ setSearch }) => {
             >
                 add new
             </Button>
+
+            <AccountModal
+                opened={accountModalOpened}
+                closed={toggleAccountModal}
+            />
         </Group>
     );
 };
