@@ -7,7 +7,8 @@ import AllPasswords from './AllPasswords';
 import Vaults from './Vaults';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-
+import { getMe } from '../hooks/getAllVaultsQuery';
+import { useQuery } from 'react-query';
 
 function LogoTitle() {
   return (
@@ -67,8 +68,18 @@ const CustomDrawer = props => {
 };
 
 function Dashboard() {
+  const { data, isLoading, isError } = useQuery("getUser", () => getMe());
+
+  if (isLoading) {
+    return <Text>Loading...</Text>;
+  }
+
+  if (isError) {
+    return <Text>Error: {isError.message}</Text>;
+  }
+
+  console.log(data);
   return (
-    
         <Drawer.Navigator 
             drawerContent={(props) => <CustomDrawer{...props}/>}
             useLegacyImplementation={true} 

@@ -1,7 +1,5 @@
 import React from 'react';
 import {StyleSheet, Text, View, Button, Image, TouchableOpacity} from 'react-native';
-import { Avatar } from '@rneui/themed';
-//import { bindCallback } from 'rxjs';
 
 
 const VaultRow = ({site}) => {
@@ -11,12 +9,14 @@ const VaultRow = ({site}) => {
             {/*change to view if whole row is not intended to be a button*/}
             <TouchableOpacity style = {styles.row}>
                 <Text style = {styles.websiteUrl}>{site.name}</Text>
-                <Avatar 
+                {/* 
+                    Please create a new component for avatar instead of this library
+                    <Avatar 
                     containerStyle={{ backgroundColor: "#9700b9" , justifyContent: 'center', right: 150}}
                     size={48}
                     icon={{ name: "google", type: "font-awesome" }}         
                     src={`https://www.google.com/s2/favicons?domain=${site.url}&sz=${iconSize}`}           
-                />
+                /> */}
                 <TouchableOpacity>
                     {/*<Text style = {{size: 50, left: 500}}/>*/}
                     <Image style =  {{ left: 130, position: 'absolute',bottom: 0}} source = {require('/Users/khaledtujjar/password-manager/mobile/assets/chevron-right-solid-24.png')} />
