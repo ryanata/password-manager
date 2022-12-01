@@ -1,10 +1,27 @@
-import { useState, useEffect } from "react"
-import { Alert, Text, Paper, Title, Button, Slider, Loader, Container, Grid, Space, Stack, Checkbox, UnstyledButton, Group, Divider } from '@mantine/core';
+import {
+    Alert,
+    Button,
+    Checkbox,
+    Container,
+    Divider,
+    Grid,
+    Group,
+    Loader,
+    Paper,
+    Slider,
+    Space,
+    Stack,
+    Text,
+    Title,
+    UnstyledButton,
+} from "@mantine/core";
 import { IconCopy } from "@tabler/icons";
-import { PasswordStrength } from "./StrengthMeter";
-import { getGeneratePassword } from "../helpers/Hooks";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { IconAlertCircle } from "@tabler/icons";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useEffect, useState } from "react";
+
+import { getGeneratePassword } from "../helpers/Hooks";
+import { PasswordStrength } from "./StrengthMeter";
 
 const PasswordGenerator = () => {
     const [length, setLength] = useState(10);
@@ -14,8 +31,13 @@ const PasswordGenerator = () => {
     const [lowercase, setLowercase] = useState(true);
     const [alert, setAlert] = useState(false);
     // const { data: passwordObj, isLoading, isError, refetch } = useGenerator(length, numbers, symbols, uppercase, lowercase);
-    const { data: passwordObj, isLoading, isError, refetch } = useQuery(
-        [`generatePassword`, length, numbers, symbols, uppercase, lowercase], 
+    const {
+        data: passwordObj,
+        isLoading,
+        isError,
+        refetch,
+    } = useQuery(
+        [`generatePassword`, length, numbers, symbols, uppercase, lowercase],
         () => getGeneratePassword(length, numbers, symbols, uppercase, lowercase),
         { refetchOnWindowFocus: false }
     );
@@ -33,8 +55,8 @@ const PasswordGenerator = () => {
     const checkOthers = (caller) => {
         const states = [lowercase, uppercase, numbers, symbols];
         // Check if every state in the array, except the caller index, is false
-        return states.filter((state, index) => index !== caller).every((state) => state === false)
-    }
+        return states.filter((state, index) => index !== caller).every((state) => state === false);
+    };
 
     if (isError) {
         return <Text>Sorry, our password generator is not working right now 😞. Try refreshing this page.</Text>;
@@ -49,12 +71,7 @@ const PasswordGenerator = () => {
             <PasswordStrength password={password} />
             <Paper shadow="xs" p="lg" radius="sm" px="xl">
                 <Group position="apart">
-                    {isLoading ? 
-                        <Loader/>
-                    :
-                    <Title order={3}>
-                        {password}
-                    </Title>}
+                    {isLoading ? <Loader /> : <Title order={3}>{password}</Title>}
                     <UnstyledButton onClick={copyHandler}>
                         <IconCopy size="30" stroke={2} />
                     </UnstyledButton>
@@ -62,8 +79,10 @@ const PasswordGenerator = () => {
             </Paper>
             <Space h="md" />
             <Paper shadow="xs" py="lg" radius="sm">
-                <Text size="lg" align="left" pl="xl">Customize Password</Text>
-                <Divider mx="lg" my="md"/>
+                <Text size="lg" align="left" pl="xl">
+                    Customize Password
+                </Text>
+                <Divider mx="lg" my="md" />
                 <Grid>
                     <Grid.Col span={6}>
                         <Container size={400} pt="sm">
@@ -75,51 +94,81 @@ const PasswordGenerator = () => {
                     </Grid.Col>
                     <Grid.Col span={4} offset={0.5}>
                         <Stack>
-                            <Checkbox size="md" checked={lowercase} value="lowercase" label="Lowercase" onChange={(event) => {
-                                if (checkOthers(0)) {
-                                    setAlert(true);
-                                } else {
-                                    setLowercase(event.currentTarget.checked);
-                                }
-                            }}/>
-                            <Checkbox size="md" checked={uppercase} value="uppercase" label="Uppercase" onChange={(event) => {
-                                if (checkOthers(1)) {
-                                    setAlert(true);
-                                } else {
-                                    setUppercase(event.currentTarget.checked);
-                                }
-                            }}/>
-                            <Checkbox size="md" checked={numbers} value="numbers" label="Numbers" onChange={(event) => {
-                                if (checkOthers(2)) {
-                                    setAlert(true);
-                                } else {
-                                    setNumbers(event.currentTarget.checked);
-                                }
-                            }}/>
-                            <Checkbox size="md" checked={symbols} value="symbols" label="Symbols" onChange={(event) => {
-                                if (checkOthers(3)) {
-                                    setAlert(true);
-                                } else {
-                                    setSymbols(event.currentTarget.checked);
-                                }
-                            }}/>
+                            <Checkbox
+                                size="md"
+                                checked={lowercase}
+                                value="lowercase"
+                                label="Lowercase"
+                                onChange={(event) => {
+                                    if (checkOthers(0)) {
+                                        setAlert(true);
+                                    } else {
+                                        setLowercase(event.currentTarget.checked);
+                                    }
+                                }}
+                            />
+                            <Checkbox
+                                size="md"
+                                checked={uppercase}
+                                value="uppercase"
+                                label="Uppercase"
+                                onChange={(event) => {
+                                    if (checkOthers(1)) {
+                                        setAlert(true);
+                                    } else {
+                                        setUppercase(event.currentTarget.checked);
+                                    }
+                                }}
+                            />
+                            <Checkbox
+                                size="md"
+                                checked={numbers}
+                                value="numbers"
+                                label="Numbers"
+                                onChange={(event) => {
+                                    if (checkOthers(2)) {
+                                        setAlert(true);
+                                    } else {
+                                        setNumbers(event.currentTarget.checked);
+                                    }
+                                }}
+                            />
+                            <Checkbox
+                                size="md"
+                                checked={symbols}
+                                value="symbols"
+                                label="Symbols"
+                                onChange={(event) => {
+                                    if (checkOthers(3)) {
+                                        setAlert(true);
+                                    } else {
+                                        setSymbols(event.currentTarget.checked);
+                                    }
+                                }}
+                            />
                         </Stack>
                     </Grid.Col>
                 </Grid>
             </Paper>
             <Space h="xl" />
-            <Button size="md" onClick={() => {
-                // refetch the data
-                refetch();
-            }}>Generate Password</Button>
-            {alert && 
-                (<Group position="right" pt="lg" mt="lg">
+            <Button
+                size="md"
+                onClick={() => {
+                    // refetch the data
+                    refetch();
+                }}
+            >
+                Generate Password
+            </Button>
+            {alert && (
+                <Group position="right" pt="lg" mt="lg">
                     <Alert icon={<IconAlertCircle size={16} />} title="Bummer!" color="red">
                         You must select at least one option.
                     </Alert>
-                </Group>)}
+                </Group>
+            )}
         </Container>
-    )
-}
+    );
+};
 
-export default PasswordGenerator
+export default PasswordGenerator;

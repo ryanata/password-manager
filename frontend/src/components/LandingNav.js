@@ -157,7 +157,7 @@ const solutionsdata = [
     },
 ];
 
-export function LandingNav({pb=120}) {
+export function LandingNav({ pb = 120 }) {
     const [drawerOpened, { toggle: toggleDrawer, close: closeDrawer }] = useDisclosure(false);
     const [linksFeaturesOpened, { toggle: toggleFeatures }] = useDisclosure(false);
     const [linksSolutionsOpened, { toggle: toggleSolutions }] = useDisclosure(false);
@@ -173,7 +173,7 @@ export function LandingNav({pb=120}) {
     const { classes, theme } = useStyles();
 
     const links = featuresdata.map((item) => (
-        <UnstyledButton onClick={() => window.location.href=item.link} className={classes.subLink} key={item.title}>
+        <UnstyledButton onClick={() => (window.location.href = item.link)} className={classes.subLink} key={item.title}>
             <Group noWrap align="flex-start">
                 <ThemeIcon size={34} variant="default" radius="md">
                     <item.icon size={22} color="#5481CA" />
@@ -191,7 +191,7 @@ export function LandingNav({pb=120}) {
     ));
 
     const solutionslinks = solutionsdata.map((item) => (
-        <UnstyledButton onClick={() => window.location.href=item.link} className={classes.subLink} key={item.title}>
+        <UnstyledButton onClick={() => (window.location.href = item.link)} className={classes.subLink} key={item.title}>
             <Group noWrap align="flex-start">
                 <ThemeIcon size={34} variant="default" radius="md">
                     <item.icon size={22} color="#5481CA" />
@@ -212,8 +212,8 @@ export function LandingNav({pb=120}) {
         <Box pb={pb}>
             <Header withBorder={false} height={60} px="md" className={classes.transparentColor}>
                 <Group position="apart" sx={{ height: "100%" }}>
-                    <Group 
-                        onClick={() => window.location.href="/"}
+                    <Group
+                        onClick={() => (window.location.href = "/")}
                         sx={(theme) => ({
                             [theme.fn.largerThan("sm")]: {
                                 width: groupSize[0],

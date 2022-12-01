@@ -1,4 +1,4 @@
-import { Box, Collapse, Group, Text, ThemeIcon, UnstyledButton, createStyles, Button } from "@mantine/core";
+import { Box, Button, Collapse, Group, Text, ThemeIcon, UnstyledButton, createStyles } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { IconCalendarStats, IconChevronLeft, IconChevronRight, TablerIcon } from "@tabler/icons";
 import { useEffect, useState } from "react";
@@ -60,7 +60,7 @@ export function LinksGroup({ icon: Icon, label, initiallyOpened, links, link, op
                 </Button>
             );
         }
-        
+
         // link.link is /dashboard/${vaultId}
         // get the vaultId from the link
         const vaultId = link.link.split("/")[2];
