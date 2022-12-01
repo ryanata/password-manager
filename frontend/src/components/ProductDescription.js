@@ -11,6 +11,11 @@ const useStyles = createStyles((theme) => ({
     outerGrid: {
         maxWidth: "100%",
     },
+    control: {
+        [theme.fn.smallerThan('xs')]: {
+          flex: 1,
+        },
+      },
 }));
 
 export function ProductDescription() {
@@ -55,8 +60,8 @@ export function ProductDescription() {
                             paddingBottom: 30,
                         }}
                     >
-                        The only password manager you need for all your life chapters. Learn how you can store, share,
-                        and secure your life with{" "}
+                        The only password manager you need for all your life chapters. Learn how you can store,
+                        organize, and secure your life with{" "}
                         <Text weight={600} component="span">
                             pwdly
                         </Text>
@@ -71,7 +76,7 @@ export function ProductDescription() {
                             },
                         }}
                     >
-                        <Button
+                        <Button 
                             sx={{
                                 color: "#ffffff",
                                 backgroundColor: "#052754",
@@ -81,11 +86,11 @@ export function ProductDescription() {
                                     fontSize: 20,
                                 },
                             }}
-                            radius="xl"
+                            radius="xl" size="md" className={classes.control}
                         >
                             Learn More
                         </Button>
-                        <Button
+                        <Button radius="xl" size="md" className={classes.control}
                             sx={{
                                 color: "#4681D0",
                                 backgroundColor: "#ffffff",
@@ -98,14 +103,13 @@ export function ProductDescription() {
                                     color: "#ffffff",
                                 },
                             }}
-                            radius="xl"
                         >
                             Get Started
                         </Button>
                     </Group>
                 </Grid.Col>
                 <Grid.Col span={3} className={classes.hiddenMobile}>
-                    <Image width="110%" src={landingMock} alt="Random unsplash image" />
+                    <Image width="110%" src={landingMock} alt="Mobile and Web Mocks" />
                 </Grid.Col>
             </Grid>
         </>
