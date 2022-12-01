@@ -1,5 +1,4 @@
-import { Anchor, Center, Group, Header, Image, Space, Text, Title, createStyles } from "@mantine/core";
-import { IconUserCircle } from "@tabler/icons";
+import { Anchor, Group, Header, Image, Space, Text, Title, createStyles } from "@mantine/core";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import React from "react";
@@ -37,19 +36,20 @@ export default function DashboardHeader() {
                         <Space h="md" />
                         <img src={Logo} alt="pwdly logo" />
                     </Group>
-                    <Group position="apart" align="center">
-                        <Title order={3} transform="capitalize">
-                            {`${user.name.firstName} ${user.name.lastName[0]}`}
-                        </Title>
+                    <Group position="apart" ta="center">
+                        <Title
+                            order={3}
+                            weight={400}
+                            transform="capitalize"
+                        >{`${user.name.firstName} ${user.name.lastName[0]}`}</Title>
+                        <Space h="s" />
                         <Anchor
                             onClick={() => {
                                 localStorage.removeItem("pwdlyToken");
                             }}
                             href="/"
                         >
-                            <Center>
-                                <IconUserCircle size={30} color="white" />
-                            </Center>
+                            <Image height={20} fit="contain" src={iconUser} />
                         </Anchor>
                         <Space h="md" />
                     </Group>
