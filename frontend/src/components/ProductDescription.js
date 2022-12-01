@@ -12,10 +12,10 @@ const useStyles = createStyles((theme) => ({
         maxWidth: "100%",
     },
     control: {
-        [theme.fn.smallerThan('xs')]: {
-          flex: 1,
+        [theme.fn.smallerThan("xs")]: {
+            flex: 1,
         },
-      },
+    },
 }));
 
 export function ProductDescription() {
@@ -76,7 +76,7 @@ export function ProductDescription() {
                             },
                         }}
                     >
-                        <Button 
+                        <Button
                             sx={{
                                 color: "#ffffff",
                                 backgroundColor: "#052754",
@@ -86,11 +86,16 @@ export function ProductDescription() {
                                     fontSize: 20,
                                 },
                             }}
-                            radius="xl" size="md" className={classes.control}
+                            radius="xl"
+                            size="md"
+                            className={classes.control}
                         >
                             Learn More
                         </Button>
-                        <Button radius="xl" size="md" className={classes.control}
+                        <Button
+                            radius="xl"
+                            size="md"
+                            className={classes.control}
                             sx={{
                                 color: "#4681D0",
                                 backgroundColor: "#ffffff",

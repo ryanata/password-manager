@@ -98,3 +98,16 @@ export const useDebounce = (value, delay) => {
     );
     return debouncedValue;
 };
+
+export const getGeneratePassword = (length, numbers, symbols, uppercase, lowercase) => {
+    return new Promise((resolve, reject) => {
+        axios
+            .post("/api/generatePassword", { length, numbers, symbols, uppercase, lowercase })
+            .then((res) => {
+                resolve(res.data);
+            })
+            .catch((err) => {
+                reject(err);
+            });
+    });
+};
