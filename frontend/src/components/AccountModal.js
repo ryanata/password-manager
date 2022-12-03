@@ -88,13 +88,6 @@ const AccountModal = ({opened, closed}) => {
         }
     }, [form.values.url]);
 
-    // Helper functions
-    const onClose = () => {
-        closed();
-        form.reset();
-        setSelectedTags([]);
-        setTags([]);
-    };
 
     const formHandler = (values) => {
         // Create a new account and double check that the tags array don't have duplicate object with another name
@@ -130,7 +123,7 @@ const AccountModal = ({opened, closed}) => {
             tags: formattedTags,
         }).then((res) => {
             console.log(res);
-            onClose();
+            closed();
         }).catch((err) => {
             setAlert(err.response.data.message);
         });
@@ -140,7 +133,7 @@ const AccountModal = ({opened, closed}) => {
         return (
             <Modal
                 opened={opened}
-                onClose={onClose}
+                onClose={closed}
                 title="Add Account"
                 size="sm"
             >
@@ -153,7 +146,7 @@ const AccountModal = ({opened, closed}) => {
         return (
             <Modal
                 opened={opened}
-                onClose={onClose}
+                onClose={closed}
                 size="sm"
                 title="Error"
             >
@@ -179,7 +172,7 @@ const AccountModal = ({opened, closed}) => {
         <Modal
             title="Create new account"
             opened={opened}
-            onClose={onClose}
+            onClose={closed}
             closeOnClickOutside={false}
             size="sm"
             styles={(theme) => ({
@@ -268,7 +261,7 @@ const AccountModal = ({opened, closed}) => {
 
                     <Group>
                         <Button
-                            onClick={onClose}
+                            onClick={closed}
                             variant="outline">
                             Cancel
                         </Button>

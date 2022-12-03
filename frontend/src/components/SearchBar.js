@@ -41,10 +41,10 @@ const SearchBar = ({ setSearch }) => {
                 add new
             </Button>
 
-            <AccountModal
+            {accountModalOpened && <AccountModal
                 opened={accountModalOpened}
                 closed={toggleAccountModal}
-            />
+            />}
         </Group>
     );
 };
