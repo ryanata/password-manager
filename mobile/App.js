@@ -5,8 +5,10 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import Dashboard from './pages/Dashboard';
+
 import * as React from 'react';
 import { createDrawerNavigator } from '@react-navigation/drawer';
+
 
 const styles = StyleSheet.create({
   container: {

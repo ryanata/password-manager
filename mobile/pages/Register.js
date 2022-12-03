@@ -11,19 +11,23 @@ from 'react-native';
 import React, { Component, useReducer, useState } from 'react';
 import axios from 'axios';
 import {useForm, Controller} from 'react-hook-form'; 
+import { useNavigation } from '@react-navigation/native'
 import * as SecureStore from 'expo-secure-store';
 
 const Register = () => {
 
     const [state, setState] = useState('')
 
-    const {setValue, handleSubmit, errors, control} = useForm({
+    const navigation = useNavigation();
+
+    const {setValue, handleSubmit, errors, control, getValues} = useForm({
         defaultValues:{
             firstName: '',
             lastName: '',
             email: '',
             phoneNumber: '',
-            password: ''
+            password: '',
+            loggedIn: false
         }
     })
 
@@ -40,14 +44,18 @@ const Register = () => {
                 phoneNumber: data.phoneNumber,
                 password: data.password,
             }).then((res) => {
-                save("pwdlyToken", res.data.user.token)
+                if (res.status === 201) {
+                    // Redirect to dashboard
+                    save("pwdlyToken", res.data.user.token);
+                    navigation.navigate('Dashboard');
+                }
             }).catch((err) => {
-                console.log("error", err)
-                if (err.status === 400){
+                console.log(err)
+                if (err.response.status === 400){
                     console.log("error")
                     setState({ alert: err.response.data.message});
                 } else {
-                    setState({ alert: "an error occured"});
+                    setState({ alert: "An error occured"});
                 }
             })
     }
@@ -73,9 +81,7 @@ const Register = () => {
                             />
                         )}
                     />
-                    
                 </View>
-
                 <View style={styles.inputView}>
                     <Controller
                         control= {control}
@@ -91,7 +97,6 @@ const Register = () => {
                             />
                         )}
                     />
-                    
                 </View>
                 <View style={styles.inputView}>
                     <Controller
@@ -110,7 +115,6 @@ const Register = () => {
                     />
                     
                 </View>
-
                 <View style={styles.inputView}>
                     <Controller
                         control= {control}
@@ -127,7 +131,6 @@ const Register = () => {
                         )}
                     />
                 </View>
-
                 <View style={styles.inputView}>
                     <Controller
                         control= {control}
@@ -145,9 +148,12 @@ const Register = () => {
                         )}
                     />
                 </View>
+                
             <TouchableOpacity onPress={() => navigation.navigate('Login')}>
                 <Text style={styles.Already_button}>Already have an account? Log in</Text>
             </TouchableOpacity>
+            
+            <Text style={styles.errorMessageTextStyle}>{state.alert}</Text>
 
             <TouchableOpacity style={styles.SignBtn} onPress = {handleSubmit(formHandler)}>
                 <Text style={styles.loginText}>Sign Up</Text>
@@ -202,12 +208,13 @@ const styles = StyleSheet.create({
     },
 
     errorMessageTextStyle: {
-        color: '#db2828',
+        color: '#c62828',
         textAlign: 'center',
-        fontSize: 12,
+        fontSize: 20,
     },
 
     Already_button: {
+        color: '#ffffffr',
         height: 30,
         marginBottom: 30,
     },
