@@ -124,10 +124,10 @@ const VaultTable = ({ tags, searchTerm, filteredTags }) => {
         };
 
     
-
+    const isFiltered = !(filteredTags.length === 0 || filteredTags.length === tags.length);
     const onDragEnd = (result) => {
         // dropped outside the list
-        if (!result.destination || searchTerm) {
+        if (!result.destination || searchTerm || isFiltered) {
             return;
         }
         // Update data

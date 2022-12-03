@@ -1,10 +1,22 @@
 import { Button, Group, TextInput, createStyles } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { IconPlus, IconSearch } from "@tabler/icons";
+import { useQueryClient } from "@tanstack/react-query";
+import { useParams } from "react-router-dom";
 import AccountModal from "./AccountModal";
 
-const SearchBar = ({ setSearch }) => {
+const SearchBar = ({ search, setSearch }) => {
     const [accountModalOpened, { toggle: toggleAccountModal }] = useDisclosure(false);
+    const { id } = useParams();
+    const queryClient = useQueryClient();
+    const queryTags = `getTags_${id}`;
+    const queryVault = `getVault_${id}`;
+
+    const onClose = () => {
+        toggleAccountModal();
+        queryClient.prefetchQuery([queryTags]);
+        queryClient.prefetchQuery([queryVault]);
+    };
 
     return (
         <Group position="apart">
@@ -43,7 +55,7 @@ const SearchBar = ({ setSearch }) => {
 
             {accountModalOpened && <AccountModal
                 opened={accountModalOpened}
-                closed={toggleAccountModal}
+                closed={onClose}
             />}
         </Group>
     );
