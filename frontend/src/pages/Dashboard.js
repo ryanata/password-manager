@@ -6,6 +6,7 @@ import { Route, Routes } from "react-router-dom";
 import DashboardHeader from "../components/DashboardHeader";
 import { DashboardLeftNav } from "../components/DashboardLeftNav";
 import PasswordGenerator from "../components/PasswordGenerator";
+import Settings from "../components/Settings.js";
 import Vault from "../components/Vault";
 import WelcomeModal from "../components/WelcomeModal";
 import { VaultContext, useUser } from "../helpers/Hooks";
@@ -101,15 +102,7 @@ const Dashboard = () => {
                         }
                     />
                     <Route path="password-generator" element={<PasswordGenerator />} />
-                    <Route
-                        path="settings"
-                        element={
-                            <>
-                                {" "}
-                                <p>settings</p>
-                            </>
-                        }
-                    />
+                    <Route path="settings" element={<Settings />} />
                 </Routes>
             </AppShell>
         </VaultProvider>
