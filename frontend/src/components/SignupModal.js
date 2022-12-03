@@ -1,20 +1,19 @@
 import {
-    createStyles,
     Anchor,
     Button,
-    Checkbox,
     Group,
     Modal,
     PasswordInput,
     Stack,
-    Title,
     Text,
     TextInput,
+    Title,
+    createStyles,
 } from "@mantine/core";
-import { useMediaQuery } from "@mantine/hooks";
 import { useForm } from "@mantine/form";
-import { useState } from "react";
+import { useMediaQuery } from "@mantine/hooks";
 import axios from "axios";
+import { useState } from "react";
 import { Navigate } from "react-router-dom";
 
 const useStyles = createStyles((theme) => ({
@@ -34,20 +33,13 @@ const useStyles = createStyles((theme) => ({
     },
 }));
 
-const SignupModal = ({ opened, closed }) => {
+const SignupModal = ({ opened, closed, openLoginModal }) => {
     // Styling
     const { classes, theme } = useStyles();
 
     // Hooks
     const isMobile = useMediaQuery(`(max-width: ${theme.breakpoints.sm - 1}px)`);
-    const [submittedValues, setSubmittedValues] = useState("");
     const [alert, setAlert] = useState("");
-
-    // Form close
-    const onClose = () => {
-        // Triggers css display: none
-        closed();
-    };
 
     const form = useForm({
         initialValues: {
@@ -85,6 +77,14 @@ const SignupModal = ({ opened, closed }) => {
                 setAlert(err.response.data.message);
             });
     };
+
+    const redirectToLogin = () => {
+        // Close Modal
+        closed();
+        // Open Login Modal
+        openLoginModal();
+    };
+
     if (form.values.loggedIn) {
         return <Navigate to="/dashboard" />;
     }
@@ -95,7 +95,7 @@ const SignupModal = ({ opened, closed }) => {
             opened={opened}
             onClose={closed}
             fullScreen={isMobile}
-            size="sm"
+            size="md"
             radius={theme.radius.md}
             styles={{
                 header: {
@@ -109,7 +109,7 @@ const SignupModal = ({ opened, closed }) => {
             </Title>
             <Text align="center" color={theme.colors.gray[6]} className={classes.modalSubheader}>
                 {"Already have an account? "}
-                <Anchor>Log in</Anchor>
+                <Anchor onClick={redirectToLogin}>Log in</Anchor>
             </Text>
             <form onSubmit={form.onSubmit(formHandler)}>
                 <Stack>

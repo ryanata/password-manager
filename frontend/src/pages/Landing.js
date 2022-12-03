@@ -1,8 +1,9 @@
-import { Gradient } from "../scripts/Gradient";
-import { useEffect, useRef } from "react";
 import { Global, css } from "@emotion/react";
+import { useEffect, useRef } from "react";
+
 import { LandingNav } from "../components/LandingNav";
 import { ProductDescription } from "../components/ProductDescription";
+import { Gradient } from "../helpers/Gradient";
 
 const cssCanvas = css`
     #gradient-canvas {
