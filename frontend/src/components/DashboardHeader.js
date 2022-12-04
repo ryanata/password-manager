@@ -42,7 +42,11 @@ export default function DashboardHeader() {
                             transform="capitalize"
                         >{`${user.name.firstName} ${user.name.lastName[0]}`}</Title>
                         <Anchor>
-                            <AccountMenu transition="skew-down" transitionDuration={300} transitionTimingFunction="ease"/>
+                            <AccountMenu
+                                transition="skew-down"
+                                transitionDuration={300}
+                                transitionTimingFunction="ease"
+                            />
                         </Anchor>
                         <Space h="md" />
                     </Group>
