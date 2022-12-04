@@ -71,7 +71,7 @@ const AccountMenu = () => {
                                     root: {
                                         backgroundColor: "#454545",
                                         color: "white",
-                                        width: "100%",
+                                        width: "248px",
                                         borderBottom: "1px solid #3A3939",
                                         borderTop: "1px solid #3A3939",
                                         "&:hover": {
