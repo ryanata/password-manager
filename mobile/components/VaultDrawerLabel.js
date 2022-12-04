@@ -2,24 +2,23 @@ import * as React from 'react';
 import { StyleSheet, Text, Button, View, Image, Pressable, TouchableOpacity } from 'react-native';
 import { createDrawerNavigator, DrawerContentScrollView, DrawerItemList, DrawerItem } from '@react-navigation/drawer';
 import { NavigationContainer, useNavigation } from '@react-navigation/native';
-import Collapsible from 'react-native-collapsible';
 import Vaults from '../pages/Vaults';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import Collapsible from 'react-native-collapsible';
 {/*Vault data Placeholder. Replace with real vault data implementation */}
-const vaults = [
-    {
-        id: '1',
-        vaultName: 'School'
-    },
-    {
-        id: '2',
-        vaultName: 'Work'
-    }
-]
 
-const VaultDrawerlabel = (navigation) => {
+const onPressVaultLabel = (navigation, vault) => {
+    //navigation.navigate('Vaults', {vault: 'vabab'})
+    console.log(vault.name)
+} 
+
+
+const VaultDrawerlabel = ({vaults}) => {
     const [isCollapsed, setCollapsed] = React.useState(true);
+    const navigation = useNavigation();
+    
+    let token = "none";
     
     return(
         <View>
@@ -39,8 +38,8 @@ const VaultDrawerlabel = (navigation) => {
             <Collapsible collapsed={isCollapsed} style={{alignItems: 'center'}}>
             {vaults.map((vault, index) => {
                 return (
-                <TouchableOpacity onPress={() => {navigation.navigate('Vaults')}} style={{padding: 10}} key={index}>
-                    <Text style={{color: 'white', fontSize: 15}}>{vault.vaultName}</Text>
+                <TouchableOpacity onPress={() => {onPressVaultLabel(navigation, vault)}} style={{padding: 10}} key={index}>
+                    <Text style={{color: 'white', fontSize: 15}}>{vault.name}</Text>
                 </TouchableOpacity>
                 );
             })}
