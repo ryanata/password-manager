@@ -3,11 +3,11 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 
 import "./App.css";
+import AboutUs from "./pages/AboutUs";
 import Dashboard from "./pages/Dashboard";
 import Features from "./pages/Features";
-import Solutions from "./pages/Solutions";
-import AboutUs from "./pages/AboutUs";
 import Landing from "./pages/Landing";
+import Solutions from "./pages/Solutions";
 
 // Create a client
 const queryClient = new QueryClient();

@@ -151,9 +151,9 @@ export function LinksGroup({ icon: Icon, label, initiallyOpened, links, link, op
     const items = (hasLinks ? [...links, {}] : []).map((link, index) => {
         if (index === links.length) {
             return (
-                <UnstyledButton key={index} component="a" onClick={toggleVaultModal}>
+                <Button key={index} component="a" onClick={toggleVaultModal} my="sm">
                     Add Vault
-                </UnstyledButton>
+                </Button>
             );
         }
 

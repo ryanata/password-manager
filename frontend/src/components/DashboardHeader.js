@@ -1,10 +1,9 @@
 import { Anchor, Group, Header, Image, Space, Text, Title, createStyles } from "@mantine/core";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
-import React from "react";
 
-import { default as iconUser } from "../assets/iconUser.png";
 import { default as Logo } from "../assets/logo.svg";
+import AccountMenu from "../components/AccountMenu";
 
 const useStyles = createStyles((theme) => ({
     header: {
@@ -42,14 +41,8 @@ export default function DashboardHeader() {
                             weight={400}
                             transform="capitalize"
                         >{`${user.name.firstName} ${user.name.lastName[0]}`}</Title>
-                        <Space h="s" />
-                        <Anchor
-                            onClick={() => {
-                                localStorage.removeItem("pwdlyToken");
-                            }}
-                            href="/"
-                        >
-                            <Image height={20} fit="contain" src={iconUser} />
+                        <Anchor>
+                            <AccountMenu transition="skew-down" transitionDuration={300} transitionTimingFunction="ease"/>
                         </Anchor>
                         <Space h="md" />
                     </Group>

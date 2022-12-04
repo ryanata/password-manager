@@ -1,8 +1,8 @@
 import { Box } from "@mantine/core";
 import { useEffect } from "react";
 
-import { SolutionsDescription } from "../components/SolutionsDescription";
 import { LandingNav } from "../components/LandingNav";
+import { SolutionsDescription } from "../components/SolutionsDescription";
 
 const Solutions = () => {
     // Sets page title
