@@ -6,9 +6,9 @@ import { useState } from "react";
 import { createVault } from "../helpers/Hooks";
 
 const VaultModal = ({ opened, closed }) => {
-    const queryClient = new useQueryClient();
+    const queryClient = useQueryClient();
     const userId = queryClient.getQueryData(["getUser"]).data._id;
-
+    
     const [error, setError] = useState("");
     const form = useForm({
         initialValues: {
@@ -27,6 +27,9 @@ const VaultModal = ({ opened, closed }) => {
                     console.log("Vault created!");
                     // Close the modal
                     closed();
+                    // Prefetch "getUser"
+                    queryClient.prefetchQuery(["getUser"]);
+                    queryClient.prefetchQuery(["getVaults"]);
                 }
             })
             .catch((err) => {

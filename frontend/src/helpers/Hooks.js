@@ -60,8 +60,27 @@ export const useVaultSearch = (vaultId, searchTerm) => {
     });
 };
 
+export const useTags = (vaultId) => {
+    return useQuery([`getTags_${vaultId}`], () => {
+        return new Promise((resolve, reject) => {
+            axios
+                .get(`/api/vault/${vaultId}/tags`)
+                .then((res) => {
+                    resolve(res.data);
+                })
+                .catch((err) => {
+                    reject(err);
+                });
+        });
+    });
+};
+
 export const createVault = (userId, name, masterPassword) => {
     return axios.post("/api/vault", { userId, name, masterPassword });
+};
+
+export const updateSite = (vaultId, oldName, name, url, accounts) => {
+    return axios.put(`/api/vault/${vaultId}/site`, { oldName, name, url, accounts });
 };
 
 export const setSites = (vaultId, sites) => {
@@ -76,6 +95,14 @@ export const setSites = (vaultId, sites) => {
                 reject(err);
             });
     });
+};
+
+export const deleteSite = (vaultId, siteId) => {
+    return axios.delete(`/api/vault/${vaultId}/site/${siteId}`);
+};
+
+export const deleteVault = (vaultId, userId) => {
+    return axios.delete(`/api/vault/${vaultId}`, { data: {userId: userId} });
 };
 
 export const useDebounce = (value, delay) => {
