@@ -1,4 +1,4 @@
-import { Group, Button, Text, Image, Stack, Space, Menu, createStyles } from '@mantine/core';
+import { Group, Button, Text, Image, Stack, Space, Menu, Anchor } from '@mantine/core';
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { IconSettings } from "@tabler/icons";
@@ -55,29 +55,30 @@ const AccountMenu = () => {
                 <Text size="sm" color={'white'}>{`${user.email}`}</Text>
             </Stack>
 
-            <Button  
-              styles={(theme) => ({
-                root: {
-                  color: theme.colorScheme === "dark" ? theme.white : theme.black,
-                  backgroundColor: '#454545',
-                  color: 'white',
-                  width: '100%',
-                  borderBottom: "1px solid #3A3939",
-                  borderTop: "1px solid #3A3939",
-                  '&:hover': {
-                    backgroundColor: '#3A3939',
-                  },
-                }})}
-              leftIcon={<IconSettings size={14} />}>
-                Account Settings
-              </Button>
-              
+            <Anchor href="/dashboard/settings">
               <Button  
-              // onClick={() => {
-              //                   localStorage.removeItem("pwdlyToken");
-              //               }}
-              //               href="/"
-                >Log Out</Button>
+                styles={(theme) => ({
+                  root: {
+                    color: theme.colorScheme === "dark" ? theme.white : theme.black,
+                    backgroundColor: '#454545',
+                    color: 'white',
+                    width: '100%',
+                    borderBottom: "1px solid #3A3939",
+                    borderTop: "1px solid #3A3939",
+                    '&:hover': {
+                      backgroundColor: '#3A3939',
+                    },
+                  }})}
+                leftIcon={<IconSettings size={14} />}>
+                  Account Settings
+                </Button>
+              </Anchor>
+              
+              <Anchor href="/">
+                <Button  onClick={() => { localStorage.removeItem("pwdlyToken"); }} href="/">
+                    Log Out
+                </Button>
+              </Anchor>
               <Space h="xs" />
           </Stack>
       </Menu.Dropdown>
