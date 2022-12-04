@@ -157,12 +157,11 @@ const solutionsdata = [
     },
 ];
 
-export function LandingNav({ pb = 120 }) {
+export function LandingNav({ loginModalOpened, signupModalOpened, toggleLoginModal, toggleSignupModal, pb = 120 }) {
     const [drawerOpened, { toggle: toggleDrawer, close: closeDrawer }] = useDisclosure(false);
     const [linksFeaturesOpened, { toggle: toggleFeatures }] = useDisclosure(false);
     const [linksSolutionsOpened, { toggle: toggleSolutions }] = useDisclosure(false);
-    const [loginModalOpened, { toggle: toggleLoginModal }] = useDisclosure(false);
-    const [signupModalOpened, { toggle: toggleSignupModal }] = useDisclosure(false);
+    
     // Save width and height of login/signup div to use on image
     const [groupSize, setGroupSize] = useState([0, 0]);
     const ref = useRef(null);

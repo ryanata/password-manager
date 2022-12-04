@@ -1,6 +1,7 @@
 import { Global, css } from "@emotion/react";
 import { useEffect, useRef } from "react";
 
+import { useDisclosure } from "@mantine/hooks";
 import { LandingNav } from "../components/LandingNav";
 import { ProductDescription } from "../components/ProductDescription";
 import { Gradient } from "../helpers/Gradient";
@@ -23,6 +24,8 @@ const cssCanvas = css`
 
 const Landing = () => {
     const canvasRef = useRef(null);
+    const [loginModalOpened, { toggle: toggleLoginModal }] = useDisclosure(false);
+    const [signupModalOpened, { toggle: toggleSignupModal }] = useDisclosure(false);
 
     // Loads in gradient
     useEffect(() => {
@@ -45,8 +48,8 @@ const Landing = () => {
         <div>
             <Global styles={cssCanvas} />
             <canvas id="gradient-canvas" ref={canvasRef} data-transition-in />
-            <LandingNav />
-            <ProductDescription />
+            <LandingNav loginModalOpened={loginModalOpened} signupModalOpened={signupModalOpened} toggleLoginModal={toggleLoginModal} toggleSignupModal={toggleSignupModal}/>
+            <ProductDescription loginModalOpened={loginModalOpened} signupModalOpened={signupModalOpened} toggleLoginModal={toggleLoginModal} toggleSignupModal={toggleSignupModal}/>
         </div>
     );
 };
