@@ -9,6 +9,7 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { getMe } from '../hooks/getAllVaultsQuery';
 import { useQuery } from 'react-query';
+import * as SecureStore from 'expo-secure-store';
 
 function LogoTitle() {
   return (
@@ -25,6 +26,18 @@ const Drawer = createDrawerNavigator();
 const CustomDrawer = props => {
 
   const navigation = useNavigation();
+  const { data, isLoading, isError } = useQuery("getUser", () => getMe())
+
+  if (isLoading) {
+    return <Text>Loading...</Text>;
+  }
+
+  if (isError) {
+    return <Text>Error: {isError.message}</Text>;
+  }
+
+  //console.log(data.vaults);
+
   return(
     <View style={{flex: 1}}>
       <DrawerContentScrollView {...props} >
@@ -47,8 +60,10 @@ const CustomDrawer = props => {
             source={require('../assets/pwdly_White_Logo_1.png')}
           />
         </View>
+        <TouchableOpacity onPress = {() => {navigation.navigate('AllPasswords', {id : data.vaults[0]})}}>
+          <Text>AllPasswords</Text>
+        </TouchableOpacity>
         <DrawerItemList {...props}/>
-
       </DrawerContentScrollView>
 
       <TouchableOpacity
@@ -68,17 +83,7 @@ const CustomDrawer = props => {
 };
 
 function Dashboard() {
-  const { data, isLoading, isError } = useQuery("getUser", () => getMe());
 
-  if (isLoading) {
-    return <Text>Loading...</Text>;
-  }
-
-  if (isError) {
-    return <Text>Error: {isError.message}</Text>;
-  }
-
-  console.log(data);
   return (
         <Drawer.Navigator 
             drawerContent={(props) => <CustomDrawer{...props}/>}
@@ -105,8 +110,9 @@ function Dashboard() {
             }}
         >
           <Drawer.Screen 
-              name="All Passwords" 
+              name="AllPasswords" 
               component={AllPasswords} 
+              initialParams = {{ id: 42/*data.vaults[0]*/}}
               options={{
                   drawerIcon: ({focused, size}) => (
                       <MaterialCommunityIcons
@@ -119,7 +125,8 @@ function Dashboard() {
                   drawerLabel: "All Passwords",
                   drawerLabelStyle: {
                     color: "white"
-                  }
+                  },
+                  drawerItemStyle: {display: 'none'}
               }}
           />
           <Drawer.Screen 

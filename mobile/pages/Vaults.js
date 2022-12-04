@@ -18,7 +18,7 @@ const Vaults = ({ navigation }) => {
             <View style={{flexDirection: "row", alignItems: 'center'}}>
                 <Pressable
                     onPress={() => {
-                             console.log("Merge sort");
+                        console.log("Merge sort");
                     }}
                     style={{
                         paddingLeft: 5,
