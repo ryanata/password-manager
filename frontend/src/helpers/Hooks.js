@@ -79,6 +79,10 @@ export const createVault = (userId, name, masterPassword) => {
     return axios.post("/api/vault", { userId, name, masterPassword });
 };
 
+export const updateSite = (vaultId, oldName, name, url, accounts) => {
+    return axios.put(`/api/vault/${vaultId}/site`, { oldName, name, url, accounts });
+};
+
 export const setSites = (vaultId, sites) => {
     // Return promise to wrap axios call
     return new Promise((resolve, reject) => {
@@ -91,6 +95,10 @@ export const setSites = (vaultId, sites) => {
                 reject(err);
             });
     });
+};
+
+export const deleteSite = (vaultId, siteId) => {
+    return axios.delete(`/api/vault/${vaultId}/site/${siteId}`);
 };
 
 export const useDebounce = (value, delay) => {

@@ -5,7 +5,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useParams } from "react-router-dom";
 import AccountModal from "./AccountModal";
 
-const SearchBar = ({ search, setSearch }) => {
+const SearchBar = ({ setSearch }) => {
     const [accountModalOpened, { toggle: toggleAccountModal }] = useDisclosure(false);
     const { id } = useParams();
     const queryClient = useQueryClient();
@@ -14,8 +14,8 @@ const SearchBar = ({ search, setSearch }) => {
 
     const onClose = () => {
         toggleAccountModal();
-        queryClient.prefetchQuery([queryTags]);
-        queryClient.prefetchQuery([queryVault]);
+        queryClient.invalidateQueries([queryTags]);
+        queryClient.invalidateQueries([queryVault]);
     };
 
     return (

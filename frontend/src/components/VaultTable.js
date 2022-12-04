@@ -104,7 +104,7 @@ const VaultTable = ({ tags, searchTerm, filteredTags }) => {
                 ...site,
                 accounts: site.accounts.filter((account) => {
                     // If any of the account tags are in the filteredTags array, return true
-                    return account.tags.some((tag) => filteredTags.includes(tag._id));
+                    return account.tags.some((tag) => filteredTags.includes(tag.name));
                 }),
             };
         });

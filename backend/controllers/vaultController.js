@@ -326,11 +326,11 @@ const deleteTag = asyncHandler(async (req, res) => {
 const updateSite = asyncHandler(async (req, res) => {
     const vaultId = req.params.vaultID;
 
-    const { oldName, name, url } = req.body;
+    const { oldName, name, url, accounts } = req.body;
 
-    if (!vaultId || !oldName || (!name && !url)) {
+    if (!vaultId || !oldName || (!name && !url && !accounts)) {
         res.status(400);
-        throw new Error('Please provide a vault ID, old site name, and new site name or url');
+        throw new Error('Please provide a vault ID, old site name, and new site name,url, or accounts');
     }
 
     const vault = await checkVaultExists(vaultId, res);
@@ -350,6 +350,13 @@ const updateSite = asyncHandler(async (req, res) => {
     }
     if (url) {
         existingSite.url = url;
+    }
+    if (accounts) {
+        existingSite.accounts = accounts;
+    }
+    if (accounts?.length === 0) {
+        // Delete the site
+        vault.sites.splice(siteIndex, 1);
     }
 
     const updatedVault = await vault.save();

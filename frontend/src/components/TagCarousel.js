@@ -19,7 +19,7 @@ const useStyles = createStyles((theme) => ({
 }));
 
 const BadgeFilter = ({tag, filteredTags, setFilteredTags, size}) => {
-    const selected = filteredTags.length == 0 || filteredTags.includes(tag._id);
+    const selected = filteredTags.length == 0 || filteredTags.includes(tag.name);
 
     return (
         <UnstyledButton
@@ -27,14 +27,14 @@ const BadgeFilter = ({tag, filteredTags, setFilteredTags, size}) => {
                 if (selected) {
                     if (filteredTags.length == 0){
                         // Add the tag to the list of filtered tags
-                        setFilteredTags([tag._id]);
+                        setFilteredTags([tag.name]);
                     } else {
                         // Unselect the tag
-                        setFilteredTags(filteredTags.filter((t) => t != tag._id));
+                        setFilteredTags(filteredTags.filter((t) => t != tag.name));
                     }
                 } else {
                     // Select the tag
-                    setFilteredTags([...filteredTags, tag._id]);
+                    setFilteredTags([...filteredTags, tag.name]);
                 }
             }}
         >
@@ -64,7 +64,7 @@ export function TagCarousel({tags, filteredTags, setFilteredTags}) {
             <ScrollArea offsetScrollbars style={{ overflowX: "scroll", width: "90%" }}>
                 <Group spacing="sm" className={classes.tagsWrapper}>
                     {tags.map((tag) => (
-                            <BadgeFilter key={tag._id} filteredTags={filteredTags} setFilteredTags={setFilteredTags} tag={tag} size={badgeSize}/>
+                            <BadgeFilter key={tag.name} filteredTags={filteredTags} setFilteredTags={setFilteredTags} tag={tag} size={badgeSize}/>
                     ))}
                 </Group>
             </ScrollArea>
