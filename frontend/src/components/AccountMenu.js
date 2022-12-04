@@ -3,15 +3,6 @@ import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { IconSettings } from "@tabler/icons";
 import { Avatar } from '@mantine/core';
-import { default as iconUser } from "../assets/iconUser.png";
-
-const useStyles = createStyles((theme) => ({
-
-      backgroundColor: "#4681D0",
-      color: theme.white,
-      borderBottom: "0px",
-  
-}));
 
 const AccountMenu = () => {
   let token = "none";
@@ -25,10 +16,10 @@ const AccountMenu = () => {
     );
 
     const user = data.data;
-    const { classes } = useStyles();
+
   return (
     <Group position="center">
-      <Menu shadow="md" width={300} position='bottom-end' trigger="hover" classNames={classes}>
+      <Menu shadow="md" width={250} radius='lg' position='bottom' offset={1} trigger="hover" styles={{ dropdown: { backgroundColor: '#454545' }, color: '#FFFFFF' }}>
       <Menu.Target>
         <Button
         radius='100%'
@@ -47,19 +38,21 @@ const AccountMenu = () => {
               backgroundColor: '#4681D0',
             },
           }})}>
-            <Avatar src={null} alt="no image here" radius="50%" size='md'/>
+            <Avatar src={null} alt="no image here" color="blue" radius="50%" size='md' />
         </Button>
       </Menu.Target>
 
-      <Menu.Dropdown color='#000000'>
+      <Menu.Dropdown>
           <Stack justify='space-around' align='center' >
             <Space h="xxs" />
 
-            <Avatar src={null} alt="no image here" radius="50%" size='xl'/>
+            <Avatar src={null} alt="no image here" color="blue" radius="50%" size='xl' />
 
             <Stack align="center" spacing={0}>
-                <Text transform="capitalize">{`${user.name.firstName} ${user.name.lastName}`}</Text>
-                <Text fz="lg">{`${user.email}`}</Text>
+                <Text size="md" transform="capitalize" color={'white'}>
+                  {`${user.name.firstName} ${user.name.lastName}`}
+                  </Text>
+                <Text size="sm" color={'white'}>{`${user.email}`}</Text>
             </Stack>
 
             <Button  
@@ -73,20 +66,19 @@ const AccountMenu = () => {
                   borderTop: "1px solid #3A3939",
                   '&:hover': {
                     backgroundColor: '#3A3939',
-                    // borderBottom: "1px solid #3A3939" "/dashboard/settings",
                   },
-
                 }})}
               leftIcon={<IconSettings size={14} />}>
                 Account Settings
               </Button>
               
-              <Button  onClick={() => {
-                                localStorage.removeItem("pwdlyToken");
-                            }}
-                            href="/"
+              <Button  
+              // onClick={() => {
+              //                   localStorage.removeItem("pwdlyToken");
+              //               }}
+              //               href="/"
                 >Log Out</Button>
-              <Space h="xxs" />
+              <Space h="xs" />
           </Stack>
       </Menu.Dropdown>
       </Menu>
