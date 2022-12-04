@@ -22,7 +22,7 @@ const updateVaultData = (data) => {
     return setSites(data.vaultId, data.sites);
 };
 
-const VaultTable = ({ searchTerm }) => {
+const VaultTable = ({ tags, searchTerm, filteredTags }) => {
     const { classes, theme } = useStyles();
     const [sort, setSort] = useState("unsorted");
     const { id } = useParams();
@@ -90,16 +90,44 @@ const VaultTable = ({ searchTerm }) => {
         );
     }
 
-    const vault = searchData
-        ? {
-              ...data.vault,
-              sites: searchData.sites,
-          }
-        : data.vault;
+    const filterTags = (sites) => {
+        // Tags holds all the tags that can be selected
+        // filteredTags holds the tags that are selected
+        // If there are no selected tags or all tags are selected, return all sites
+        if (filteredTags.length === 0 || filteredTags.length === tags.length) {
+            return sites;
+        }
+        
+        // Return sites array with accounts filtered by tags
+        const fSites = sites.map((site) => {
+            return {
+                ...site,
+                accounts: site.accounts.filter((account) => {
+                    // If any of the account tags are in the filteredTags array, return true
+                    return account.tags.some((tag) => filteredTags.includes(tag.name));
+                }),
+            };
+        });
+        // Filter out sites that have no accounts
+        return fSites.filter((site) => site.accounts.length > 0);
+    };
 
+    const vault = searchData ? 
+        {
+            ...data.vault,
+            sites: filterTags(searchData.sites),
+        }
+        : 
+        {
+            ...data.vault,
+            sites: filterTags(data.vault.sites),
+        };
+
+    
+    const isFiltered = !(filteredTags.length === 0 || filteredTags.length === tags.length);
     const onDragEnd = (result) => {
         // dropped outside the list
-        if (!result.destination || searchTerm) {
+        if (!result.destination || searchTerm || isFiltered) {
             return;
         }
         // Update data
@@ -121,10 +149,17 @@ const VaultTable = ({ searchTerm }) => {
         }
     };
 
+
+
     return (
         <>
             <Box className={classes.noSpacing}>
                 <VaultHeader sort={sort} toggleSort={toggleSort} />
+                {vault.sites.length === 0 && (
+                    <Center style={{ width: "100%", height: "100%" }}>
+                        <Text color="steel-blue">No accounts here. Try adding an account by clicking the 'Add New' button above.</Text>
+                    </Center>
+                )}
                 {sort === "unsorted" ? (
                     <DragDropContext onDragEnd={onDragEnd}>
                         <Droppable droppableId="sites">
