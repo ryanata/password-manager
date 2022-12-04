@@ -1,6 +1,7 @@
 import { Button, Grid, Group, Image, Text, Title, createStyles } from "@mantine/core";
 
 import { default as landingMock } from "../assets/mocksLanding.png";
+import { useNavigate } from "react-router-dom";
 
 const useStyles = createStyles((theme) => ({
     hiddenMobile: {
@@ -11,12 +12,18 @@ const useStyles = createStyles((theme) => ({
     outerGrid: {
         maxWidth: "100%",
     },
+    control: {
+        [theme.fn.smallerThan("xs")]: {
+            flex: 1,
+        },
+    },
 }));
 
-export function ProductDescription() {
+export function ProductDescription({loginModalOpened, signupModalOpened, toggleLoginModal, toggleSignupModal}) {
     const { classes, theme } = useStyles();
     const mobilePadding = 20;
     const desktopPadding = 50;
+    const navigate = useNavigate();
     return (
         <>
             <Grid grow gutter={40} m={0} className={classes.outerGrid}>
@@ -55,8 +62,8 @@ export function ProductDescription() {
                             paddingBottom: 30,
                         }}
                     >
-                        The only password manager you need for all your life chapters. Learn how you can store, share,
-                        and secure your life with{" "}
+                        The only password manager you need for all your life chapters. Learn how you can store,
+                        organize, and secure your life with{" "}
                         <Text weight={600} component="span">
                             pwdly
                         </Text>
@@ -82,10 +89,17 @@ export function ProductDescription() {
                                 },
                             }}
                             radius="xl"
+                            size="md"
+                            className={classes.control}
+                            onClick={() => {navigate("/features")}}
                         >
                             Learn More
                         </Button>
                         <Button
+                            radius="xl"
+                            size="md"
+                            className={classes.control}
+                            onClick={toggleSignupModal}
                             sx={{
                                 color: "#4681D0",
                                 backgroundColor: "#ffffff",
@@ -98,14 +112,13 @@ export function ProductDescription() {
                                     color: "#ffffff",
                                 },
                             }}
-                            radius="xl"
                         >
                             Get Started
                         </Button>
                     </Group>
                 </Grid.Col>
                 <Grid.Col span={3} className={classes.hiddenMobile}>
-                    <Image width="110%" src={landingMock} alt="Random unsplash image" />
+                    <Image width="110%" src={landingMock} alt="Mobile and Web Mocks" />
                 </Grid.Col>
             </Grid>
         </>

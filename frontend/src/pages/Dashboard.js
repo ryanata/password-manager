@@ -1,27 +1,47 @@
 import { Anchor, AppShell, Center, Group, Header, Loader, Navbar, Text, createStyles } from "@mantine/core";
 import { useMediaQuery } from "@mantine/hooks";
 import { useMemo, useState } from "react";
-import { DashboardLeftNav } from "../components/DashboardLeftNav"; 
+import { Route, Routes } from "react-router-dom";
 
-import VaultTable from "../components/VaultTable";
 import DashboardHeader from "../components/DashboardHeader";
+import { DashboardLeftNav } from "../components/DashboardLeftNav";
+import PasswordGenerator from "../components/PasswordGenerator";
+import Settings from "../components/Settings.js";
+import Vault from "../components/Vault";
+import WelcomeModal from "../components/WelcomeModal";
 import { VaultContext, useUser } from "../helpers/Hooks";
 
 const useStyles = createStyles((theme) => ({}));
 
-const initialVault = {
-    name: "Personal",
-    unlocked: false,
+const LoadingVaults = ({ vaults }) => {
+    // Redirect to the first vault
+    const firstVault = vaults[0];
+    if (firstVault) {
+        window.location.href = `/dashboard/${firstVault}`;
+    }
+    return <>Welcome to pwdly! Create a vault to begin😄</>;
 };
 
-const VaultProvider = ({ children }) => {
-    const [vault, setVault] = useState(initialVault);
+const VaultProvider = ({ vaultIds, children }) => {
+    // Go through all vaults Ids and create an object like this:
+    // {
+    //     "vaultId1": {
+    //         "unlocked": false,
+    //      }
+    // }
+    const intialVault = vaultIds.reduce((acc, vaultId) => {
+        acc[vaultId] = {
+            unlocked: false,
+        };
+        return acc;
+    }, {});
+    const [vaultStates, setVaultStates] = useState(intialVault);
     const value = useMemo(
         () => ({
-            vault,
-            setVault,
+            vaultStates,
+            setVaultStates,
         }),
-        [vault]
+        [vaultStates]
     );
 
     return <VaultContext.Provider value={value}>{children}</VaultContext.Provider>;
@@ -32,7 +52,6 @@ const Dashboard = () => {
     // Hooks
     const isTablet = useMediaQuery(`(max-width: ${theme.breakpoints.md - 1}px)`);
     const { data, isLoading, error } = useUser();
-
     if (isLoading) {
         return (
             <Center style={{ width: "100%", height: "100vh" }}>
@@ -53,10 +72,12 @@ const Dashboard = () => {
         );
     }
 
-    const user = data.data;
-    console.log(user);
+    const vaults = data.data.vaults;
+    // If they have no vaults, open a welcome modal
+    const noVaults = vaults.length === 0;
+    const userId = data.data._id;
     return (
-        <VaultProvider>
+        <VaultProvider vaultIds={vaults}>
             <AppShell
                 padding="md"
                 navbar={isTablet ? null : <DashboardLeftNav />}
@@ -67,7 +88,22 @@ const Dashboard = () => {
                     },
                 })}
             >
-                <VaultTable />
+                {noVaults && <WelcomeModal userId={userId} />}
+                <Routes>
+                    <Route exact path="/" element={<LoadingVaults vaults={vaults} />} />
+                    <Route path=":id" element={<Vault />} />
+                    <Route
+                        path="all-passwords"
+                        element={
+                            <>
+                                {" "}
+                                <p>all passwords</p>{" "}
+                            </>
+                        }
+                    />
+                    <Route path="password-generator" element={<PasswordGenerator />} />
+                    <Route path="settings" element={<Settings />} />
+                </Routes>
             </AppShell>
         </VaultProvider>
     );
