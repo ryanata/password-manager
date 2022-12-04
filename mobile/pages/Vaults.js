@@ -12,7 +12,8 @@ const styles = StyleSheet.create({
     },
 });
 
-const Vaults = ({ navigation }) => {
+const Vaults = ({ route, navigation }) => {
+    
     return ( 
         <View style={styles.container}>
             <View style={{flexDirection: "row", alignItems: 'center'}}>
@@ -36,7 +37,7 @@ const Vaults = ({ navigation }) => {
             </View>
             
             <ScrollView style={{flex: 1, marginTop: 10}}>
-                <Text>Vaults</Text>
+                <Text>Vults</Text>
             </ScrollView>
         </View>
      );
