@@ -155,6 +155,11 @@ const VaultTable = ({ tags, searchTerm, filteredTags }) => {
         <>
             <Box className={classes.noSpacing}>
                 <VaultHeader sort={sort} toggleSort={toggleSort} />
+                {vault.sites.length === 0 && (
+                    <Center style={{ width: "100%", height: "100%" }}>
+                        <Text color="steel-blue">No accounts here. Try adding an account by clicking the 'Add New' button above.</Text>
+                    </Center>
+                )}
                 {sort === "unsorted" ? (
                     <DragDropContext onDragEnd={onDragEnd}>
                         <Droppable droppableId="sites">

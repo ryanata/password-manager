@@ -1,10 +1,13 @@
-import { Box, Collapse, Group, Text, ThemeIcon, UnstyledButton, createStyles } from "@mantine/core";
-import { useDisclosure } from "@mantine/hooks";
+import { Affix, Box, Button, Collapse, Group, Menu, Text, ThemeIcon, UnstyledButton, createStyles } from "@mantine/core";
+import { useClickOutside, useDisclosure } from "@mantine/hooks";
 import { IconCalendarStats, IconChevronLeft, IconChevronRight, TablerIcon } from "@tabler/icons";
+import { deleteVault } from "../helpers/Hooks";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useQueryClient } from "@tanstack/react-query";
 
 import VaultModal from "./VaultModal";
+import DeleteWarning from "./DeleteWarning";
 
 const useStyles = createStyles((theme) => ({
     control: {
@@ -43,12 +46,105 @@ const useStyles = createStyles((theme) => ({
     },
 }));
 
+const DrawerLink = ({ link }) => {
+    const { classes, theme } = useStyles();
+    const [deleteVaultOpened, { toggle: toggleDeleteVault }] = useDisclosure(false);
+    const navigate = useNavigate();
+    // Context menu
+    const [coords, setCoords] = useState({
+        clientX: null,
+        clientY: null
+    });
+    const ref = useClickOutside(() =>
+    setCoords({ clientX: null, clientY: null })
+    );
+    const queryClient = useQueryClient();
+    
+    // link.link is /dashboard/${vaultId}
+    // get the vaultId from the link
+    const vaultId = link.link.split("/")[2];
+    const userId = queryClient.getQueryData(["getUser"]).data._id;
+    // url is /dashboard/${vaultId} get the vaultId from the url
+    const url = window.location.pathname.split("/")[2];
+    const onVault = url === vaultId;
+
+    const handleContextMenu = (e) => {
+        e.preventDefault();
+        const { clientX, clientY } = e;
+        setCoords({ clientX, clientY });
+    };
+    const validCoords = coords.clientX !== null && coords.clientY !== null;
+    const affixPosition = (coords.clientX !== null && coords.clientY !== null) ? 
+                          { left: coords.clientX, top: coords.clientY } : undefined;
+    return (
+        <>
+            <div onContextMenu={handleContextMenu}>
+                <Text
+                    component="a"
+                    className={classes.link}
+                    onClick={() => {
+                        navigate(link.link);
+                    }}
+                    align="left"
+                    sx={{
+                        borderLeft: onVault && `3px solid ${theme.colors.green[5]}`,
+                        cursor: "pointer",
+                    }}
+                >
+                    {link.label}
+                </Text>
+            </div>
+            <Affix
+                sx={{ display: validCoords ? "initial" : "none" }}
+                position={affixPosition}
+            >
+                <Menu opened={validCoords} width={150}>
+                    <div ref={ref}>
+                        <Menu.Target>
+                        <div />
+                        </Menu.Target>
+                        <Menu.Dropdown>
+                        <Menu.Item color="red" onClick={toggleDeleteVault}>Delete vault</Menu.Item>
+                        </Menu.Dropdown>
+                    </div>
+                </Menu>
+                {deleteVaultOpened && (
+                    <DeleteWarning
+                        opened={deleteVaultOpened}
+                        toggle={toggleDeleteVault}
+                        label="Are you sure you want to delete this vault?">
+                        <Group position="right" mt="sm">
+                                <Group spacing="xs">
+                                    <Button variant="outline" onClick={toggleDeleteVault}>No</Button>
+                                    <Button onClick={() => {
+                                        // Close Modal
+                                        toggleDeleteVault();
+                                        // Delete vault
+                                        deleteVault(vaultId, userId)
+                                        .then((res) => {
+                                            // Navigate to dashboard
+                                            navigate("/dashboard");
+                                        })
+                                        .catch((err) => {
+                                            console.log(err);
+                                        });
+                                    }}>
+                                        Yes
+                                    </Button>
+                                </Group>
+                            </Group>
+                    </DeleteWarning>
+                )}
+            </Affix>
+        </>
+    )
+}
+
 export function LinksGroup({ icon: Icon, label, initiallyOpened, links, link, openSidebar }) {
     const { classes, theme } = useStyles();
     const hasLinks = Array.isArray(links);
     const [opened, setOpened] = useState(initiallyOpened || false);
     const [vaultModalOpened, { toggle: toggleVaultModal }] = useDisclosure(false);
-    const navigate = useNavigate();
 
     const ChevronIcon = theme.dir === "ltr" ? IconChevronRight : IconChevronLeft;
 
@@ -61,28 +157,8 @@ export function LinksGroup({ icon: Icon, label, initiallyOpened, links, link, op
             );
         }
 
-        // link.link is /dashboard/${vaultId}
-        // get the vaultId from the link
-        const vaultId = link.link.split("/")[2];
-        // url is /dashboard/${vaultId} get the vaultId from the url
-        const url = window.location.pathname.split("/")[2];
-        const onVault = url === vaultId;
         return (
-            <Text
-                component="a"
-                className={classes.link}
-                onClick={() => {
-                    navigate(link.link);
-                }}
-                key={index}
-                align="left"
-                sx={{
-                    borderLeft: onVault && `3px solid ${theme.colors.green[5]}`,
-                    cursor: "pointer",
-                }}
-            >
-                {link.label}
-            </Text>
+            <DrawerLink key={index} link={link} />
         );
     });
 
@@ -131,31 +207,8 @@ export function LinksGroup({ icon: Icon, label, initiallyOpened, links, link, op
                 </Group>
             </UnstyledButton>
             {hasLinks ? <Collapse in={opened}>{items}</Collapse> : null}
-            <VaultModal opened={vaultModalOpened} closed={toggleVaultModal} />
+            {vaultModalOpened && <VaultModal opened={vaultModalOpened} closed={toggleVaultModal} />}
         </>
     );
 }
 
-const mockdata = {
-    label: "Releases",
-    icon: IconCalendarStats,
-    links: [
-        { label: "Upcoming releases", link: "/" },
-        { label: "Previous releases", link: "/" },
-        { label: "Releases schedule", link: "/" },
-    ],
-};
-
-export function NavbarLinksGroup() {
-    return (
-        <Box
-            sx={(theme) => ({
-                minHeight: 220,
-                padding: theme.spacing.md,
-                backgroundColor: theme.colorScheme === "dark" ? theme.colors.dark[6] : theme.white,
-            })}
-        >
-            <LinksGroup {...mockdata} />
-        </Box>
-    );
-}

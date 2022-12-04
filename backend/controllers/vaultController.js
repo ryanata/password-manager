@@ -141,21 +141,28 @@ const updateVault = asyncHandler(async (req, res) => {
 // @route   DELETE /api/vault/{vaultID}
 const deleteVault = asyncHandler(async (req, res) => {
     const vaultID = req.params.vaultID;
+    const { userId } = req.body;
 
-    const vaultExists = await Vault.findById(vaultID);
-
-    if (!vaultExists) {
+    if (!userId) {
         res.status(400);
-        throw new Error('This vault does not exist');
+        throw new Error('Please provide a user ID');
     }
 
+    await checkVaultExists(vaultID, res);
     const vault = await Vault.findByIdAndDelete(vaultID);
 
+    // Remove vault from user's vaults
+    const updatedUser = await User.findByIdAndUpdate(
+        { _id: userId },
+        { $pull: { vaults: vault._id } },
+        { new: true }
+    );
+
     if (vault) {
-        res.status(200);
-        res.json({
-            message: "Vault was deleted"
-        });
+        res.status(200).json({
+            message: 'Vault deleted',
+            newUser: updatedUser
+        })
     }
     else {
         res.status(400);

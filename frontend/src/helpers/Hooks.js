@@ -101,6 +101,10 @@ export const deleteSite = (vaultId, siteId) => {
     return axios.delete(`/api/vault/${vaultId}/site/${siteId}`);
 };
 
+export const deleteVault = (vaultId, userId) => {
+    return axios.delete(`/api/vault/${vaultId}`, { data: {userId: userId} });
+};
+
 export const useDebounce = (value, delay) => {
     // State and setters for debounced value
     const [debouncedValue, setDebouncedValue] = useState(value);

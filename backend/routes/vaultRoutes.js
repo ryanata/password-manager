@@ -26,25 +26,8 @@ const { protect } = require('../middleware/authMiddleware');
 router.post('', createVault);
 router.get('', protect, getVaults);
 router.get('/:vaultID', getVault);
+router.delete('/:vaultID', deleteVault);
 
-/** 
- * TODO: update vault
- * PRIORITY: low
- * Comments: We will use updateVault ONLY for changing name, master password, and mfa. Not very critical 
- */
-// router.put('/:vaultID', updateVault);
-/**
- * TODO: delete vault
- * PRIORITY: low
- * Comments: Delete vault, self-explanatory.
- */
-// router.delete('/:vaultID', deleteVault);
-
-/**
- * TODO: all tag api calls
- * PRIORITY: medium
- * Comments: We will need to create, get, update, and delete tags.
- */
 // // tags
 router.get('/:vaultID/tags', getTags);
 router.delete('/:vaultID/tag', deleteTag);
