@@ -2,6 +2,8 @@ import { StyleSheet, Button, Text, View, Keyboard, ScrollView, Pressable } from 
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import axios from "axios";
 import { useVault } from '../helpers/Hooks';
+import NewVaultButton from '../components/NewVaultButton';
+import { useUser } from '../helpers/Hooks';
 
 const styles = StyleSheet.create({
     container: {
@@ -13,9 +15,11 @@ const styles = StyleSheet.create({
     },
 });
 
+ 
+
 const Vaults = ({ route, navigation }) => {
     const { data, isLoading, isError, error } = useVault(route.params.vault.id);
-
+    
     if(isLoading){
         return <Text>Loading vault</Text>
     }
@@ -28,25 +32,6 @@ const Vaults = ({ route, navigation }) => {
 
     return ( 
         <View style={styles.container}>
-            <View style={{flexDirection: "row", alignItems: 'center'}}>
-                <Pressable
-                    onPress={() => {
-                             console.log("Merge sort");
-                    }}
-                    style={{
-                        paddingLeft: 5,
-                        alignItems: 'center'
-                    }}
-                >
-                    {({ pressed }) => (
-                        <MaterialCommunityIcons
-                          name="plus-box"
-                          size={35}
-                          color={'#4681D0'}
-                        />
-                    )}
-                </Pressable>
-            </View>
             
             <ScrollView style={{flex: 1, marginTop: 10}}>
                 {sites.map((site, index) => {
