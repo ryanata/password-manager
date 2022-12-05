@@ -96,7 +96,7 @@ const Login = ()  => {
                                 autoCapitalize='none'
                                 placeholderTextColor="#003f5c"
                                 onSubmitEditing={event =>
-                                    this.passwordInput.wrappedInstance.focus()
+                                    {}
                                 }
                                 onChangeText={value => onChange(value)}
                             />

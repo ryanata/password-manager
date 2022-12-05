@@ -111,7 +111,7 @@ const NewVaultButton = (props) => {
                 />     
         
                 <Pressable
-                style={[styles.button, styles.buttonClose]}
+                style={({pressed}) => [styles.button, styles.buttonClose,{backgroundColor: pressed ? "#16578B" : "#2196F3"}]}
                 onPress={handleSubmit(createVaultApiCall)}
                 >
                   <Text style={styles.textStyle}>Create Vault</Text>
@@ -125,10 +125,7 @@ const NewVaultButton = (props) => {
         onPress={() => {
           	setModalVisible(true)
         }}
-        style={{
-            paddingLeft: 5,
-            alignItems: 'center'
-        }}
+        style={({ pressed }) => [styles.button, styles.buttonClose,{backgroundColor: pressed ? "#16578B" : "#2196F3"}]}
         >
 			{({ pressed }) => (
                 <Text style={{color: "white"}}>Add New Vault</Text>
