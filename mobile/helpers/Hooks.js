@@ -2,6 +2,7 @@ import { QueryClient, QueryClientProvider, useQuery } from 'react-query'
 import axios from "axios";
 import { createContext, useEffect, useState } from "react";
 import * as SecureStore from 'expo-secure-store';
+import { Text } from 'react-native';
 
 // Vault state context
 export const VaultContext = createContext(null);
@@ -16,6 +17,19 @@ export const useUser = () => {
     }
     return useQuery(["getUser"], () => axios.get("https://pwdly.herokuapp.com/api/user/me", { headers: { Authorization: `Bearer ${token}` } }));
 };
+
+export const getUserId = () => {
+    const { data, isLoading, isError, error } = useUser();
+    
+    if(isLoading){
+     return <Text>Loading vault</Text>
+     }
+     if(isError){
+         Alert("Error: placeholder")
+         return <Text>Errorr</Text>
+     }
+    return data.data._id
+}
 
 export const useVaults = async () => {
     let token = "none";
@@ -79,7 +93,6 @@ export const setSites = (vaultId, sites) => {
             });
     });
 };
-{/*
 export const useDebounce = (value, delay) => {
     // State and setters for debounced value
     const [debouncedValue, setDebouncedValue] = useState(value);
@@ -113,7 +126,6 @@ export const getGeneratePassword = (length, numbers, symbols, uppercase, lowerca
             });
     });
 };
-*/}
 
 //store value in local storage
 export async function save(key, value) {
