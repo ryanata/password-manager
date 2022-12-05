@@ -1,7 +1,5 @@
-
 import React from 'react';
 import {StyleSheet, Text, View, Button, Image, TouchableOpacity, SafeAreaView, ScrollView} from 'react-native';
-import { Avatar } from '@rneui/themed';
 import { useMutation, useQuery, useQueryClient } from "react-query";
 import { useState } from "react";
 import VaultRow from './VaultRow';

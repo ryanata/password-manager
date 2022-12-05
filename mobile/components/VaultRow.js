@@ -11,7 +11,7 @@ const VaultRow = ({site}) => {
             <TouchableOpacity style={styles.row}>
                 <Text style={styles.websiteUrl}>{site.name}</Text>
                 <Avatar site={site.url} style={styles.avatar}></Avatar>
-                <Image style={{ right: 10, position: 'absolute'}} source = {require('/Users/khaledtujjar/password-manager/mobile/assets/chevron-right-solid-24.png')} />
+                <Image style={{ right: 10, position: 'absolute'}} source = {require('../assets/chevron-right-solid-24.png')} />
             </TouchableOpacity> 
             
         </View>
