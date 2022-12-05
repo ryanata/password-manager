@@ -8,8 +8,9 @@ import {
     Image, 
     TextInput,
 } from 'react-native';
-
 import {useForm, Controller} from 'react-hook-form';
+
+
 import axios from "axios";
 import { useReducer } from "react";
 import { useNavigation } from '@react-navigation/native';
@@ -143,7 +144,7 @@ const styles = StyleSheet.create({
     inputView: {
         backgroundColor: "#ffffff",
         borderRadius: 30,
-        width: "70%",
+        width: "70%", 
         height: 45,
         marginBottom: 20,
         alignItems: "center",

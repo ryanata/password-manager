@@ -5,12 +5,14 @@ import { NavigationContainer, useNavigation } from '@react-navigation/native';
 import Login from './Login';
 import VaultInfo from './VaultInfo';
 import AllPasswords from './AllPasswords';
+import Settings from './Settings';
 import Vaults from './Vaults';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { getMe } from '../hooks/getAllVaultsQuery';
 import { useQuery } from 'react-query';
 import * as SecureStore from 'expo-secure-store';
+import EditProfile from '../components/EditProfileModal';
 
 function LogoTitle() {
   return (
@@ -68,14 +70,14 @@ const CustomDrawer = props => {
 
       <TouchableOpacity
         style={styles.navbarFooter}
-        onPress={() => console.log("Account Settings Button")}
+        onPress={() => {navigation.navigate('Settings', {user : data})}}
       >
         <Ionicons
           name="settings-outline"
           size={30}
           color={'#ffffff'}
         />
-        <Text style={{color: 'white', fontWeight: "500"}}>Account Settings</Text>
+        <Text style={{color: 'white', fontWeight: "500"}}>       Settings</Text>
       </TouchableOpacity>
 
       
@@ -188,8 +190,27 @@ function Dashboard() {
               }}
           />
 
+          <Drawer.Screen 
+              name="Settings" 
+              component={Settings} 
+              options={{
+                  drawerIcon: ({focused, size}) => (
+                      <MaterialCommunityIcons
+                          name="lock"
+                          size={24}
+                          color={focused ? '#fffffff' : '#fff'}
+                      />
+                  ),
+                  drawerActiveTintColor: "white",
+                  drawerLabel: "All Passwords",
+                  drawerLabelStyle: {
+                    color: "white"
+                  },
+                  drawerItemStyle: {display: 'none'}
+              }}
+          />
         </Drawer.Navigator>
-    
+
   );
 }
 
