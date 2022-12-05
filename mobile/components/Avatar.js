@@ -4,7 +4,7 @@ import {StyleSheet, Text, View, Button, Image, TouchableOpacity} from 'react-nat
 
 const Avatar = ({site}) => {
 
-    console.log(site);
+    //console.log(site);
     const iconSize = 48
     return(
         <Image

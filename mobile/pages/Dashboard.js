@@ -3,6 +3,7 @@ import { StyleSheet, Text, Button, View, Image, Pressable, TouchableOpacity } fr
 import { createDrawerNavigator, DrawerContentScrollView, DrawerItemList } from '@react-navigation/drawer';
 import { NavigationContainer, useNavigation } from '@react-navigation/native';
 import Login from './Login';
+import VaultInfo from './VaultInfo';
 import AllPasswords from './AllPasswords';
 import Vaults from './Vaults';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -37,7 +38,6 @@ const CustomDrawer = props => {
   }
 
   //console.log(data.vaults);
-
   return(
     <View style={{flex: 1}}>
       <DrawerContentScrollView {...props} >
@@ -60,7 +60,7 @@ const CustomDrawer = props => {
             source={require('../assets/pwdly_White_Logo_1.png')}
           />
         </View>
-        <TouchableOpacity onPress = {() => {navigation.navigate('AllPasswords', {id : data.vaults[0]})}}>
+        <TouchableOpacity onPress = {() => {navigation.navigate('AllPasswords', {id : data.vaults})}}>
           <Text>AllPasswords</Text>
         </TouchableOpacity>
         <DrawerItemList {...props}/>
@@ -77,6 +77,7 @@ const CustomDrawer = props => {
         />
         <Text style={{color: 'white', fontWeight: "500"}}>Account Settings</Text>
       </TouchableOpacity>
+
       
     </View>
   );
@@ -112,7 +113,6 @@ function Dashboard() {
           <Drawer.Screen 
               name="AllPasswords" 
               component={AllPasswords} 
-              initialParams = {{ id: 42/*data.vaults[0]*/}}
               options={{
                   drawerIcon: ({focused, size}) => (
                       <MaterialCommunityIcons
@@ -167,6 +167,27 @@ function Dashboard() {
                   }
               }}
           />
+          
+          <Drawer.Screen 
+              name="VaultInfo" 
+              component={VaultInfo} 
+              options={{
+                  drawerIcon: ({focused, size}) => (
+                      <MaterialCommunityIcons
+                          name="lock"
+                          size={24}
+                          color={focused ? '#fffffff' : '#fff'}
+                      />
+                  ),
+                  drawerActiveTintColor: "white",
+                  drawerLabel: "All Passwords",
+                  drawerLabelStyle: {
+                    color: "white"
+                  },
+                  drawerItemStyle: {display: 'none'}
+              }}
+          />
+
         </Drawer.Navigator>
     
   );
