@@ -6,6 +6,8 @@ import Vaults from '../pages/Vaults';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Collapsible from 'react-native-collapsible';
+import NewVaultButton from './NewVaultButton';
+import { useUser } from '../helpers/Hooks';
 {/*Vault data Placeholder. Replace with real vault data implementation */}
 
 const onPressVaultLabel = (navigation, vault) => {
@@ -13,10 +15,23 @@ const onPressVaultLabel = (navigation, vault) => {
     //console.log(vault.name)
 } 
 
+const getUserId = () => {
+    const { data, isLoading, isError, error } = useUser();
+    
+    if(isLoading){
+     return <Text>Loading vault</Text>
+     }
+     if(isError){
+         Alert("Error: placeholder")
+         return <Text>Errorr</Text>
+     }
+    return data.data._id
+}
 
 const VaultDrawerlabel = ({vaults}) => {
     const [isCollapsed, setCollapsed] = React.useState(true);
     const navigation = useNavigation();
+    const userId = getUserId();
     
     let token = "none";
     
@@ -43,7 +58,9 @@ const VaultDrawerlabel = ({vaults}) => {
                 </TouchableOpacity>
                 );
             })}
-                
+                <View style={{flexDirection: "row", alignItems: 'center'}}>
+                    <NewVaultButton userId={userId}/>
+                </View> 
             </Collapsible>            
         </View>
     );

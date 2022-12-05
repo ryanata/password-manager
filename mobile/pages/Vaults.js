@@ -15,24 +15,11 @@ const styles = StyleSheet.create({
     },
 });
 
-const getUserId = () => {
-   const { data, isLoading, isError, error } = useUser();
-   if(isLoading){
-    return <Text>Loading vault</Text>
-    }
-    if(isError){
-        Alert("Error: placeholder")
-        return <Text>Errorr</Text>
-    }
-   return data.data._id
-} 
+ 
 
 const Vaults = ({ route, navigation }) => {
     const { data, isLoading, isError, error } = useVault(route.params.vault.id);
-    const userId = getUserId();
     
-
-
     if(isLoading){
         return <Text>Loading vault</Text>
     }
@@ -45,9 +32,6 @@ const Vaults = ({ route, navigation }) => {
 
     return ( 
         <View style={styles.container}>
-            <View style={{flexDirection: "row", alignItems: 'center'}}>
-                <NewVaultButton userId={userId}/>
-            </View>
             
             <ScrollView style={{flex: 1, marginTop: 10}}>
                 {sites.map((site, index) => {

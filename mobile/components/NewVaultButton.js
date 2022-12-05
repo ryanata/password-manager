@@ -4,6 +4,7 @@ import { Alert, Modal, StyleSheet, Text, Pressable, View, TextInput } from "reac
 import axios from 'axios';
 import {useForm, Controller} from 'react-hook-form';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import { createVault } from "../helpers/Hooks";
 
 
 const NewVaultButton = (props) => {
@@ -18,20 +19,31 @@ const NewVaultButton = (props) => {
 
   const createVaultApiCall = (data) => {
     {/* need to get user id (user.userId). For api call */}
-    axios
-		.post("https://pwdly.herokuapp.com/api/vault",{
-			name: data.vaultName,
-			userId: props.userId,
-			masterPassword: data.masterPassword
-		}).then((res) => {
-			console.log("vault created successfully")
+    if(data.vaultName.trim().length === 0){
+        Alert.alert("Fill out all fields");
+        setModalVisible(!modalVisible)
+        return
+    }
+    if(data.masterPassword.length === 0){
+        Alert.alert("Fill out all fields");
+        setModalVisible(!modalVisible)
+        return
+    }
+    createVault(props.userId, data.vaultName, data.masterPassword)
+        .then((res) => {
+            if (res.status === 201) {
+                console.log("vault created successfully")
+                Alert("Vault created Successfully")
+            }
 		}).catch((err) => {
-			console.log("error", err)
+			
 			if (err.status === 400){
 				console.log("error")
 				setState({ alert: err.response.data.message});
+                Alert.alert(err.response.data.message)
 			} else {
 				setState({ alert: "an error occured"});
+                Alert.alert("Error: Failed vault creation")
 			}
 		})
     setModalVisible(!modalVisible)
@@ -119,11 +131,7 @@ const NewVaultButton = (props) => {
         }}
         >
 			{({ pressed }) => (
-				<MaterialCommunityIcons
-				name="plus-box"
-				size={35}
-				color={'#4681D0'}
-				/>
+                <Text style={{color: "white"}}>Add New Vault</Text>
 			)}
         </Pressable>
     </View>
