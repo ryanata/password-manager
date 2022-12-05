@@ -1,23 +1,22 @@
-const { supertest } = require('supertest');
-const { userRoute } = require('../routes/userRoutes')
-jest.mock('axios')
-const axios = require('axios')
-const {
-    registerUser,
-    loginUser,
-    getMe,
-    addVault
-} = require('../controllers/userController');
+const request = require("supertest");
+const { app } = require("../testServer");
 
+describe("API Tests", () => {
+    test('login on the test user', async () => {
+        const data = {
+            email: "nap@gmail.com",
+            password: "123"
+        };
+        const res = await request(app).post('/api/user/login').send(data).expect(200);
+        expect(res.status).toBe(200); 
+    });
 
-
-describe("Login", ()=>{
-    const username = "test@gmail.com"
-    const password = "123"
-
-    test("should respond with a 200 status code", async () => {
-        const { username, password } = req.body
-        await loginUser(req, res).post('/api/user/login')
-        expect(res.status).toBe(200)
-    })
-})
+    test('login on the test user', async () => {
+        const data = {
+            email: "nap@gmail.com",
+            password: "123"
+        };
+        const res = await request(app).post('/api/user/login').send(data).expect(200);
+        expect(res.status).toBe(200); 
+    });
+});
