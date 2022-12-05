@@ -18,10 +18,9 @@ export const useUser = () => {
 };
 
 export const useVaults = async () => {
-    //let token = "none";
-    const [token, setToken] = useState('');
+    let token = "none";
     try {
-        SecureStore.getItemAsync('pwdlytoken').then((response) => {setToken(response)})
+        SecureStore.getItemAsync('pwdlytoken').then((response) => {token = response})
         
     } catch (error) {
         console.log(error);

@@ -9,8 +9,8 @@ import Collapsible from 'react-native-collapsible';
 {/*Vault data Placeholder. Replace with real vault data implementation */}
 
 const onPressVaultLabel = (navigation, vault) => {
-    //navigation.navigate('Vaults', {vault: 'vabab'})
-    console.log(vault.name)
+    navigation.navigate('Vaults', {vault: vault})
+    //console.log(vault.name)
 } 
 
 
