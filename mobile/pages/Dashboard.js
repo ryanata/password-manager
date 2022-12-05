@@ -5,6 +5,7 @@ import { NavigationContainer, useNavigation } from '@react-navigation/native';
 import Login from './Login';
 import AllPasswords from './AllPasswords';
 import Vaults from './Vaults';
+import PasswordGenerator from './PasswordGenerator';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import VaultDrawerlabel from '../components/VaultDrawerLabel';
@@ -160,7 +161,7 @@ function Dashboard() {
           />  
           <Drawer.Screen 
             name="Password Generator" 
-            component={Login} 
+            component={PasswordGenerator} 
             options={{
                   drawerIcon: ({focused, size}) => (
                       <MaterialCommunityIcons
