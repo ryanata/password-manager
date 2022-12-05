@@ -1,14 +1,19 @@
 import React from 'react';
 import {StyleSheet, Text, View, Button, Image, TouchableOpacity} from 'react-native';
 import Avatar from './Avatar'
+import { NavigationContainer, useNavigation } from '@react-navigation/native';
+
 
 const VaultRow = ({site}) => {
-    console.log("hi")
+    const navigation = useNavigation();
+    
+    //console.log(site.accounts)
+
     return (
         <View style={styles.container}>
 
             {/*change to view if whole row is not intended to be a button*/}
-            <TouchableOpacity style={styles.row}>
+            <TouchableOpacity style={styles.row} onPress={() => {navigation.navigate('VaultInfo', {site : site})}}>
                 <Text style={styles.websiteUrl}>{site.name}</Text>
                 <Avatar site={site.url} style={styles.avatar}></Avatar>
                 <Image style={{ right: 10, position: 'absolute'}} source = {require('/Users/khaledtujjar/password-manager/mobile/assets/chevron-right-solid-24.png')} />
@@ -26,19 +31,26 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: '#ffffff',
         flexDirection: "column",
-    },
-    row: {
-        backgroundColor: '#ffffff',
-        top: -150,
-        flex:1,
-        alignItems:'center',
+        alignItems: 'flex-start',
+        //height: 50,
         borderBottomColor: '#B8B8B8',
         borderBottomWidth: 0.7,
         borderTopWidth: 0.7,
         borderTopColor: '#B8B8B8',
+        height: 100,
+    },
+    row: {
+        backgroundColor: '#ffffff',
+        //flex: 1,
+        alignItems:'center',
+        //borderBottomColor: '#B8B8B8',
+        //borderBottomWidth: 0.7,
+        //borderTopWidth: 0.7,
+        //borderTopColor: '#B8B8B8',
         justifyContent: 'center',
         alignItems: 'center',
         flexDirection: 'row',
+        //alignSelf: 'flex-start',
     },
     websiteUrl:{
         fontSize: 25,

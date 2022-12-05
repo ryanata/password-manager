@@ -7,61 +7,27 @@ import * as SecureStore from 'expo-secure-store';
 import axios from 'axios'
 import { useNavigation } from '@react-navigation/native';
 
-const getVaultInfo = () =>{
-        
-    const { data, isLoading, isError } = useQuery("getUser", () => getMe())
-
-    if (isLoading) {
-        return <Text>Loading...</Text>;
-    }
-
-    if (isError) {
-        return <Text>Error: {isError.message}</Text>;
-    }
-    
-    //console.log(data.vault)
-    return data.vaults;
-}
-
 const AllPasswords = ({route}) => {
-   
     //console.log(route.params.id)
-    const id = route.params.id
-    //const { data, isLoading, isError } = useQuery("getUser", () => getMe()
-    let vaultId = getVaultInfo()
-    //console.log(vaultId[0])
+    const vaults = route.params.id
+    
+    //console.log(vaults);
 
-    const { data, isLoading, isError } = useQuery("getVault_${id}", () => useVault(id))
-
-    if (isLoading) {
-        return <Text>Loading...</Text>;
-    }
-
-    if (isError) {
-        return <Text>Error: {isError.message}</Text>;
-    }
-
-    console.log(data.vault.sites)
-
-    const sites = data.vault.sites
     return ( 
         <View style={styles.container}>
-            <ScrollView style={{flex: 1, marginTop: 10}}>
+            {/*<ScrollView style={{flex: 1, marginTop: 10}}>
                 <Text>{data.vault.name}</Text>
             </ScrollView>
-            {sites.map((site) => (<VaultRow site={site}/> ))}
+            {sites.map((site) => (<VaultRow site={site}/> ))}*/}
+            {vaults.map((vault, index) => (<VaultTable key={index} id={vault}/> ))}
         </View>
-     );
+    );
 }
  
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#fff',
-        alignItems: 'left',
-        justifyContent: 'top',
-        paddingTop: 10,
-        alignItems: 'center'
+        backgroundColor: '#ffffff',
     },
     text1:{
 
