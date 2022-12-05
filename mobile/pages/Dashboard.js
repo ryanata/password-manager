@@ -1,15 +1,18 @@
 import * as React from 'react';
+import { useState, useMemo, useContext } from "react";
 import { StyleSheet, Text, Button, View, Image, Pressable, TouchableOpacity } from 'react-native';
 import { createDrawerNavigator, DrawerContentScrollView, DrawerItemList } from '@react-navigation/drawer';
 import { NavigationContainer, useNavigation } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import Login from './Login';
-import VaultInfo from './VaultInfo';
 import AllPasswords from './AllPasswords';
 import Vaults from './Vaults';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { getMe } from '../hooks/getAllVaultsQuery';
 import { useQuery } from 'react-query';
+import SiteInfo from './SiteInfo';
+import { VaultContext } from '../hooks/vaultContext';
 import * as SecureStore from 'expo-secure-store';
 
 function LogoTitle() {
@@ -25,7 +28,6 @@ const Drawer = createDrawerNavigator();
 
 
 const CustomDrawer = props => {
-
   const navigation = useNavigation();
   const { data, isLoading, isError } = useQuery("getUser", () => getMe())
 
@@ -37,7 +39,6 @@ const CustomDrawer = props => {
     return <Text>Error: {isError.message}</Text>;
   }
 
-  //console.log(data.vaults);
   return(
     <View style={{flex: 1}}>
       <DrawerContentScrollView {...props} >
@@ -51,7 +52,7 @@ const CustomDrawer = props => {
             <MaterialCommunityIcons
               name="arrow-left-box"
               size={40}
-              color={'#625A5A'}
+              color={'white'}
             />
           </Pressable>
           {/* Hamburger menu header pwdly icon*/}
@@ -60,9 +61,6 @@ const CustomDrawer = props => {
             source={require('../assets/pwdly_White_Logo_1.png')}
           />
         </View>
-        <TouchableOpacity onPress = {() => {navigation.navigate('AllPasswords', {id : data.vaults})}}>
-          <Text>AllPasswords</Text>
-        </TouchableOpacity>
         <DrawerItemList {...props}/>
       </DrawerContentScrollView>
 
@@ -72,7 +70,7 @@ const CustomDrawer = props => {
       >
         <Ionicons
           name="settings-outline"
-          size={30}
+          size={24}
           color={'#ffffff'}
         />
         <Text style={{color: 'white', fontWeight: "500"}}>Account Settings</Text>
@@ -83,112 +81,138 @@ const CustomDrawer = props => {
   );
 };
 
+const AllPasswordsContainer = () => {
+  const Stack = createNativeStackNavigator();
+  return (
+    <Stack.Navigator intialRouteName="AllPasswords">
+      <Stack.Screen name="AllPasswords" component={AllPasswords} options={{headerShown: false}}/>
+      <Stack.Screen name="SiteInfo" component={SiteInfo} options={{ headerTitle: props => <LogoTitle {...props} /> }}/>
+    </Stack.Navigator>
+  )
+}
+
+const VaultProvider = ({ vaultIds, children }) => {
+  // Go through all vaults Ids and create an object like this:
+  // {
+  //     "vaultId1": {
+  //         "unlocked": false,
+  //      }
+  // }
+  const intialVault = vaultIds.reduce((acc, vaultId) => {
+      acc[vaultId] = {
+          unlocked: false,
+      };
+      return acc;
+  }, {});
+  const [vaultStates, setVaultStates] = useState(intialVault);
+  const value = useMemo(
+      () => ({
+          vaultStates,
+          setVaultStates,
+      }),
+      [vaultStates]
+  );
+
+  return <VaultContext.Provider value={value}>{children}</VaultContext.Provider>;
+};
+
 function Dashboard() {
+  const { data, isLoading, isError } = useQuery("getUser", () => getMe())
+
+  if (isLoading) {
+    return <Text>Loading...</Text>;
+  }
+
+  if (isError) {
+    return <Text>Error: {isError.message}</Text>;
+  }
+
+  const vaults = data.vaults;
 
   return (
-        <Drawer.Navigator 
-            drawerContent={(props) => <CustomDrawer{...props}/>}
-            useLegacyImplementation={true} 
-            initialRouteName="Vaults"
-            screenOptions={{
-                drawerStyle: {
-                backgroundColor: '#363535',
-                width: 240,
-                },
-                headerTitle: (props) => <LogoTitle/>,
-                headerStyle: {
-                  backgroundColor: '#4681D0',
-                },
-                headerTitleStyle: {
-                  color: '#ffffff',
-                  fontFamily: ''
-                },
-                headerTintColor: 'white',
-                drawerLabel: (props) => <DrawerHeader/>
-            }}
-            options={{
-              title: 'pwdly'
-            }}
-        >
-          <Drawer.Screen 
-              name="AllPasswords" 
-              component={AllPasswords} 
-              options={{
-                  drawerIcon: ({focused, size}) => (
-                      <MaterialCommunityIcons
-                          name="lock"
-                          size={24}
-                          color={focused ? '#fffffff' : '#fff'}
-                      />
-                  ),
-                  drawerActiveTintColor: "white",
-                  drawerLabel: "All Passwords",
-                  drawerLabelStyle: {
-                    color: "white"
+        <VaultProvider vaultIds={vaults}>
+          <Drawer.Navigator 
+              drawerContent={(props) => <CustomDrawer{...props}/>}
+              useLegacyImplementation={true} 
+              initialRouteName="Vaults"
+              screenOptions={{
+                  drawerStyle: {
+                  backgroundColor: '#363535',
+                  width: 240,
                   },
-                  drawerItemStyle: {display: 'none'}
-              }}
-          />
-          <Drawer.Screen 
-            name="Vaults" 
-            component={Vaults} 
-            options={{
-                  drawerIcon: ({focused, size}) => (
-                      <MaterialCommunityIcons
-                          name="safe"
-                          size={24}
-                          color={focused ? '#fffffff' : '#fff'}
-                      />
-                  ),
-                  title: "Vaults",
-                  drawerActiveTintColor: "white",
-                  drawerLabel: "Vaults",
-                  drawerLabelStyle: {
-                    color: "white"
-                  }
-              }}
-          />
-          <Drawer.Screen 
-            name="Password Generator" 
-            component={Login} 
-            options={{
-                  drawerIcon: ({focused, size}) => (
-                      <MaterialCommunityIcons
-                          name="shield-sword"
-                          size={24}
-                          color={focused ? '#fffffff' : '#fff'}
-                      />
-                  ),
-                  title: "Password Generator",
-                  drawerActiveTintColor: "white",
-                  drawerLabel: "Password Generator",
-                  drawerLabelStyle: {
-                    color: "white"
-                  }
-              }}
-          />
-          
-          <Drawer.Screen 
-              name="VaultInfo" 
-              component={VaultInfo} 
-              options={{
-                  drawerIcon: ({focused, size}) => (
-                      <MaterialCommunityIcons
-                          name="lock"
-                          size={24}
-                          color={focused ? '#fffffff' : '#fff'}
-                      />
-                  ),
-                  drawerActiveTintColor: "white",
-                  drawerLabel: "All Passwords",
-                  drawerLabelStyle: {
-                    color: "white"
+                  headerTitle: (props) => <LogoTitle/>,
+                  headerStyle: {
+                    backgroundColor: '#4681D0',
                   },
-                  drawerItemStyle: {display: 'none'}
+                  headerTitleStyle: {
+                    color: '#ffffff',
+                    fontFamily: ''
+                  },
+                  headerTintColor: 'white',
               }}
-          />
-
-        </Drawer.Navigator>
+              options={{
+                title: 'pwdly'
+              }}
+          >
+            <Drawer.Screen 
+                name="AllPasswordsContainer" 
+                component={AllPasswordsContainer} 
+                options={{
+                    drawerIcon: ({focused, size}) => (
+                        <MaterialCommunityIcons
+                            name="lock"
+                            size={24}
+                            color={focused ? '#fffffff' : '#fff'}
+                        />
+                    ),
+                    drawerActiveTintColor: "white",
+                    drawerLabel: "All Passwords",
+                    drawerLabelStyle: {
+                      color: "white"
+                    },
+                    // drawerItemStyle: {display: 'none'}
+                }}
+            />
+            <Drawer.Screen 
+              name="Vaults" 
+              component={Vaults} 
+              options={{
+                    drawerIcon: ({focused, size}) => (
+                        <MaterialCommunityIcons
+                            name="safe"
+                            size={24}
+                            color="white"
+                        />
+                    ),
+                    title: "Vaults",
+                    drawerActiveTintColor: "white",
+                    drawerLabel: "Vaults",
+                    drawerLabelStyle: {
+                      color: "white"
+                    }
+                }}
+            />
+            <Drawer.Screen 
+              name="Password Generator" 
+              component={Login} 
+              options={{
+                    drawerIcon: ({focused, size}) => (
+                        <MaterialCommunityIcons
+                            name="shield-outline"
+                            size={24}
+                            color="white"
+                        />
+                    ),
+                    title: "Password Generator",
+                    drawerActiveTintColor: "white",
+                    drawerLabel: "Password Generator",
+                    drawerLabelStyle: {
+                      color: "white"
+                    }
+                }}
+            />
+          </Drawer.Navigator>
+        </VaultProvider>
     
   );
 }

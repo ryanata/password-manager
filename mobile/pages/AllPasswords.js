@@ -1,26 +1,18 @@
-import { StyleSheet, Button, Text, View, Keyboard, ScrollView } from 'react-native';
-import { useQuery } from 'react-query';
+import { StyleSheet, SafeAreaView, Button, Text, View, Keyboard, ScrollView } from 'react-native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import VaultTable from '../components/VaultTable'
-import VaultRow from '../components/VaultRow'
-import { getMe, useVault, getVaults, getVaultData, getValueFor } from '../hooks/getAllVaultsQuery';
-import * as SecureStore from 'expo-secure-store';
-import axios from 'axios'
-import { useNavigation } from '@react-navigation/native';
+import { useQueryClient } from 'react-query';
 
-const AllPasswords = ({route}) => {
-    //console.log(route.params.id)
-    const vaults = route.params.id
-    
-    //console.log(vaults);
-
-    return ( 
-        <View style={styles.container}>
-            {/*<ScrollView style={{flex: 1, marginTop: 10}}>
-                <Text>{data.vault.name}</Text>
-            </ScrollView>
-            {sites.map((site) => (<VaultRow site={site}/> ))}*/}
-            {vaults.map((vault, index) => (<VaultTable key={index} id={vault}/> ))}
-        </View>
+const AllPasswords = () => {
+    const queryClient = useQueryClient();
+    const user = queryClient.getQueryData('getUser');
+    const vaults = user.vaults;
+    return (
+        <ScrollView contentInsetAdjustmentBehavior="automatic">
+            <SafeAreaView style={styles.container}>
+                {vaults.map((vault, index) => (<VaultTable stackable key={index} id={vault} lastElement={index === vaults.length - 1}/> ))}
+            </SafeAreaView>
+        </ScrollView>
     );
 }
  
@@ -29,9 +21,6 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: '#ffffff',
     },
-    text1:{
-
-    }
 });
 
 export default AllPasswords;

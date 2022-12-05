@@ -5,11 +5,11 @@ import {StyleSheet, Text, View, Button, Image, TouchableOpacity} from 'react-nat
 const Avatar = ({site}) => {
 
     //console.log(site);
-    const iconSize = 48
+    const iconSize = 32
     return(
         <Image
-            style={{width: '100%', height: '50%'}}
-            source={{uri:'https://www.google.com/s2/favicons?domain=${site}&sz=${iconSize}'}}
+            style={{width: 32, height: 32, borderRadius: 32/6, overflow: "hidden", borderWidth: 1, borderColor: "white"}}
+            source={{uri:`https://www.google.com/s2/favicons?domain=${site}&sz=${iconSize}`}}
         />
     )
 }
