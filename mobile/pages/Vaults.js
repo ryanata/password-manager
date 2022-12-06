@@ -12,7 +12,6 @@ const styles = StyleSheet.create({
         flex: 1,
         flexDirection: "column",
         backgroundColor: '#fff',
-        alignItems: 'left',
         justifyContent: 'top',
         paddingTop: 10,
     },
@@ -30,8 +29,16 @@ const Vaults = ({ route, navigation }) => {
 
     return ( 
         <View style={styles.container}>
-            <CustomSearchbar setSearch={setSearch}/>
-            <VaultTable vault={route.params.vault} searchTerm={search} id={id}/>
+            
+            
+            <View style={{flexDirection: "row", flex: 0.7}}>
+                <CustomSearchbar setSearch={setSearch}/>
+                <AddAccount vaultId={id} />
+            </View>
+            <View style={{flex: 10}}>
+                <VaultTable vault={route.params.vault} searchTerm={search} id={id}/>
+            </View>
+            
         </View>
      );
 }

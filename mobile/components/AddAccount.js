@@ -1,11 +1,13 @@
 import { useState } from "react";
 import * as React from 'react'
-import { Alert, Modal, StyleSheet, Text, Pressable, View, TextInput } from "react-native";
+import { Alert, Modal, StyleSheet, Text, Pressable, View, TextInput, TouchableOpacity } from "react-native";
 import axios from 'axios';
 import {useForm, Controller} from 'react-hook-form';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import { useNavigation } from '@react-navigation/native';
 
 const AddAccount = ({rerenderVaults, vaultId}) => {
+    const navigation = useNavigation();
 	const [state, setState] = useState('')
 	const [modalVisible, setModalVisible] = useState(false);
 	const {setValue, handleSubmit, formState: {errors, isValid}, control} = useForm({
@@ -44,7 +46,6 @@ const AddAccount = ({rerenderVaults, vaultId}) => {
         values.password.trim().length === 0 ||
         values.name.trim().length === 0){
             Alert.alert("Fill out all fields");
-            rerenderVaults();
             setModalVisible(!modalVisible)
             return
         }
@@ -57,12 +58,12 @@ const AddAccount = ({rerenderVaults, vaultId}) => {
             tags: selectedTags,
         }).then((res) => {
             Alert.alert("Account added")
+            //navigation.navigate('Vaults', {id: vaultId})
         }).catch((err) => {
             Alert.alert("Account creation failed:\n" + err)
             console.log(err)
         });
         setModalVisible(false);
-        rerenderVaults();
     };
 return(
     <View style={styles.centeredView}>
@@ -76,7 +77,17 @@ return(
 		}}
         >
             <View style={styles.centeredView}>
-              <View style={styles.modalView}>
+                <View style={styles.modalView}>
+                    <View style={styles.modalHeader}>
+                    <View style={styles.modalHeaderContent}><Text></Text></View>
+                    <TouchableOpacity style={styles.closeButton} onPress={() => setModalVisible(false)}>
+                    <MaterialCommunityIcons
+                        name="close"
+                        size={25}
+                        color={'#000000'}
+                    />
+                    </TouchableOpacity>
+                </View>
                 <Controller
                   control= {control}
                   name="name"
@@ -267,9 +278,31 @@ const styles = StyleSheet.create({
       textAlign: "center"
     },
     TextInput: {
-      padding: 10,
-      minWidth: 40
+        padding: 10,
+        width: "100%",
+        textAlign: "center",
+        borderRadius: 5,
+        backgroundColor: "#f0f0f0",
+        marginBottom: 15,
+        marginTop: 5,
+        borderWidth: 1,
+        borderColor: "#CCCCCC",
     },
+    closeButton: {
+        alignItems: "flex-end",
+      },
+    
+      modalHeader: {
+        flexDirection: "row",
+        marginBottom: 10,
+      },
+      modalHeaderContent: {
+        flexGrow: 1,
+      },
+      modalButton: {
+        flexDirection: "row",
+        justifyContent: "flex-end",
+      }
   });
 
 export default AddAccount;

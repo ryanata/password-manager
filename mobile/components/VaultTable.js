@@ -43,9 +43,19 @@ const VaultTable = ({searchTerm, id, stackable}) => {
             </View>
         )
     }
-
+    
     return ( 
         <SafeAreaView style={styles.container}>
+            <Text style={{
+                    fontSize: 17, 
+                    paddingLeft: 16, 
+                    paddingVertical: 2,
+                    backgroundColor:"#F2F2F2",
+                    fontWeight: "500",
+                    borderBottomWidth: 0.9,
+                    borderBottomColor: '#B8B8B8',
+                    
+                }}>{vault.name}</Text>
             <FlatList
                 data={sites}
                 renderItem={({ item }) => <VaultRow site={item} vaultId={id}/>}

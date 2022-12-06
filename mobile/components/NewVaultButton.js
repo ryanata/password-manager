@@ -20,7 +20,7 @@ const NewVaultButton = (props) => {
   const createVaultApiCall = (data) => {
     {/* need to get user id (user.userId). For api call */}
     if(data.vaultName.trim().length === 0 || data.masterPassword.length){
-        Alert.alert("Fill out all fields");
+        Alert.alert("Please fill out all fields");
         setModalVisible(!modalVisible)
         return
     }
