@@ -6,8 +6,9 @@ import { useParams } from "react-router-dom";
 import { VaultContext } from "../helpers/Hooks";
 
 const useStyles = createStyles((theme) => ({}));
-const MasterPasswordModal = ({ opened, closed, password }) => {
+const MasterPasswordModal = ({ opened, closed, password, vaultName, vaultId }) => {
     const { id } = useParams();
+    const properId = vaultId ? vaultId : id;
 
     // Hooks
     const form = useForm({
@@ -26,7 +27,7 @@ const MasterPasswordModal = ({ opened, closed, password }) => {
             // Set vault.unlocked to true
             setVaultStates({
                 ...vaultStates,
-                [id]: {
+                [properId]: {
                     unlocked: true,
                 },
             });
@@ -50,6 +51,7 @@ const MasterPasswordModal = ({ opened, closed, password }) => {
                     marginBottom: 0,
                 },
             }}
+            title={`Enter master password for your "${vaultName}" vault`}
             padding="lg"
         >
             <form onSubmit={form.onSubmit((values) => formHandler(values))}>

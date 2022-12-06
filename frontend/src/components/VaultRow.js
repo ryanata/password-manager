@@ -68,7 +68,7 @@ const badgeHeights = {
     lg: 26,
 };
 
-const VaultRow = ({ site, provided, toggleModal }) => {
+const VaultRow = ({ site, provided, toggleModal, preventContext, vaultId }) => {
     const { classes, theme } = useStyles();
     const isMobile = useMediaQuery(`(max-width: ${theme.breakpoints.sm - 1}px)`);
     const isTablet = useMediaQuery(`(max-width: ${theme.breakpoints.md - 1}px)`);
@@ -89,11 +89,13 @@ const VaultRow = ({ site, provided, toggleModal }) => {
     
     
     const handleContextMenu = (e) => {
+        if (preventContext) return;
         e.preventDefault();
         const { clientX, clientY } = e;
         console.log(clientX, clientY);
         setCoords({ clientX, clientY });
     };
+
     const validCoords = coords.clientX !== null && coords.clientY !== null;
     const affixPosition = (coords.clientX !== null && coords.clientY !== null) ? 
                           { left: coords.clientX, top: coords.clientY } : undefined;
@@ -155,7 +157,7 @@ const VaultRow = ({ site, provided, toggleModal }) => {
                         </div>
                     </Grid.Col>
                     <Grid.Col span={3}>
-                        <PasswordData account={account} toggleModal={toggleModal} />
+                        <PasswordData account={account} toggleModal={toggleModal} vaultId={vaultId}/>
                     </Grid.Col>
                 </Grid>
             ))}

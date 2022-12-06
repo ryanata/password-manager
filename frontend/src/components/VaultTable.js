@@ -199,6 +199,7 @@ const VaultTable = ({ tags, searchTerm, filteredTags }) => {
                 opened={masterPassModalOpened}
                 closed={toggleMasterPassModal}
                 password={vault.masterPassword}
+                vaultName={vault.name}
             />
         </>
     );

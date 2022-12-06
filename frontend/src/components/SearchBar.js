@@ -5,7 +5,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useParams } from "react-router-dom";
 import AccountModal from "./AccountModal";
 
-const SearchBar = ({ setSearch }) => {
+const SearchBar = ({ setSearch, disableAdd }) => {
     const [accountModalOpened, { toggle: toggleAccountModal }] = useDisclosure(false);
     const { id } = useParams();
     const queryClient = useQueryClient();
@@ -33,7 +33,7 @@ const SearchBar = ({ setSearch }) => {
                     },
                 })}
             />
-            <Button
+            {!disableAdd && <Button
                 size="md"
                 uppercase
                 leftIcon={<IconPlus size={28} />}
@@ -51,7 +51,7 @@ const SearchBar = ({ setSearch }) => {
                 })}
             >
                 add new
-            </Button>
+            </Button>}
 
             {accountModalOpened && <AccountModal
                 opened={accountModalOpened}

@@ -7,6 +7,7 @@ import DashboardHeader from "../components/DashboardHeader";
 import { DashboardLeftNav } from "../components/DashboardLeftNav";
 import PasswordGenerator from "../components/PasswordGenerator";
 import Settings from "../components/Settings.js";
+import AllPasswords from "../components/AllPasswords";
 import Vault from "../components/Vault";
 import WelcomeModal from "../components/WelcomeModal";
 import { VaultContext, useUser } from "../helpers/Hooks";
@@ -92,15 +93,7 @@ const Dashboard = () => {
                 <Routes>
                     <Route exact path="/" element={<LoadingVaults vaults={vaults} />} />
                     <Route path=":id" element={<Vault />} />
-                    <Route
-                        path="all-passwords"
-                        element={
-                            <>
-                                {" "}
-                                <p>all passwords</p>{" "}
-                            </>
-                        }
-                    />
+                    <Route path="all-passwords" element={<AllPasswords />} />
                     <Route path="password-generator" element={<PasswordGenerator />} />
                     <Route path="settings" element={<Settings />} />
                 </Routes>
