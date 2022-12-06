@@ -2,11 +2,13 @@ import { Text, Paper, Box, Grid, Avatar, Stack, Button, Container, Group } from 
 import { useDisclosure } from '@mantine/hooks';
 import { useQueryClient } from "@tanstack/react-query";
 import EditAccountModal from './EditAccountModal';
+import EditPasswordModal from './EditPasswordModal';
 import axios from "axios";
 
 const Settings = () => {
     // Hooks
     const [editAccountModalOpened, { toggle: toggleEditAccountModal }] = useDisclosure(false);
+    const [editPasswordModalOpened, { toggle: toggleEditPasswordModal }] = useDisclosure(false);
 
     // Helpers
     const queryClient = new useQueryClient();
@@ -15,6 +17,17 @@ const Settings = () => {
     // Format user.phone to string to (xxx) xxx-xxxx
     const phone = user.phone.toString();
     const formattedPhone = phone ? `(${phone?.slice(0, 3)}) ${phone?.slice(3, 6)}-${phone?.slice(6, 10)}` : "";
+
+    const toggleTwoFactorAuth = () => {
+        axios.put(`/api/user/${user._id}/update`, { twoFactorAuthEnabled: !user.twoFactorAuthEnabled })
+            .then((res) => {
+                queryClient.invalidateQueries(["getUser"]);
+            })
+            .catch((err) => {
+                console.log(err);
+            });      
+    };
+
 
     return (
         <Container size="sm">
@@ -41,7 +54,7 @@ const Settings = () => {
             </Paper>
             <Text py="lg" size="xl" align="left">Password and Authentication</Text>
             <Group position="left">
-                <Button>Change Password</Button>
+                <Button onClick={toggleEditPasswordModal}>Change Password</Button>
             </Group>
             <Text pt="lg" size="xl" align="left">Password and Authentication</Text>
             <Text size="xs" color="gray" align="left" pb="lg">Add an extra layer of security 
@@ -49,9 +62,10 @@ const Settings = () => {
             Once configured, you will be required to enter both your password and an authentication
             code from your mobile phone in order sign in.</Text>
             <Group position="left">
-                <Button>Enable Two-Factor Auth</Button>
+                <Button color={user.twoFactorAuthEnabled && "red"} onClick={toggleTwoFactorAuth}>{user.twoFactorAuthEnabled ? "Disable Two-Factor Auth" : "Enable Two-Factor Auth"}</Button>
             </Group>
-            <EditAccountModal opened={editAccountModalOpened} closed={toggleEditAccountModal} user={user} />
+            {editAccountModalOpened && <EditAccountModal opened={editAccountModalOpened} closed={toggleEditAccountModal} user={user} />}
+            {editPasswordModalOpened && <EditPasswordModal opened={editPasswordModalOpened} closed={toggleEditPasswordModal} user={user} />}
         </Container>
     );
 }
