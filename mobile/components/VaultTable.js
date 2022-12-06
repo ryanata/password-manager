@@ -48,6 +48,7 @@ const VaultTable = ({ searchTerm, vaultId }) => {
         <ScrollView style={{flex: 1, marginTop: 10}}>
             {vault?.sites?.map((site, index) => {
                 return (
+                    //need to replace with proper vault row
                     <Text style={{color: 'black', fontSize: 15, marginTop: 10}} key={index}>{site.name}</Text>
                 );
             })}
