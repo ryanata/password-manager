@@ -7,7 +7,7 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import { useNavigation } from '@react-navigation/native';
 import { useQueryClient } from 'react-query';
 
-const AddAccount = ({rerenderVaults, vaultId}) => {
+const AddAccount = ({vaultId}) => {
     const navigation = useNavigation();
 	const [state, setState] = useState('')
 	const [modalVisible, setModalVisible] = useState(false);
@@ -248,7 +248,7 @@ const styles = StyleSheet.create({
       margin: 20,
       backgroundColor: "white",
       borderRadius: 20,
-      padding: 35,
+      padding: 10,
       alignItems: "center",
       shadowColor: "#000",
       shadowOffset: {
@@ -261,7 +261,7 @@ const styles = StyleSheet.create({
     },
     button: {
       borderRadius: 10,
-      padding: 5,
+      padding: 10,
       elevation: 2,
       
     },

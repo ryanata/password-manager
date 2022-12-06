@@ -8,6 +8,7 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import Collapsible from 'react-native-collapsible';
 import NewVaultButton from './NewVaultButton';
 import { useQueryClient } from 'react-query';
+import { deleteVault } from '../helpers/Hooks';
 
 const onPressVaultLabel = (navigation, vault) => {
     navigation.navigate('Vaults', {id: vault.id})

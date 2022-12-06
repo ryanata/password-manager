@@ -1,8 +1,5 @@
 import * as React from 'react';
 import { StyleSheet, Button, Text, View, Keyboard, ScrollView, Pressable } from 'react-native';
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import axios from "axios";
-import { useVault, useVaultSearch, getUserId, useDebounce } from '../helpers/Hooks';
 import CustomSearchbar from '../components/SearchBar';
 import VaultTable from '../components/VaultTable';
 import AddAccount from '../components/AddAccount';
@@ -19,7 +16,7 @@ const styles = StyleSheet.create({
 
  
 
-const Vaults = ({ route, navigation }) => {
+const Vaults = ({ route }) => {
     const id = route.params?.id;
 
     const [search, setSearch] = React.useState("");
