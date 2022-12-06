@@ -64,7 +64,7 @@ const EditAccountModal = ({ opened, closed, user }) => {
             styles={{
                 header: {
                     marginBottom: 12,
-                    fontSize: "20px",
+                    fontSize: "25px",
                 },
             }}
             padding="lg"
