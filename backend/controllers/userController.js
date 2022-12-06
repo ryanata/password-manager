@@ -55,6 +55,7 @@ const registerUser = asyncHandler(async (req, res) => {
     const user = await User.create({
         email: email,
         emailVerified: false,
+        twoFactorAuthEnabled: false,
         phone: phoneNumber,
         password: hashedPassword,
         name: {
@@ -78,6 +79,7 @@ const registerUser = asyncHandler(async (req, res) => {
                 email: user.email,
                 phoneNumber: user.phone,
                 emailVerified: user.emailVerified,
+                twoFactorAuthEnabled: user.twoFactorAuthEnabled,
                 token: generateToken(user._id),
             },
         });
@@ -113,6 +115,7 @@ const loginUser = asyncHandler(async (req, res) => {
                 email: user.email,
                 phoneNumber: user.phone,
                 emailVerified: user.emailVerified,
+                twoFactorAuthEnabled: user.twoFactorAuthEnabled,
                 token: generateToken(user._id),
             },
         });
@@ -138,8 +141,7 @@ const verifyUser = asyncHandler(async (req, res) => {
     const user = await User.findByIdAndUpdate(userId, { emailVerified: true }, { new: true });
     if (user) {
         res.status(200).json({
-            message: 'User verified!',
-            newUser: user
+            message: `That you for verifying your account ${user.name.firstName}!`,
         });
     } else {
         res.status(400);
@@ -199,9 +201,9 @@ const forgotPassword = asyncHandler(async (req, res) => {
 const updateUser = asyncHandler(async (req, res) => {
     const userId = req.params.id;
 
-    const { firstName, lastName, email, phoneNumber, password } = req.body;
+    const { firstName, lastName, email, phoneNumber, password, twoFactorAuthEnabled, oldPassword } = req.body;
 
-    if (!firstName && !lastName && !email && !phoneNumber && !password) {
+    if (!firstName && !lastName && !email && !phoneNumber && !password && twoFactorAuthEnabled === undefined) {
         res.status(400);
         throw new Error('Please enter ANY field');
     }
@@ -221,11 +223,23 @@ const updateUser = asyncHandler(async (req, res) => {
     if (phoneNumber) {
         user.phone = phoneNumber;
     }
+    if (twoFactorAuthEnabled !== undefined) {
+        user.twoFactorAuthEnabled = twoFactorAuthEnabled;
+    }
     if (password) {
-        // Hash password
-        const salt = await bcrypt.genSalt(10);
-        const hashedPassword = await bcrypt.hash(password, salt);
-        user.password = hashedPassword;
+        if (!oldPassword) {
+            res.status(400);
+            throw new Error('Please enter your current password');
+        }
+        if (await bcrypt.compare(oldPassword, user.password)) {
+            // Hash new password
+            const salt = await bcrypt.genSalt(10);
+            const hashedPassword = await bcrypt.hash(password, salt);
+            user.password = hashedPassword;
+        } else {
+            res.status(401);
+            throw new Error('Invalid password');
+        }
     }
 
     const updated = await user.save();

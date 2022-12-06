@@ -10,6 +10,10 @@ const userSchema = new mongoose.Schema({
         type: Boolean,
         required: true,
     },
+    twoFactorAuthEnabled: {
+        type: Boolean,
+        required: true,
+    },
     password: {
         type: String,
         required: true,

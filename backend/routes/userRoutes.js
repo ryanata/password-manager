@@ -16,5 +16,5 @@ router.post('/login', loginUser);
 router.post('/forgotPassword', forgotPassword);
 router.put('/:id/update', updateUser);
 router.get('/me', protect, getMe);
-router.put('/:id/verify', verifyUser);
+router.get('/:id/verify', verifyUser);
 module.exports = router;
