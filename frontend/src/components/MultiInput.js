@@ -1,22 +1,31 @@
-import { forwardRef, useState, useEffect } from 'react';
-import { Box, CloseButton, Modal, Badge, Loader, Title, MultiSelect, TextInput, PasswordInput, Text, Group, Button, Stack, createStyles } from '@mantine/core';
-import ColorModal from './ColorModal';
-import { useParams } from 'react-router-dom';
-import { useTags } from '../helpers/Hooks';
+import {
+    Badge,
+    Box,
+    Button,
+    CloseButton,
+    Group,
+    Loader,
+    Modal,
+    MultiSelect,
+    PasswordInput,
+    Stack,
+    Text,
+    TextInput,
+    Title,
+    createStyles,
+} from "@mantine/core";
+import { forwardRef, useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
 
-const useStyles = createStyles((theme) => ({
-}));
+import { useTags } from "../helpers/Hooks";
+import ColorModal from "./ColorModal";
 
+const useStyles = createStyles((theme) => ({}));
 
 const SelectItem = forwardRef(({ label, color, mantineColor, ...others }, ref) => (
     <div ref={ref} {...others}>
         <Group position="left" noWrap>
-            <Badge
-                color={color}
-                variant="filled"
-                size="md"
-                radius="sm"
-            >
+            <Badge color={color} variant="filled" size="md" radius="sm">
                 {label}
             </Badge>
         </Group>
@@ -27,15 +36,19 @@ const SelectedItem = forwardRef(({ label, color, mantineColor, onRemove, ...othe
     const clone = (({ classNames, styles, ...o }) => o)(others);
     return (
         <div ref={ref} {...clone}>
-            <Group noWrap spacing={0} sx={{
-                backgroundColor: mantineColor,
-                borderRadius: 4,
-                color: 'white',
-                paddingLeft: 10,
-                textTransform: 'uppercase',
-                fontWeight: 700,
-                fontSize: '12px',
-            }}>
+            <Group
+                noWrap
+                spacing={0}
+                sx={{
+                    backgroundColor: mantineColor,
+                    borderRadius: 4,
+                    color: "white",
+                    paddingLeft: 10,
+                    textTransform: "uppercase",
+                    fontWeight: 700,
+                    fontSize: "12px",
+                }}
+            >
                 <span>{label}</span>
                 <CloseButton
                     aria-hidden
@@ -49,10 +62,10 @@ const SelectedItem = forwardRef(({ label, color, mantineColor, onRemove, ...othe
                 />
             </Group>
         </div>
-)});
+    );
+});
 
-
-const MultiInput = ({preSelectedTags=[], updateForm, children, ...others}) => {
+const MultiInput = ({ preSelectedTags = [], updateForm, children, ...others }) => {
     // Hooks
     const { classes, theme } = useStyles();
     const [newTag, setNewTag] = useState({});
@@ -65,7 +78,7 @@ const MultiInput = ({preSelectedTags=[], updateForm, children, ...others}) => {
         // If selectedTags changed, check if selectedTags is in tags
         // If not, continue, the hook will come back when tags is updated
         // If so, update the form
-        
+
         // Check that all strings in selectedTags are in tags.label
         const allIn = selectedTags.every((tag) => tags.map((t) => t.label).includes(tag));
 
@@ -75,23 +88,18 @@ const MultiInput = ({preSelectedTags=[], updateForm, children, ...others}) => {
                 return {
                     name: tagObject.label,
                     color: tagObject.color,
-                }
+                };
             });
             updateForm(selectedTagObjects);
         }
     }, [selectedTags, tags]);
 
-
     if (isLoading) {
-        return (
-            <Loader />
-        )
+        return <Loader />;
     }
 
     if (isError) {
-        return (
-            <Text>There was an error loading the tags</Text>
-        )
+        return <Text>There was an error loading the tags</Text>;
     }
 
     // Only run once on very first render (cheaper than useEffect)
@@ -102,13 +110,17 @@ const MultiInput = ({preSelectedTags=[], updateForm, children, ...others}) => {
                 value: tag.name,
                 color: tag.color,
                 mantineColor: theme.colors[tag.color][6],
-            }
+            };
         });
         setTags(formattedTags);
-        setSelectedTags(preSelectedTags.map((tag) => { return tag.name }));
+        setSelectedTags(
+            preSelectedTags.map((tag) => {
+                return tag.name;
+            })
+        );
     }
 
-    return ( 
+    return (
         <>
             <MultiSelect
                 label="Tags"
@@ -125,10 +137,10 @@ const MultiInput = ({preSelectedTags=[], updateForm, children, ...others}) => {
                 getCreateLabel={(query) => `Create tag "${query}"`}
                 onCreate={(query) => {
                     // TODO: If duplicate tag name, throw error and don't add
-                    const item = { 
+                    const item = {
                         label: query,
                         value: query,
-                        color: 'blue',
+                        color: "blue",
                         mantineColor: theme.colors["blue"][6],
                     };
                     setNewTag(item);
@@ -137,12 +149,11 @@ const MultiInput = ({preSelectedTags=[], updateForm, children, ...others}) => {
                 nothingFound="Nobody here"
                 maxDropdownHeight={400}
                 filter={(value, selected, item) =>
-                    !selected &&
-                    (item.label.toLowerCase().includes(value.toLowerCase().trim()))
+                    !selected && item.label.toLowerCase().includes(value.toLowerCase().trim())
                 }
             />
             <Modal
-                title={`Choose tag color for ${newTag?.label ? newTag.label : 'your tag'}`}
+                title={`Choose tag color for ${newTag?.label ? newTag.label : "your tag"}`}
                 opened={Object.keys(newTag).length !== 0}
                 centered
                 size="xs"
@@ -150,11 +161,11 @@ const MultiInput = ({preSelectedTags=[], updateForm, children, ...others}) => {
                     setTags((current) => [...current, newTag]);
                     setNewTag({});
                 }}
-                >
-                    <ColorModal setTag={setNewTag} tag={newTag}/>
+            >
+                <ColorModal setTag={setNewTag} tag={newTag} />
             </Modal>
         </>
-     );
-}
- 
+    );
+};
+
 export default MultiInput;

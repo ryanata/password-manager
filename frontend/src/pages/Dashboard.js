@@ -3,6 +3,7 @@ import { useMediaQuery } from "@mantine/hooks";
 import { useMemo, useState } from "react";
 import { Route, Routes } from "react-router-dom";
 
+import AllPasswords from "../components/AllPasswords";
 import DashboardHeader from "../components/DashboardHeader";
 import { DashboardLeftNav } from "../components/DashboardLeftNav";
 import PasswordGenerator from "../components/PasswordGenerator";
@@ -91,15 +92,7 @@ const Dashboard = () => {
                 <Routes>
                     <Route exact path="/" element={<LoadingVaults vaults={vaults} />} />
                     <Route path=":id" element={<Vault />} />
-                    <Route
-                        path="all-passwords"
-                        element={
-                            <>
-                                {" "}
-                                <p>all passwords</p>{" "}
-                            </>
-                        }
-                    />
+                    <Route path="all-passwords" element={<AllPasswords />} />
                     <Route path="password-generator" element={<PasswordGenerator />} />
                     <Route path="settings" element={<Settings />} />
                 </Routes>

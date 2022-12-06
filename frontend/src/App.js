@@ -1,7 +1,7 @@
-import { MantineProvider, ColorSchemeProvider } from "@mantine/core";
+import { ColorSchemeProvider, MantineProvider } from "@mantine/core";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { useState } from "react";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
 
 import "./App.css";
 import AboutUs from "./pages/AboutUs";
@@ -13,10 +13,9 @@ import Solutions from "./pages/Solutions";
 // Create a client
 const queryClient = new QueryClient();
 
-
 function App() {
-    const [colorScheme, setColorScheme] = useState('light');
-    const toggleColorScheme = (value) => setColorScheme(value || (colorScheme === 'dark' ? 'light' : 'dark'));
+    const [colorScheme, setColorScheme] = useState("light");
+    const toggleColorScheme = (value) => setColorScheme(value || (colorScheme === "dark" ? "light" : "dark"));
     return (
         <QueryClientProvider client={queryClient}>
             <ColorSchemeProvider colorScheme={colorScheme} toggleColorScheme={toggleColorScheme}>
