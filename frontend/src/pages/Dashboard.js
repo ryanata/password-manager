@@ -3,11 +3,11 @@ import { useMediaQuery } from "@mantine/hooks";
 import { useMemo, useState } from "react";
 import { Route, Routes } from "react-router-dom";
 
+import AllPasswords from "../components/AllPasswords";
 import DashboardHeader from "../components/DashboardHeader";
 import { DashboardLeftNav } from "../components/DashboardLeftNav";
 import PasswordGenerator from "../components/PasswordGenerator";
 import Settings from "../components/Settings.js";
-import AllPasswords from "../components/AllPasswords";
 import Vault from "../components/Vault";
 import WelcomeModal from "../components/WelcomeModal";
 import { VaultContext, useUser } from "../helpers/Hooks";

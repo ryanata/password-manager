@@ -1,9 +1,10 @@
-import { Badge, Group, ScrollArea, ThemeIcon, createStyles, UnstyledButton } from "@mantine/core";
+import { Badge, Group, ScrollArea, ThemeIcon, UnstyledButton, createStyles } from "@mantine/core";
 import { useMediaQuery } from "@mantine/hooks";
 import { IconPlus } from "@tabler/icons";
-import { useTags } from "../helpers/Hooks";
-import { useParams } from "react-router-dom";
 import { useState } from "react";
+import { useParams } from "react-router-dom";
+
+import { useTags } from "../helpers/Hooks";
 
 const useStyles = createStyles((theme) => ({
     root: {
@@ -18,14 +19,14 @@ const useStyles = createStyles((theme) => ({
     },
 }));
 
-const BadgeFilter = ({tag, filteredTags, setFilteredTags, size}) => {
+const BadgeFilter = ({ tag, filteredTags, setFilteredTags, size }) => {
     const selected = filteredTags.length == 0 || filteredTags.includes(tag.name);
 
     return (
         <UnstyledButton
             onClick={() => {
                 if (selected) {
-                    if (filteredTags.length == 0){
+                    if (filteredTags.length == 0) {
                         // Add the tag to the list of filtered tags
                         setFilteredTags([tag.name]);
                     } else {
@@ -40,21 +41,20 @@ const BadgeFilter = ({tag, filteredTags, setFilteredTags, size}) => {
         >
             <Badge
                 color={tag.color}
-                variant={filteredTags.length == 0 ? "outline" : (selected ? "filled" : "outline")}
+                variant={filteredTags.length == 0 ? "outline" : selected ? "filled" : "outline"}
                 size={size}
                 radius="sm"
-            > 
+            >
                 {tag.name}
             </Badge>
         </UnstyledButton>
-    )
-}
+    );
+};
 
-export function TagCarousel({tags, filteredTags, setFilteredTags}) {
+export function TagCarousel({ tags, filteredTags, setFilteredTags }) {
     const { classes, theme } = useStyles();
     const isMobile = useMediaQuery(`(max-width: ${theme.breakpoints.sm - 1}px)`);
     const isTablet = useMediaQuery(`(max-width: ${theme.breakpoints.md - 1}px)`);
-    
 
     // const iconSize = isMobile ? 16 : 32;
     const badgeSize = isMobile ? "sm" : isTablet ? "md" : "lg";
@@ -64,7 +64,13 @@ export function TagCarousel({tags, filteredTags, setFilteredTags}) {
             <ScrollArea offsetScrollbars style={{ overflowX: "scroll", width: "90%" }}>
                 <Group spacing="sm" className={classes.tagsWrapper}>
                     {tags.map((tag) => (
-                            <BadgeFilter key={tag.name} filteredTags={filteredTags} setFilteredTags={setFilteredTags} tag={tag} size={badgeSize}/>
+                        <BadgeFilter
+                            key={tag.name}
+                            filteredTags={filteredTags}
+                            setFilteredTags={setFilteredTags}
+                            tag={tag}
+                            size={badgeSize}
+                        />
                     ))}
                 </Group>
             </ScrollArea>

@@ -20,7 +20,7 @@ const useStyles = createStyles((theme) => ({
     noneText: {
         textAlign: "left",
         padding: "10px 16px",
-    }
+    },
 }));
 
 const Icons = {
@@ -41,7 +41,7 @@ const NameHeader = ({ children, sort, onSort }) => {
                     {children}
                 </Text>
             </div>
-        )
+        );
     }
 
     return (

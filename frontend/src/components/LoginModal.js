@@ -109,7 +109,7 @@ const LoginModal = ({ opened, closed, openSignupModal }) => {
                     setState({ alert: values.email });
                 })
                 .catch((err) => {
-                    console.log(err.response.data)
+                    console.log(err.response.data);
                     setState({ alert: "ERROR" });
                 });
         }

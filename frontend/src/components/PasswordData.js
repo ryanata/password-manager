@@ -14,7 +14,6 @@ const useStyles = createStyles((theme) => ({
         fontSize: theme.fontSizes.md,
         [theme.fn.smallerThan("sm")]: {
             fontSize: theme.fontSizes.sm,
-            
         },
         [theme.fn.smallerThan("xs")]: {
             fontSize: theme.fontSizes.xs,
@@ -53,7 +52,6 @@ const PasswordData = ({ account, toggleModal, vaultId }) => {
     const { classes, theme } = useStyles();
     const { id } = useParams();
     const properId = vaultId ? vaultId : id;
-    console.log(properId);
     // Hooks
     const [showPassword, setShowPassword] = useState(false);
     const { vaultStates, setVaultStates } = useContext(VaultContext);

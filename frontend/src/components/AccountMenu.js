@@ -1,9 +1,9 @@
-import { Anchor, Button, Group, Image, Menu, Space, Stack, Text } from "@mantine/core";
+import { Button, Group, Image, Menu, Space, Stack, Text } from "@mantine/core";
 import { Avatar } from "@mantine/core";
 import { IconSettings } from "@tabler/icons";
 import { useQuery } from "@tanstack/react-query";
-import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 const AccountMenu = () => {
     let token = "none";
@@ -66,36 +66,33 @@ const AccountMenu = () => {
                             <Text size="sm" color={"white"}>{`${user.email}`}</Text>
                         </Stack>
 
-                        <Anchor href="/dashboard/settings">
-                            <Button
-                                styles={(theme) => ({
-                                    root: {
-                                        backgroundColor: "#454545",
-                                        color: "white",
-                                        width: "248px",
-                                        borderBottom: "1px solid #3A3939",
-                                        borderTop: "1px solid #3A3939",
-                                        "&:hover": {
-                                            backgroundColor: "#3A3939",
-                                        },
+                        <Button
+                            styles={(theme) => ({
+                                root: {
+                                    backgroundColor: "#454545",
+                                    color: "white",
+                                    width: "248px",
+                                    borderBottom: "1px solid #3A3939",
+                                    borderTop: "1px solid #3A3939",
+                                    "&:hover": {
+                                        backgroundColor: "#3A3939",
                                     },
-                                })}
-                                leftIcon={<IconSettings size={14} />}
-                            >
-                                Account Settings
-                            </Button>
-                        </Anchor>
+                                },
+                            })}
+                            leftIcon={<IconSettings size={14} />}
+                            onClick={() => navigate("/dashboard/settings")}
+                        >
+                            Account Settings
+                        </Button>
 
-                        <Anchor href="/">
-                            <Button
-                                onClick={() => {
-                                    localStorage.removeItem("pwdlyToken");
-                                }}
-                                href="/"
-                            >
-                                Log Out
-                            </Button>
-                        </Anchor>
+                        <Button
+                            onClick={() => {
+                                localStorage.removeItem("pwdlyToken");
+                                navigate("/");
+                            }}
+                        >
+                            Log Out
+                        </Button>
                         <Space h="xs" />
                     </Stack>
                 </Menu.Dropdown>

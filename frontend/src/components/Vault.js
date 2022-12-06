@@ -1,11 +1,11 @@
+import { Center, Loader, Text } from "@mantine/core";
 import { useState } from "react";
+import { useParams } from "react-router-dom";
 
-import { Loader, Center, Text } from "@mantine/core";
+import { useTags } from "../helpers/Hooks";
 import SearchBar from "./SearchBar";
 import { TagCarousel } from "./TagCarousel";
 import VaultTable from "./VaultTable";
-import { useTags } from "../helpers/Hooks";
-import { useParams } from "react-router-dom";
 
 const Vault = () => {
     const [search, setSearch] = useState("");
@@ -18,7 +18,7 @@ const Vault = () => {
             <Center style={{ width: "100%", height: "80vh" }}>
                 <Loader size="xl" color="steel-blue" />
             </Center>
-        )
+        );
     }
 
     if (isError) {
@@ -26,7 +26,7 @@ const Vault = () => {
             <Center style={{ width: "100%", height: "80vh" }}>
                 <Text>Couldn't get vault information 😢. Try refreshing the page to re-fetch.</Text>
             </Center>
-        )
+        );
     }
 
     const tags = data.tags;
@@ -34,7 +34,7 @@ const Vault = () => {
     return (
         <>
             <SearchBar setSearch={setSearch} />
-            <TagCarousel tags={tags} setFilteredTags={setFilteredTags} filteredTags={filteredTags}/>
+            <TagCarousel tags={tags} setFilteredTags={setFilteredTags} filteredTags={filteredTags} />
             <VaultTable tags={tags} searchTerm={search} filteredTags={filteredTags} />
         </>
     );

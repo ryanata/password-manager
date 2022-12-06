@@ -48,14 +48,16 @@ const MasterPasswordModal = ({ opened, closed, password, vaultName, vaultId }) =
             radius="md"
             styles={{
                 header: {
-                    marginBottom: 0,
+                    marginBottom: 12,
+                    fontSize: "25px",
                 },
             }}
-            title={`Enter master password for your "${vaultName}" vault`}
+            title={`${vaultName} vault`}
             padding="lg"
         >
             <form onSubmit={form.onSubmit((values) => formHandler(values))}>
-                <PasswordInput label="Master password" {...form.getInputProps("password")} />
+                <Text size="xs">{`Enter the master password for your "${vaultName}" vault`}</Text>
+                <PasswordInput mt="xs" label="Master password" {...form.getInputProps("password")} />
                 <Group position="right" mt="md">
                     <Button type="submit">Submit</Button>
                 </Group>
