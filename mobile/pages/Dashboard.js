@@ -1,12 +1,18 @@
 import * as React from 'react';
-import { StyleSheet, Text, Button, View, Image, Pressable, TouchableOpacity } from 'react-native';
-import { createDrawerNavigator, DrawerContentScrollView, DrawerItemList } from '@react-navigation/drawer';
+import { StyleSheet, Text, Button, View, Image, Pressable, TouchableOpacity, Alert } from 'react-native';
+import { createDrawerNavigator, DrawerContentScrollView, DrawerItemList, DrawerItem } from '@react-navigation/drawer';
 import { NavigationContainer, useNavigation } from '@react-navigation/native';
 import Login from './Login';
 import AllPasswords from './AllPasswords';
 import Vaults from './Vaults';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import VaultDrawerlabel from '../components/VaultDrawerLabel';
+import { useVaults } from '../helpers/Hooks';
+import { useQuery } from 'react-query';
+import axios from 'axios'
+import * as SecureStore from 'expo-secure-store';
+
 
 
 function LogoTitle() {
@@ -20,49 +26,69 @@ function LogoTitle() {
 
 const Drawer = createDrawerNavigator();
 
-
+{/*Drawer components are defined here */}
 const CustomDrawer = props => {
+    const navigation = useNavigation();
+    let token = "none"
+    try {
+        SecureStore.getItemAsync('pwdlytoken').then((response) => {token = response})
+        
+    } catch (error) {
+        console.log(error);
+    }
+    const { data, isLoading, isError, error } = useQuery(["getVaults"], () => axios.get("https://pwdly.herokuapp.com/api/vault", { headers: { Authorization: `Bearer ${token}` } }));
+    if(isLoading){
+        return <Text>Loading</Text>
+    }
+    if(isError){
+        Alert("Error: placeholder")
+        return <Text>Error</Text>
+    }
+    const vaults = data.data.vaults;
+    
+	return(
+		<View style={{flex: 1}}>
+			<DrawerContentScrollView {...props} >
+                {/*Drawer header*/}
+				<View
+				style={styles.navDrawerHeader}
+				>
+					{/*Hamburger menu header backarrow pressable*/}
+					<Pressable onPress={() => { 
+						navigation.navigate('Login');
+						}}>
+						<MaterialCommunityIcons
+						name="arrow-left-box"
+						size={40}
+						color={'#625A5A'}
+						/>
+					</Pressable>
+					{/* Hamburger menu header pwdly icon*/}
+					<Image
+						style={{ width: 90, height: 29,  }}
+						source={require('../assets/pwdly_White_Logo_1.png')}
+					/>
+				</View>
+                {/*Allpasswords label and Password generator label defined in <Drawer.navigator> */}
+				<DrawerItemList {...props}/>
+                {/*Collapsable for user's vaults*/}
+                <VaultDrawerlabel vaults={vaults} />
+			</DrawerContentScrollView>
 
-  const navigation = useNavigation();
-  return(
-    <View style={{flex: 1}}>
-      <DrawerContentScrollView {...props} >
-        <View
-          style={styles.navDrawerHeader}
-        >
-          {/*Hamburger menu header backarrow pressable*/}
-          <Pressable onPress={() => { 
-              navigation.navigate('Login');
-            }}>
-            <MaterialCommunityIcons
-              name="arrow-left-box"
-              size={40}
-              color={'#625A5A'}
-            />
-          </Pressable>
-          {/* Hamburger menu header pwdly icon*/}
-          <Image
-            style={{ width: 90, height: 29,  }}
-            source={require('../assets/pwdly_White_Logo_1.png')}
-          />
-        </View>
-        <DrawerItemList {...props}/>
-
-      </DrawerContentScrollView>
-
-      <TouchableOpacity
-        style={styles.navbarFooter}
-        onPress={() => console.log("Account Settings Button")}
-      >
-        <Ionicons
-          name="settings-outline"
-          size={30}
-          color={'#ffffff'}
-        />
-        <Text style={{color: 'white', fontWeight: "500"}}>Account Settings</Text>
-      </TouchableOpacity>
-      
-    </View>
+			{/*Settings button at bottom of drawer*/}
+			<TouchableOpacity
+				style={styles.navbarFooter}
+				onPress={() => navigation.navigate('AllPasswords')}
+			>
+				<Ionicons
+				name="settings-outline"
+				size={30}
+				color={'#ffffff'}
+				/>
+				<Text style={{color: 'white', fontWeight: "500"}}>Account Settings</Text>
+			</TouchableOpacity>
+		
+		</View>
   );
 };
 
@@ -72,7 +98,7 @@ function Dashboard() {
         <Drawer.Navigator 
             drawerContent={(props) => <CustomDrawer{...props}/>}
             useLegacyImplementation={true} 
-            initialRouteName="Vaults"
+            initialRouteName="AllPasswords"
             screenOptions={{
                 drawerStyle: {
                 backgroundColor: '#363535',
@@ -94,7 +120,7 @@ function Dashboard() {
             }}
         >
           <Drawer.Screen 
-              name="All Passwords" 
+              name="AllPasswords" 
               component={AllPasswords} 
               options={{
                   drawerIcon: ({focused, size}) => (
@@ -110,7 +136,8 @@ function Dashboard() {
                     color: "white"
                   }
               }}
-          />
+          />         
+          {/*This tab is hidden in place of the VaultDrawerLabel component*/} 
           <Drawer.Screen 
             name="Vaults" 
             component={Vaults} 
@@ -127,9 +154,10 @@ function Dashboard() {
                   drawerLabel: "Vaults",
                   drawerLabelStyle: {
                     color: "white"
-                  }
+                  },
+                  drawerItemStyle: { display: 'none' }
               }}
-          />
+          />  
           <Drawer.Screen 
             name="Password Generator" 
             component={Login} 

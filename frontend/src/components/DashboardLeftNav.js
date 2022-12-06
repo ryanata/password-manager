@@ -79,7 +79,7 @@ export function DashboardLeftNav() {
         {
             label: "Settings",
             icon: IconSettings,
-            link: "https://www.google.com/",
+            link: "/dashboard/settings",
         },
     ];
 
