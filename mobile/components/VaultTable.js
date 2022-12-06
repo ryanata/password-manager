@@ -1,60 +1,69 @@
-import * as React from 'react';
-import { StyleSheet, Button, Text, View, Keyboard, ScrollView, Pressable, ActivityIndicator } from 'react-native';
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import axios from "axios";
-import { useVault, useVaultSearch } from '../helpers/Hooks';
-import CustomSearchbar from '../components/SearchBar';
-import { getUserId, useDebounce } from '../helpers/Hooks';
+import { useState } from 'react';
+import { ActivityIndicator, StyleSheet, SafeAreaView, Button, FlatList, Text, View, Keyboard, ScrollView, StatusBar } from 'react-native';
+import { useQuery } from 'react-query';
+import VaultRow from '../components/VaultRow'
+import { useVault } from '../hooks/getAllVaultsQuery';
+import { useDebounce, useVaultSearch } from '../helpers/Hooks';
 
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: '#fff',
-        alignItems: 'left',
-        justifyContent: 'top',
-        paddingTop: 10
-    },
-});
-
- 
-
-const VaultTable = ({ searchTerm, vaultId }) => {
-    // Get vault data
-    const { data, isLoading, isError, error } = useVault(vaultId);
+const VaultTable = ({searchTerm, id, stackable}) => {
+    const { data, isLoading, isError } = useQuery(`getVault_${id}`, () => useVault(id))
     // Get vault search data
-    const [search, setSearch] = React.useState("");
     const searchTermDebounced = useDebounce(searchTerm, 500);
-    const { data: searchData, isLoading: searchLoading, error: searchError } = useVaultSearch(vaultId, searchTermDebounced);
-
+    const { data: searchData, isLoading: searchLoading, error: searchError } = useVaultSearch(id, searchTermDebounced);
     if(isLoading || searchLoading){
         return <ActivityIndicator />
     }
-    if(isError){
-        Alert("Error: placeholder")
+    if(isError || searchError){
         return <Text>Errorr</Text>
-    } 
-
+    }
+    
     const vault = searchData
         ? {
               ...data.vault,
               sites: searchData.sites,
           }
         : data.vault;
-    const sites = data.vault.sites
-    
+    const sites = vault.sites
+
+
+    if (stackable) {
+        return (
+            <View>
+                <Text style={{
+                    fontSize: 17, 
+                    paddingLeft: 16, 
+                    paddingVertical: 2,
+                    backgroundColor:"#F2F2F2",
+                    fontWeight: "500",
+                    borderBottomWidth: 0.9,
+                    borderBottomColor: '#B8B8B8',
+                    
+                }}>{data.vault.name}</Text>
+                {sites.map((site, index) => (<VaultRow key={index} site={site} vaultId={id} stackable first={index===0}/> ))}
+            </View>
+        )
+    }
 
     return ( 
-        
-        <ScrollView style={{flex: 1, marginTop: 10}}>
-            {vault?.sites?.map((site, index) => {
-                return (
-                    //need to replace with proper vault row
-                    <Text style={{color: 'black', fontSize: 15, marginTop: 10}} key={index}>{site.name}</Text>
-                );
-            })}
-        </ScrollView>
-        
+        <SafeAreaView style={styles.container}>
+            <FlatList
+                data={sites}
+                renderItem={({ item }) => <VaultRow site={item} vaultId={id}/>}
+                keyExtractor={item => item._id}
+            />
+            {/* {sites.map((site, index) => (<VaultRow site={site} key={site._id} lastElement={index === sites.length - 1}/> ))} */}
+        </SafeAreaView>
      );
 }
- 
+
+const styles = StyleSheet.create({
+    container: {
+        width: "100%",
+        height: "100%",
+        marginTop: StatusBar.currentHeight || 0,
+    },
+});
+
 export default VaultTable;
+ 
+

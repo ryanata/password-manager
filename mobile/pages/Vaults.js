@@ -14,36 +14,24 @@ const styles = StyleSheet.create({
         backgroundColor: '#fff',
         alignItems: 'left',
         justifyContent: 'top',
-        paddingTop: 10
+        paddingTop: 10,
     },
 });
 
  
 
 const Vaults = ({ route, navigation }) => {
-    const id = route.params.vault.id;
+    const id = route.params?.id;
 
     const [search, setSearch] = React.useState("");
-    //for rerendering component. dosent work
-    const [_, forceUpdate] = React.useReducer((x) => x + 1, 0);
-
-    function handleClick() {
-        console.log('updated')
-        forceUpdate();
+    if (!id) {
+        return <Text>Error</Text>
     }
-    
 
     return ( 
         <View style={styles.container}>
-            <View style={{flexDirection: "row", flex: 0.7}}>
-                <CustomSearchbar setSearch={setSearch}/>
-                <AddAccount vaultId={id} rerenderVaults={handleClick}/>
-            </View>
-            <View style={{flex: 10}}>
-                <VaultTable vault={route.params.vault} searchTerm={search} vaultId={id}/>
-            </View>
-            <Button onPress={handleClick} title="rerender">Force update</Button>
-                
+            <CustomSearchbar setSearch={setSearch}/>
+            <VaultTable vault={route.params.vault} searchTerm={search} id={id}/>
         </View>
      );
 }

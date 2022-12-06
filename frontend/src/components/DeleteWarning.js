@@ -1,7 +1,7 @@
-import { Modal, Title, Text } from "@mantine/core";
+import { Modal, Text, Title } from "@mantine/core";
 
-const DeleteWarning = ({opened, closed, label, children}) => {
-    return ( 
+const DeleteWarning = ({ opened, closed, label, children }) => {
+    return (
         <Modal
             opened={opened}
             onClose={closed}
@@ -15,7 +15,7 @@ const DeleteWarning = ({opened, closed, label, children}) => {
                 title: {
                     color: "red",
                     fontWeight: 600,
-                }
+                },
             }}
         >
             <Text weight={500} align="center">
@@ -26,7 +26,7 @@ const DeleteWarning = ({opened, closed, label, children}) => {
             </Text>
             {children}
         </Modal>
-     );
-}
- 
+    );
+};
+
 export default DeleteWarning;

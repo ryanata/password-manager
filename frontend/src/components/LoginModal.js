@@ -101,8 +101,17 @@ const LoginModal = ({ opened, closed, openSignupModal }) => {
                     form.setFieldValue("submittingLogin", null);
                 });
         } else {
-            // TODO: Send forgot password request to backend
-            setState({ alert: values.email });
+            axios
+                .post("/api/user/forgotPassword", {
+                    email: values.email,
+                })
+                .then((res) => {
+                    setState({ alert: values.email });
+                })
+                .catch((err) => {
+                    console.log(err.response.data);
+                    setState({ alert: "ERROR" });
+                });
         }
     };
 

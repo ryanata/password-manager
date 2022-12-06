@@ -1,19 +1,32 @@
-import { Affix, Avatar, Badge, Box, Button, Divider, Grid, Group, Menu, ScrollArea, Text, createStyles } from "@mantine/core";
-import { useMediaQuery, useClickOutside, useDisclosure } from "@mantine/hooks";
-import { deleteSite } from "../helpers/Hooks";
+import {
+    Affix,
+    Avatar,
+    Badge,
+    Box,
+    Button,
+    Divider,
+    Grid,
+    Group,
+    Menu,
+    ScrollArea,
+    Text,
+    createStyles,
+} from "@mantine/core";
+import { useClickOutside, useDisclosure, useMediaQuery } from "@mantine/hooks";
 import { useQueryClient } from "@tanstack/react-query";
-import { useParams } from "react-router-dom";
 import { useState } from "react";
+import { useParams } from "react-router-dom";
 
-import PasswordData from "./PasswordData";
-import EditModal from "./EditSiteModal";
+import { deleteSite } from "../helpers/Hooks";
 import DeleteWarning from "./DeleteWarning";
+import EditModal from "./EditSiteModal";
+import PasswordData from "./PasswordData";
 
 const useStyles = createStyles((theme) => ({
     root: {
         // On hover of the row, change the background color to the lightest shade of gray
         "&:hover": {
-            backgroundColor: theme.colors.gray[3],
+            backgroundColor: theme.colorScheme === "dark" ? theme.colors.dark[5] : theme.colors.gray[3],
         },
     },
     siteHeader: {
@@ -68,17 +81,15 @@ const badgeHeights = {
     lg: 26,
 };
 
-const VaultRow = ({ site, provided, toggleModal }) => {
+const VaultRow = ({ site, provided, toggleModal, preventContext, vaultId }) => {
     const { classes, theme } = useStyles();
     const isMobile = useMediaQuery(`(max-width: ${theme.breakpoints.sm - 1}px)`);
     const isTablet = useMediaQuery(`(max-width: ${theme.breakpoints.md - 1}px)`);
     const [coords, setCoords] = useState({
         clientX: null,
-        clientY: null
-      });
-    const ref = useClickOutside(() =>
-        setCoords({ clientX: null, clientY: null })
-    );
+        clientY: null,
+    });
+    const ref = useClickOutside(() => setCoords({ clientX: null, clientY: null }));
     const { id } = useParams();
     const [editModalOpened, { toggle: toggleEditModal }] = useDisclosure(false);
     const [deleteModalOpened, { toggle: toggleDeleteModal }] = useDisclosure(false);
@@ -86,17 +97,18 @@ const VaultRow = ({ site, provided, toggleModal }) => {
     const queryClient = useQueryClient();
     const queryTags = `getTags_${id}`;
     const queryVault = `getVault_${id}`;
-    
-    
+
     const handleContextMenu = (e) => {
+        if (preventContext) return;
         e.preventDefault();
         const { clientX, clientY } = e;
         console.log(clientX, clientY);
         setCoords({ clientX, clientY });
     };
+
     const validCoords = coords.clientX !== null && coords.clientY !== null;
-    const affixPosition = (coords.clientX !== null && coords.clientY !== null) ? 
-                          { left: coords.clientX, top: coords.clientY } : undefined;
+    const affixPosition =
+        coords.clientX !== null && coords.clientY !== null ? { left: coords.clientX, top: coords.clientY } : undefined;
     const iconSize = isMobile ? 16 : 32;
     const badgeSize = isMobile ? "sm" : isTablet ? "md" : "lg";
     return (
@@ -141,12 +153,7 @@ const VaultRow = ({ site, provided, toggleModal }) => {
                                         <Box sx={{ width: "12px", height: badgeHeights[badgeSize] }} />
                                     )}
                                     {account.tags.map((tag, j) => (
-                                        <Badge 
-                                            key={j} 
-                                            radius="sm"
-                                            variant="filled"
-                                            color={tag.color} 
-                                            size={badgeSize}>
+                                        <Badge key={j} radius="sm" variant="filled" color={tag.color} size={badgeSize}>
                                             {tag.name}
                                         </Badge>
                                     ))}
@@ -155,36 +162,39 @@ const VaultRow = ({ site, provided, toggleModal }) => {
                         </div>
                     </Grid.Col>
                     <Grid.Col span={3}>
-                        <PasswordData account={account} toggleModal={toggleModal} />
+                        <PasswordData account={account} toggleModal={toggleModal} vaultId={vaultId} />
                     </Grid.Col>
                 </Grid>
             ))}
             <Divider mb="xs" />
-            <Affix
-                sx={{ display: validCoords ? "initial" : "none" }}
-                position={affixPosition}
-            >
+            <Affix sx={{ display: validCoords ? "initial" : "none" }} position={affixPosition}>
                 <Menu opened={validCoords} width={150}>
-                <div ref={ref}>
-                    <Menu.Target>
-                    <div />
-                    </Menu.Target>
-                    <Menu.Dropdown>
-                    <Menu.Item onClick={toggleEditModal}>Edit</Menu.Item>
-                    <Menu.Item color="red" onClick={toggleDeleteModal}>Delete site</Menu.Item>
-                    </Menu.Dropdown>
-                </div>
+                    <div ref={ref}>
+                        <Menu.Target>
+                            <div />
+                        </Menu.Target>
+                        <Menu.Dropdown>
+                            <Menu.Item onClick={toggleEditModal}>Edit</Menu.Item>
+                            <Menu.Item color="red" onClick={toggleDeleteModal}>
+                                Delete site
+                            </Menu.Item>
+                        </Menu.Dropdown>
+                    </div>
                 </Menu>
-                {editModalOpened && <EditModal opened={editModalOpened} closed={toggleEditModal} site={site}/>}
+                {editModalOpened && <EditModal opened={editModalOpened} closed={toggleEditModal} site={site} />}
                 {deleteModalOpened && (
-                    <DeleteWarning 
-                        opened={deleteModalOpened} 
-                        closed={toggleDeleteModal} 
-                        label="Are you sure you want to this delete this site?">
-                            <Group position="right" mt="sm">
-                                <Group spacing="xs">
-                                    <Button variant="outline" onClick={toggleDeleteModal}>No</Button>
-                                    <Button onClick={() => {
+                    <DeleteWarning
+                        opened={deleteModalOpened}
+                        closed={toggleDeleteModal}
+                        label="Are you sure you want to this delete this site?"
+                    >
+                        <Group position="right" mt="sm">
+                            <Group spacing="xs">
+                                <Button variant="outline" onClick={toggleDeleteModal}>
+                                    No
+                                </Button>
+                                <Button
+                                    onClick={() => {
                                         // Close Modal
                                         toggleDeleteModal();
                                         // Delete site
@@ -198,10 +208,14 @@ const VaultRow = ({ site, provided, toggleModal }) => {
                                             .catch((err) => {
                                                 console.log(err);
                                             });
-                                    }}>Yes</Button>
-                                </Group>
+                                    }}
+                                >
+                                    Yes
+                                </Button>
                             </Group>
-                    </DeleteWarning>)}
+                        </Group>
+                    </DeleteWarning>
+                )}
             </Affix>
         </Box>
     );

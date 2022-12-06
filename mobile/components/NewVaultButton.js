@@ -1,6 +1,6 @@
 import { useState } from "react";
 import * as React from 'react'
-import { Alert, Modal, StyleSheet, Text, Pressable, View, TextInput } from "react-native";
+import { Alert, Modal, StyleSheet, Text, Pressable, View, TextInput, TouchableOpacity } from "react-native";
 import axios from 'axios';
 import {useForm, Controller} from 'react-hook-form';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -47,30 +47,41 @@ const NewVaultButton = (props) => {
   return (
     <View style={styles.centeredView}>
         <Modal
-		animationType="fade"
-		transparent={true}
-		visible={modalVisible}
-		onRequestClose={() => {
-		Alert.alert("Modal has been closed.");
-		setModalVisible(!modalVisible);
-		}}
+        animationType="fade"
+        transparent={true}
+        visible={modalVisible}
+        onRequestClose={() => {
+          Alert.alert("Modal has been closed.");
+          setModalVisible(false);
+        }}
         >
             <View style={styles.centeredView}>
               <View style={styles.modalView}>
+                <View style={styles.modalHeader}>
+                  <View style={styles.modalHeaderContent}><Text></Text></View>
+                  <TouchableOpacity style={styles.closeButton} onPress={() => setModalVisible(false)}>
+                    <MaterialCommunityIcons
+                      name="close"
+                      size={25}
+                      color={'#000000'}
+                    />
+                  </TouchableOpacity>
+                </View>
                 <Controller
-                  control= {control}
+                  control={control}
                   name="vaultName"
                   render={({field: {onChange, value} }) =>(
                       	<TextInput
-						required={true}
-						style={styles.TextInput}
-						placeholder="Enter Vault name"
-						autoCapitalize='none'
-						placeholderTextColor={"#003f5c"}
-						onSubmitEditing={event =>
-						handleSubmit(createVaultApiCall)
-						}
-						onChangeText={value => onChange(value)}
+                          required={true}
+                          style={styles.TextInput}
+                          placeholder="Enter Vault Name"
+                          autoCapitalize='none'
+                          placeholderTextColor={"#003f5c"}
+                          padding={10}
+                          onSubmitEditing={event =>
+                            handleSubmit(createVaultApiCall)
+                            }
+                          onChangeText={value => onChange(value)}
                       	/>
                   )}
                   rules={{
@@ -84,18 +95,18 @@ const NewVaultButton = (props) => {
                 control= {control}
                 name="masterPassword"
                 render={({field: {onChange, value} }) =>(
-					<TextInput
-					secureTextEntry={true}
-					required={true}
-					style={styles.TextInput}
-					placeholder="Master Password"
-					autoCapitalize='none'
-					placeholderTextColor={"#003f5c"}
-					onSubmitEditing={event =>
-						handleSubmit(createVaultApiCall)
-					}
-					onChangeText={value => onChange(value)}
-					/>
+                  <TextInput
+                  secureTextEntry={true}
+                  required={true}
+                  style={styles.TextInput}
+                  placeholder="Master Password"
+                  autoCapitalize='none'
+                  placeholderTextColor={"#003f5c"}
+                  onSubmitEditing={event =>
+                    handleSubmit(createVaultApiCall)
+                  }
+                  onChangeText={value => onChange(value)}
+                  />
                 )}
                 rules={{
 					minLength: {
@@ -120,7 +131,7 @@ const NewVaultButton = (props) => {
         onPress={() => {
           	setModalVisible(true)
         }}
-        style={({ pressed }) => [styles.button, styles.buttonClose,{backgroundColor: pressed ? "#16578B" : "#2196F3"}]}
+        style={({ pressed }) => [styles.addButton, styles.addButtonClose,{backgroundColor: pressed ? "#16578B" : "#2196F3"}]}
         >
 			{({ pressed }) => (
                 <Text style={{color: "white"}}>Add New Vault</Text>
@@ -137,10 +148,13 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   modalView: {
+    width: "70%",
+    height: "30%",
     margin: 20,
     backgroundColor: "white",
-    borderRadius: 20,
-    padding: 35,
+    borderRadius: 10,
+    paddingHorizontal: 35,
+    paddingTop: 17,
     alignItems: "center",
     shadowColor: "#000",
     shadowOffset: {
@@ -151,9 +165,21 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 5
   },
+  addButton: {
+    borderRadius: 20,
+    padding: 10,
+    paddingHorizontal: 20,
+    marginTop: 10,
+    elevation: 2
+  },
+  addButtonClose: {
+    backgroundColor: "#2196F3",
+  },
   button: {
     borderRadius: 20,
     padding: 10,
+    paddingHorizontal: 25,
+    marginTop: 20,
     elevation: 2
   },
   buttonOpen: {
@@ -173,7 +199,31 @@ const styles = StyleSheet.create({
   },
   TextInput: {
     padding: 10,
+    width: "100%",
+    textAlign: "center",
+    borderRadius: 5,
+    backgroundColor: "#f0f0f0",
+    marginBottom: 15,
+    marginTop: 5,
+    borderWidth: 1,
+    borderColor: "#CCCCCC",
   },
+
+  closeButton: {
+    alignItems: "flex-end",
+  },
+
+  modalHeader: {
+    flexDirection: "row",
+    marginBottom: 10,
+  },
+  modalHeaderContent: {
+    flexGrow: 1,
+  },
+  modalButton: {
+    flexDirection: "row",
+    justifyContent: "flex-end",
+  }
 });
 
 export default NewVaultButton;

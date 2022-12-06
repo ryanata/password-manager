@@ -7,19 +7,18 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Collapsible from 'react-native-collapsible';
 import NewVaultButton from './NewVaultButton';
-import { getUserId } from '../helpers/Hooks';
-{/*Vault data Placeholder. Replace with real vault data implementation */}
+import { useQueryClient } from 'react-query';
 
 const onPressVaultLabel = (navigation, vault) => {
-    navigation.navigate('Vaults', {vault: vault})
-    //console.log(vault.name)
+    navigation.navigate('Vaults', {id: vault.id})
 } 
 
 
 const VaultDrawerlabel = ({vaults}) => {
     const [isCollapsed, setCollapsed] = React.useState(true);
     const navigation = useNavigation();
-    const userId = getUserId();
+    const queryClient = useQueryClient();
+    const userId = queryClient.getQueryData('getUser').id;
     
     let token = "none";
     

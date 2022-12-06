@@ -17,6 +17,10 @@ const useStyles = createStyles((theme) => ({
         height: 21,
         borderRadius: 21,
     },
+    noneText: {
+        textAlign: "left",
+        padding: "10px 16px",
+    },
 }));
 
 const Icons = {
@@ -29,6 +33,17 @@ const Icons = {
 const NameHeader = ({ children, sort, onSort }) => {
     const { classes } = useStyles();
     const Icon = Icons[sort];
+
+    if (sort === "none") {
+        return (
+            <div className={classes.th}>
+                <Text weight={500} size="sm" className={classes.noneText}>
+                    {children}
+                </Text>
+            </div>
+        );
+    }
+
     return (
         <div className={classes.th}>
             <UnstyledButton onClick={onSort} className={classes.control}>
