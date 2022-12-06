@@ -19,17 +19,17 @@ const styles = StyleSheet.create({
  
 
 const Vaults = ({ route, navigation }) => {
-    const id = route.params.vault.id;
+    const id = route.params?.id;
 
     const [search, setSearch] = React.useState("");
-    
-    
+    if (!id) {
+        return <Text>Error</Text>
+    }
 
     return ( 
         <View style={styles.container}>
             <CustomSearchbar setSearch={setSearch}/>
-            <VaultTable vault={route.params.vault} searchTerm={search} vaultId={id}/>
-                
+            <VaultTable vault={route.params.vault} searchTerm={search} id={id}/>
         </View>
      );
 }

@@ -1,19 +1,20 @@
 import * as React from 'react';
+import { useState, useMemo, useContext } from "react";
 import { StyleSheet, Text, Button, View, Image, Pressable, TouchableOpacity, Alert } from 'react-native';
 import { createDrawerNavigator, DrawerContentScrollView, DrawerItemList, DrawerItem } from '@react-navigation/drawer';
-import { NavigationContainer, useNavigation } from '@react-navigation/native';
+import { useNavigation } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import Login from './Login';
 import AllPasswords from './AllPasswords';
 import Vaults from './Vaults';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import VaultDrawerlabel from '../components/VaultDrawerLabel';
-import { useVaults } from '../helpers/Hooks';
+import { getMe } from '../hooks/getAllVaultsQuery';
 import { useQuery } from 'react-query';
-import axios from 'axios'
-import * as SecureStore from 'expo-secure-store';
-
-
+import SiteInfo from './SiteInfo';
+import { VaultContext } from '../hooks/vaultContext';
+import VaultDrawerlabel from '../components/VaultDrawerLabel';
+import { getVaults } from '../helpers/Hooks';
 
 function LogoTitle() {
   return (
@@ -28,73 +29,97 @@ const Drawer = createDrawerNavigator();
 
 {/*Drawer components are defined here */}
 const CustomDrawer = props => {
-    const navigation = useNavigation();
-    let token = "none"
-    try {
-        SecureStore.getItemAsync('pwdlytoken').then((response) => {token = response})
-        
-    } catch (error) {
-        console.log(error);
-    }
-    const { data, isLoading, isError, error } = useQuery(["getVaults"], () => axios.get("https://pwdly.herokuapp.com/api/vault", { headers: { Authorization: `Bearer ${token}` } }));
-    if(isLoading){
-        return <Text>Loading</Text>
-    }
-    if(isError){
-        Alert("Error: placeholder")
-        return <Text>Error</Text>
-    }
-    const vaults = data.data.vaults;
-    
-	return(
+  const navigation = useNavigation();
+  const { data, isLoading, isError, error } = useQuery("getVaults", getVaults);
+  
+  if (isLoading) {
+    return <Text>Loading...</Text>;
+  }
+
+  if (isError) {
+    return <Text>Error: {isError.message}</Text>;
+  }
+
+  const vaults = data.vaults;
+  return(
 		<View style={{flex: 1}}>
 			<DrawerContentScrollView {...props} >
-                {/*Drawer header*/}
-				<View
-				style={styles.navDrawerHeader}
-				>
+        {/*Drawer header*/}
+        <View
+          style={styles.navDrawerHeader}
+        >
 					{/*Hamburger menu header backarrow pressable*/}
-					<Pressable onPress={() => { 
-						navigation.navigate('Login');
-						}}>
-						<MaterialCommunityIcons
-						name="arrow-left-box"
-						size={40}
-						color={'#625A5A'}
-						/>
-					</Pressable>
+          <Pressable onPress={() => { 
+              navigation.navigate('Login');
+            }}>
+            <MaterialCommunityIcons
+              name="arrow-left-box"
+              size={40}
+              color={'#625A5A'}
+            />
+          </Pressable>
 					{/* Hamburger menu header pwdly icon*/}
 					<Image
 						style={{ width: 90, height: 29,  }}
 						source={require('../assets/pwdly_White_Logo_1.png')}
 					/>
 				</View>
-                {/*Allpasswords label and Password generator label defined in <Drawer.navigator> */}
 				<DrawerItemList {...props}/>
-                {/*Collapsable for user's vaults*/}
-                <VaultDrawerlabel vaults={vaults} />
+        {/*Collapsable for user's vaults*/}
+        <VaultDrawerlabel vaults={vaults} />
 			</DrawerContentScrollView>
 
 			{/*Settings button at bottom of drawer*/}
 			<TouchableOpacity
 				style={styles.navbarFooter}
-				onPress={() => navigation.navigate('AllPasswords')}
+				// onPress={() => navigation.navigate('AllPasswords')}
 			>
 				<Ionicons
-				name="settings-outline"
-				size={30}
-				color={'#ffffff'}
+          name="settings-outline"
+          size={30}
+          color={'#ffffff'}
 				/>
 				<Text style={{color: 'white', fontWeight: "500"}}>Account Settings</Text>
 			</TouchableOpacity>
-		
 		</View>
   );
 };
+    
+    
+const VaultProvider = ({ vaultIds, children }) => {
+  const intialVault = vaultIds.reduce((acc, vaultId) => {
+      acc[vaultId] = {
+          unlocked: false,
+      };
+      return acc;
+  }, {});
+  const [vaultStates, setVaultStates] = useState(intialVault);
+  const value = useMemo(
+      () => ({
+          vaultStates,
+          setVaultStates,
+      }),
+      [vaultStates]
+  );
+
+  return <VaultContext.Provider value={value}>{children}</VaultContext.Provider>;
+};
 
 function Dashboard() {
+  const { data, isLoading, isError } = useQuery("getUser", () => getMe())
+
+  if (isLoading) {
+    return <Text>Loading...</Text>;
+  }
+
+  if (isError) {
+    return <Text>Error: {isError.message}</Text>;
+  }
+
+  const vaults = data.vaults;
+
   return (
-    
+      <VaultProvider vaultIds={vaults}>
         <Drawer.Navigator 
             drawerContent={(props) => <CustomDrawer{...props}/>}
             useLegacyImplementation={true} 
@@ -134,9 +159,9 @@ function Dashboard() {
                   drawerLabel: "All Passwords",
                   drawerLabelStyle: {
                     color: "white"
-                  }
+                  },
               }}
-          />         
+          />
           {/*This tab is hidden in place of the VaultDrawerLabel component*/} 
           <Drawer.Screen 
             name="Vaults" 
@@ -177,8 +202,28 @@ function Dashboard() {
                   }
               }}
           />
+          <Drawer.Screen 
+            name="SiteInfo" 
+            component={SiteInfo} 
+            options={{
+              drawerIcon: ({focused, size}) => (
+                  <MaterialCommunityIcons
+                      name="shield-sword"
+                      size={24}
+                      color={focused ? '#fffffff' : '#fff'}
+                  />
+              ),
+              title: "Password Generator",
+              drawerActiveTintColor: "white",
+              drawerLabel: "Password Generator",
+              drawerLabelStyle: {
+                color: "white"
+              },
+              drawerItemStyle: { display: 'none' }
+            }}
+          />
         </Drawer.Navigator>
-    
+      </VaultProvider>
   );
 }
 

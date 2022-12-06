@@ -31,15 +31,19 @@ export const getUserId = () => {
     return data.data._id
 }
 
-export const useVaults = async () => {
-    let token = "none";
-    try {
-        SecureStore.getItemAsync('pwdlytoken').then((response) => {token = response})
-        
-    } catch (error) {
-        console.log(error);
-    }
-    return useQuery(["getVaults"], () => axios.get("https://pwdly.herokuapp.com/api/vault", { headers: { Authorization: `Bearer ${token}` } }));
+export const getVaults = () => {
+    return new Promise((resolve, reject) => {
+        SecureStore.getItemAsync('pwdlytoken')
+        .then((response) => {
+            return axios.get("https://pwdly.herokuapp.com/api/vault", { headers: { Authorization: `Bearer ${response}` } })
+        })
+        .then((res) => {
+            resolve(res.data);
+        })
+        .catch((err) => {
+            reject(err);
+        })
+    });
 };
 
 export const useVault = (vaultId) => {

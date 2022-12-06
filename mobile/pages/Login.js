@@ -14,7 +14,6 @@ import axios from "axios";
 import { useReducer } from "react";
 import { useNavigation } from '@react-navigation/native';
 import * as SecureStore from 'expo-secure-store';
-//import AsyncStorage from '@react-native-async-storage/async-storage';
 
     
 const Login = ()  => { 
@@ -59,8 +58,7 @@ const Login = ()  => {
             })
             .then((res) => {
                 if (res.status === 200) { 
-                    save('pwdlytoken', res.data.user.token)
-                    
+                    save('pwdlytoken', res.data.user.token )
                 }
             })
             .catch((err) => {

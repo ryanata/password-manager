@@ -1,21 +1,26 @@
-import { StyleSheet, Button, Text, View, Keyboard, ScrollView } from 'react-native';
+import { StyleSheet, SafeAreaView, Button, Text, View, Keyboard, ScrollView } from 'react-native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import VaultTable from '../components/VaultTable'
+import { useQueryClient } from 'react-query';
+
+const AllPasswords = () => {
+    const queryClient = useQueryClient();
+    const user = queryClient.getQueryData('getUser');
+    const vaults = user.vaults;
+    return (
+        <ScrollView contentInsetAdjustmentBehavior="automatic">
+            <SafeAreaView style={styles.container}>
+                {vaults.map((vault, index) => (<VaultTable stackable searchTerm="" key={index} id={vault} lastElement={index === vaults.length - 1}/> ))}
+            </SafeAreaView>
+        </ScrollView>
+    );
+}
+ 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#fff',
-        alignItems: 'left',
-        justifyContent: 'top',
-        paddingTop: 10
+        backgroundColor: '#ffffff',
     },
 });
-const AllPasswords = ({ navigation }) => {
-    return ( 
-        <View style={styles.container}>
-            <ScrollView style={{flex: 1, marginTop: 10}}>
-                <Text>Passwords</Text>
-            </ScrollView>
-        </View>
-     );
-}
- 
+
 export default AllPasswords;
