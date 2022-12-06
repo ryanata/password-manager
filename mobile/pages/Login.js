@@ -95,6 +95,8 @@ const Login = ()  => {
                                 placeholder="Email"
                                 autoCapitalize='none'
                                 placeholderTextColor="#003f5c"
+                                width = "100%"
+                                textAlign='center'
                                 onSubmitEditing={event =>
                                     {}
                                 }
@@ -114,6 +116,8 @@ const Login = ()  => {
                                 placeholder="Password"
                                 placeholderTextColor="#003f5c"
                                 secureTextEntry={true}
+                                width = "100%"
+                                textAlign='center'
                                 autoCapitalize='none'
                                 onChangeText={value => onChange(value)}
                             />
@@ -122,7 +126,7 @@ const Login = ()  => {
                 </View>
 
                 <TouchableOpacity style ={styles.forgot_button} onPress = {handleSubmit(onPressSignup)}>
-                    <Text style = {styles.signUpText}>New User? Sign Up</Text>
+                    <Text style = {styles.signUpText}>New user? Sign Up</Text>
                 </TouchableOpacity>
         
                 <TouchableOpacity style={styles.loginBtn} onPress = {handleSubmit(onPressLogin)}> 
@@ -142,11 +146,13 @@ const styles = StyleSheet.create({
      },
    
     image :{
-      marginBottom: 40,
+      marginBottom: 30,
       alignItems: "center",
-      
-   
+      width: 110,
+      height: 50,
+      resizeMode: 'contain',
     },
+
     signUpText :{
         color: '#ffffff'
     },
@@ -172,7 +178,7 @@ const styles = StyleSheet.create({
     },
      
     loginBtn: {
-        width: "80%",
+        width: "50%",
         borderRadius: 25,
         height: 50,
         alignItems: "center",
