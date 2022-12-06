@@ -33,7 +33,7 @@ const useStyles = createStyles((theme) => ({
         marginLeft: 30,
         fontSize: theme.fontSizes.md,
         color: "#D4D4D4",
-        borderLeft: `1px solid ${theme.colorScheme === "dark" ? theme.colors.dark[4] : theme.colors.gray[3]}`,
+        borderLeft: `1px solid white`,
 
         "&:hover": {
             backgroundColor: "#3A3A3A",
@@ -87,7 +87,7 @@ const DrawerLink = ({ link }) => {
                     }}
                     align="left"
                     sx={{
-                        borderLeft: onVault && `3px solid ${theme.colors.green[5]}`,
+                        borderLeft: onVault && `3px solid ${theme.colors.lime[4]}`,
                         cursor: "pointer",
                     }}
                 >
@@ -145,6 +145,7 @@ export function LinksGroup({ icon: Icon, label, initiallyOpened, links, link, op
     const hasLinks = Array.isArray(links);
     const [opened, setOpened] = useState(initiallyOpened || false);
     const [vaultModalOpened, { toggle: toggleVaultModal }] = useDisclosure(false);
+    const navigate = useNavigate();
 
     const ChevronIcon = theme.dir === "ltr" ? IconChevronRight : IconChevronLeft;
 
@@ -181,7 +182,7 @@ export function LinksGroup({ icon: Icon, label, initiallyOpened, links, link, op
                         }
                     } else if (link) {
                         // Redirect to link (this is for all non-vault links)
-                        window.location.href = link;
+                        navigate(link);
                     }
                 }}
                 title={label}

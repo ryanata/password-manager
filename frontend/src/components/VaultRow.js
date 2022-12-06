@@ -13,7 +13,7 @@ const useStyles = createStyles((theme) => ({
     root: {
         // On hover of the row, change the background color to the lightest shade of gray
         "&:hover": {
-            backgroundColor: theme.colors.gray[3],
+            backgroundColor: theme.colorScheme === "dark" ? theme.colors.dark[5] : theme.colors.gray[3]
         },
     },
     siteHeader: {

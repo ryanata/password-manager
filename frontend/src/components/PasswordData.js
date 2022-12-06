@@ -10,9 +10,11 @@ const useStyles = createStyles((theme) => ({
     input: {
         borderStyle: "none",
         backgroundColor: "inherit",
+        color: theme.colorScheme === "dark" ? theme.colors.dark[0] : theme.colors.gray[7],
         fontSize: theme.fontSizes.md,
         [theme.fn.smallerThan("sm")]: {
             fontSize: theme.fontSizes.sm,
+            
         },
         [theme.fn.smallerThan("xs")]: {
             fontSize: theme.fontSizes.xs,

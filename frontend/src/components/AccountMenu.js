@@ -2,6 +2,7 @@ import { Anchor, Button, Group, Image, Menu, Space, Stack, Text } from "@mantine
 import { Avatar } from "@mantine/core";
 import { IconSettings } from "@tabler/icons";
 import { useQuery } from "@tanstack/react-query";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
 const AccountMenu = () => {
@@ -14,7 +15,7 @@ const AccountMenu = () => {
     const { data, isLoading, error } = useQuery(["getUser"], () =>
         axios.get("/api/user/me", { headers: { Authorization: `Bearer ${token}` } })
     );
-
+    const navigate = useNavigate();
     const user = data.data;
 
     return (
@@ -48,7 +49,7 @@ const AccountMenu = () => {
                             },
                         })}
                     >
-                        <Avatar src={null} alt="no image here" color="blue" radius="50%" size="md" />
+                        <Avatar src={null} alt="no image here" color="blue" variant="light" radius="50%" size="md" />
                     </Button>
                 </Menu.Target>
 
