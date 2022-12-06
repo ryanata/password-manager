@@ -25,23 +25,6 @@ const AddAccount = ({vaultId}) => {
     const formHandler = (values) => {
         const selectedTags = values.tags;
 
-        if (values.url.length > 6 && !values.name && values.url.includes('.')) {
-            // if www. is in the url, set the name to the url without www.
-            if (values.url.includes('www.')) {
-                const noWWW = values.url.split('www.')[1];
-                // set the name to noWWW without the everything after the last period and capitalize the first letter
-                values.name = noWWW.split('.')[0].charAt(0).toUpperCase() + noWWW.split('.')[0].slice(1);
-                //setFieldValue('name', noWWW.split('.')[0].charAt(0).toUpperCase() + noWWW.split('.')[0].slice(1));
-            } else if (values.url.includes('https://')) {
-                const noHTTPS = values.url.split('https://')[1];
-                values.name = noHTTPS.split('.')[0].charAt(0).toUpperCase() + noHTTPS.split('.')[0].slice(1)
-                //setFieldValue('name', noHTTPS.split('.')[0].charAt(0).toUpperCase() + noHTTPS.split('.')[0].slice(1));
-            } else {
-                values.name = values.url.split('.')[0].charAt(0).toUpperCase() + values.url.split('.')[0].slice(1)
-                //setFieldValue('name', values.url.split('.')[0].charAt(0).toUpperCase() + values.url.split('.')[0].slice(1));
-            }
-        }
-
         //check if fields are empty
         if(values.url.trim().length === 0 || 
         values.username.trim().length === 0 || 
