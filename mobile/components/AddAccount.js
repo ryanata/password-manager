@@ -5,11 +5,13 @@ import axios from 'axios';
 import {useForm, Controller} from 'react-hook-form';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { useNavigation } from '@react-navigation/native';
+import { useQueryClient } from 'react-query';
 
 const AddAccount = ({rerenderVaults, vaultId}) => {
     const navigation = useNavigation();
 	const [state, setState] = useState('')
 	const [modalVisible, setModalVisible] = useState(false);
+    const queryClient = useQueryClient();
 	const {setValue, handleSubmit, formState: {errors, isValid}, control} = useForm({
 		defaultValues:{
 			name: '',
@@ -45,8 +47,7 @@ const AddAccount = ({rerenderVaults, vaultId}) => {
         values.username.trim().length === 0 || 
         values.password.trim().length === 0 ||
         values.name.trim().length === 0){
-            Alert.alert("Fill out all fields");
-            setModalVisible(!modalVisible)
+            Alert.alert("Please fill out all fields");
             return
         }
         
@@ -57,6 +58,8 @@ const AddAccount = ({rerenderVaults, vaultId}) => {
             password: values.password,
             tags: selectedTags,
         }).then((res) => {
+            setModalVisible(false)
+            queryClient.invalidateQueries(`getVault_${vaultId}`);
             Alert.alert("Account added")
             //navigation.navigate('Vaults', {id: vaultId})
         }).catch((err) => {

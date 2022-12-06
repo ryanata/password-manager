@@ -2,13 +2,14 @@ import * as React from 'react';
 import { StyleSheet, SafeAreaView, Button, Text, View, Keyboard, ScrollView } from 'react-native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import VaultTable from '../components/VaultTable'
-import { useQueryClient } from 'react-query';
+import { useQuery } from 'react-query';
+import { getMe } from '../hooks/getAllVaultsQuery';
 import CustomSearchbar from '../components/SearchBar';
 
 const AllPasswords = () => {
-    const queryClient = useQueryClient();
-    const user = queryClient.getQueryData('getUser');
-    const vaults = user.vaults;
+    const { data, isLoading, isError } = useQuery("getUser", () => getMe())
+    const vaults = data.vaults;
+
     const [search, setSearch] = React.useState("");
     return (
         <View style={{ flex: 1}}>
