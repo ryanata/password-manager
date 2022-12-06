@@ -2,7 +2,7 @@ import * as React from 'react';
 import { useState, useMemo, useContext } from "react";
 import { StyleSheet, Text, Button, View, Image, Pressable, TouchableOpacity, Alert } from 'react-native';
 import { createDrawerNavigator, DrawerContentScrollView, DrawerItemList, DrawerItem } from '@react-navigation/drawer';
-import { NavigationContainer, useNavigation } from '@react-navigation/native';
+import { useNavigation } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import Login from './Login';
 import AllPasswords from './AllPasswords';
@@ -86,20 +86,6 @@ const CustomDrawer = props => {
 };
     
     
-	
-
-const AllPasswordsContainer = () => {
-  const Stack = createNativeStackNavigator();
-  return (
-    <Stack.Navigator intialRouteName="AllPasswords">
-      <Stack.Screen name="AllPasswords" component={AllPasswords} options={{headerShown: true}}/>
-      <Stack.Screen name="SiteInfo" component={SiteInfo} options={{ 
-        headerTitle: props => <LogoTitle {...props} />
-      }}/>
-    </Stack.Navigator>
-  )
-}
-
 const VaultProvider = ({ vaultIds, children }) => {
   const intialVault = vaultIds.reduce((acc, vaultId) => {
       acc[vaultId] = {
@@ -137,7 +123,7 @@ function Dashboard() {
         <Drawer.Navigator 
             drawerContent={(props) => <CustomDrawer{...props}/>}
             useLegacyImplementation={true} 
-            initialRouteName="AllPasswordsContainer"
+            initialRouteName="AllPasswords"
             screenOptions={{
                 drawerStyle: {
                 backgroundColor: '#363535',
@@ -159,8 +145,8 @@ function Dashboard() {
             }}
         >
           <Drawer.Screen 
-              name="AllPasswordsContainer" 
-              component={AllPasswordsContainer} 
+              name="AllPasswords" 
+              component={AllPasswords} 
               options={{
                   drawerIcon: ({focused, size}) => (
                       <MaterialCommunityIcons
@@ -215,6 +201,26 @@ function Dashboard() {
                     color: "white"
                   }
               }}
+          />
+          <Drawer.Screen 
+            name="SiteInfo" 
+            component={SiteInfo} 
+            options={{
+              drawerIcon: ({focused, size}) => (
+                  <MaterialCommunityIcons
+                      name="shield-sword"
+                      size={24}
+                      color={focused ? '#fffffff' : '#fff'}
+                  />
+              ),
+              title: "Password Generator",
+              drawerActiveTintColor: "white",
+              drawerLabel: "Password Generator",
+              drawerLabelStyle: {
+                color: "white"
+              },
+              drawerItemStyle: { display: 'none' }
+            }}
           />
         </Drawer.Navigator>
       </VaultProvider>

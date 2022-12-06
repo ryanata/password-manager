@@ -19,10 +19,9 @@ const styles = StyleSheet.create({
  
 
 const Vaults = ({ route, navigation }) => {
-    const id = route.params?.vault?.id;
-    
+    const id = route.params?.id;
+
     const [search, setSearch] = React.useState("");
-    console.log(route.params);
     if (!id) {
         return <Text>Error</Text>
     }

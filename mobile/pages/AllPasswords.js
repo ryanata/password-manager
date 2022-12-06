@@ -7,7 +7,6 @@ const AllPasswords = () => {
     const queryClient = useQueryClient();
     const user = queryClient.getQueryData('getUser');
     const vaults = user.vaults;
-    console.log(vaults);
     return (
         <ScrollView contentInsetAdjustmentBehavior="automatic">
             <SafeAreaView style={styles.container}>

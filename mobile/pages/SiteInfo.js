@@ -114,28 +114,31 @@ const SiteInfo = ({navigation, route}) => {
     const site = route.params.site;
     const vaultId = route.params.vaultId;
     const accounts = site.accounts;
-    // console.log(route.params);
-
-    useLayoutEffect(() => {
-        navigation.setOptions({
-            headerLeft: () => (
-                <TouchableOpacity onPress={() => {
-                    if (route.params.fromAllPasswords) {
-                        navigation.navigate('AllPasswords');
-                    } else {
-                        navigation.navigate('Vaults', {vault: {id: vaultId}});
-                    }
-                }}>
-                    <Text>{"<---"}</Text>
-                </TouchableOpacity>
-            )
-        });
-    }, []);
+    console.log(route.params.fromAllPasswords);
 
     return(
         <View style={styles.container}>
             <View style={styles.header}>
-                <Text style={styles.site}>{site.name}</Text>
+                <View style={{
+                    flexDirection: 'row',
+                    justifyContent: 'space-between',
+                }}>
+                    <Text style={styles.site}>{site.name}</Text>
+                    <TouchableOpacity style={{
+                        backgroundColor: 'lightblue',
+                        borderRadius: 5,
+                        paddingVertical: 5,
+                    }}
+                        onPress={() => {
+                            if (route.params.fromAllPasswords) { 
+                                navigation.navigate('AllPasswords');
+                            } else {
+                                navigation.navigate('Vaults', {id: vaultId});
+                            }
+                        }}>
+                        <Text style={styles.url}>Go back</Text>
+                    </TouchableOpacity>
+                </View>
                 <Text style={styles.url}>{site.url}</Text>
             </View>
             <View style={styles.accountInfo}>

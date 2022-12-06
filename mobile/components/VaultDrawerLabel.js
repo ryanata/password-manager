@@ -10,8 +10,7 @@ import NewVaultButton from './NewVaultButton';
 import { useQueryClient } from 'react-query';
 
 const onPressVaultLabel = (navigation, vault) => {
-    navigation.navigate('Vaults', {vault: vault})
-    //console.log(vault.name)
+    navigation.navigate('Vaults', {id: vault.id})
 } 
 
 
