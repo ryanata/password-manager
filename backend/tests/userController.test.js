@@ -8,11 +8,12 @@ describe("API Tests", () => {
             email: "nap@gmail.com",
             password: "123"
         };
-        const res = await request(app).post('/api/user/login').send(data).expect(200);
+        const res = await request(app).post('/api/user/login').send(data);
         expect(res.status).toBe(200); 
     });
 
-    test('register on the existing user', async () => {
+    // replace the email every time you want to test as it sends it to the collection
+    test('register user', async () => {
         const data = {
             firstName:"Ada",
             lastName:"adA",
@@ -21,7 +22,7 @@ describe("API Tests", () => {
             password: "123"
         };
         const res = await request(app).post('/api/user/register').send(data);
-        expect(res.status).toBe(400); 
+        expect(res.status).toBe(200); 
     });
 
     test('register with empty fields', async () => {
@@ -31,6 +32,18 @@ describe("API Tests", () => {
             email: "654896@gmail.com",
             phoneNumber: "1234567890",
             password: ""
+        };
+        const res = await request(app).post('/api/user/register').send(data);
+        expect(res.status).toBe(400); 
+    });
+
+    test('register with existing user', async () => {
+        const data = {
+            firstName:"Ada",
+            lastName:"adA",
+            email: "654896@gmail.com",
+            phoneNumber: "1234567890",
+            password: "123"
         };
         const res = await request(app).post('/api/user/register').send(data);
         expect(res.status).toBe(400); 
