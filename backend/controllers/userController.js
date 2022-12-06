@@ -32,7 +32,7 @@ const sendEmail = asyncHandler(async (data) => {
 });
 
 // @desc    Create new user
-// @route   GET /api/user/register
+// @route   POST /api/user/register
 const registerUser = asyncHandler(async (req, res) => {
     const { firstName, lastName, email, phoneNumber, password } = req.body;
 
@@ -67,7 +67,7 @@ const registerUser = asyncHandler(async (req, res) => {
         sendEmail({
             to: email,
             subject: "Verify your email",
-            text: "Hello world?",
+            text: `Please click this link to verify your email: https://pwdly.herokuapp.com/api/user/${user._id}/verify`,
         });
         res.status(201).json({
             message: 'User created!',
@@ -88,7 +88,7 @@ const registerUser = asyncHandler(async (req, res) => {
 });
 
 // @desc    Login user
-// @route   GET /api/user/login
+// @route   POST /api/user/login
 const loginUser = asyncHandler(async (req, res) => {
     const { email, password } = req.body;
 
@@ -148,7 +148,7 @@ const verifyUser = asyncHandler(async (req, res) => {
 });
 
 // @desc Forgot password
-// @route POST /api/user/forgotpassword
+// @route POST /api/user/forgotPassword
 const forgotPassword = asyncHandler(async (req, res) => {
     const { email } = req.body;
 
@@ -194,6 +194,53 @@ const forgotPassword = asyncHandler(async (req, res) => {
     }
 });
 
+// @desc    Update user
+// @route   PUT /api/user/:id/update
+const updateUser = asyncHandler(async (req, res) => {
+    const userId = req.params.id;
+
+    const { firstName, lastName, email, phoneNumber, password } = req.body;
+
+    if (!firstName && !lastName && !email && !phoneNumber && !password) {
+        res.status(400);
+        throw new Error('Please enter ANY field');
+    }
+
+    const user = await checkUserExists(userId);
+
+    if (firstName) {
+        user.name.firstName = firstName;
+    }
+    if (lastName) {
+        user.name.lastName = lastName;
+    }
+    if (email) {
+        user.email = email;
+        user.emailVerified = false;
+    }
+    if (phoneNumber) {
+        user.phone = phoneNumber;
+    }
+    if (password) {
+        // Hash password
+        const salt = await bcrypt.genSalt(10);
+        const hashedPassword = await bcrypt.hash(password, salt);
+        user.password = hashedPassword;
+    }
+
+    const updated = await user.save();
+
+    if (updated) {
+        res.status(200).json({
+            message: 'User updated!',
+            user: updated,
+        });
+    } else {
+        res.status(400);
+        throw new Error('Invalid user data');
+    }
+});
+
 
 // Generate JWT
 const generateToken = (id) => {
@@ -218,4 +265,6 @@ module.exports = {
     loginUser,
     getMe,
     verifyUser,
+    forgotPassword,
+    updateUser,
   }
