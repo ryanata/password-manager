@@ -4,7 +4,7 @@ import { VaultContext } from "../hooks/vaultContext";
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { useQueryClient } from 'react-query';
 
-const Password = ({ vaultId, password}) => {
+const Password = ({ vaultId, account}) => {
     const [show, setShow] = useState(false);
     const [modalVisible, setModalVisible] = useState(false);
     const { vaultStates, setVaultStates } = useContext(VaultContext);
@@ -14,6 +14,7 @@ const Password = ({ vaultId, password}) => {
     const vaultUnlocked = vaultStates[vaultId]?.unlocked;
     const vault = queryClient.getQueryData(`getVault_${vaultId}`)
     const vaultName = vault?.vault?.name;
+    const password = account?.password;
     
     const clickHandler = () => {
         if (vaultUnlocked) {
@@ -165,11 +166,11 @@ const Password = ({ vaultId, password}) => {
         </View>
     )
 }
+
 const SiteInfo = ({navigation, route}) => {
     const site = route.params.site;
     const vaultId = route.params.vaultId;
     const accounts = site.accounts;
-    console.log(route.params.fromAllPasswords);
 
     // If site.url does not start with http:// or https://, add https:// to the beginning of the url
     const url = site.url.startsWith('http://') || site.url.startsWith('https://') ? site.url : `https://${site.url}`;
@@ -236,7 +237,7 @@ const SiteInfo = ({navigation, route}) => {
             {accounts.map((account, index) => (
                 <View style={styles.accountInfo} key={index}>
                     <Text style={styles.username}>{account.username}</Text>
-                    <Password vaultId={vaultId} password={account.password}/>
+                    <Password vaultId={vaultId} account={account}/>
                 </View>
             ))}
         </View>

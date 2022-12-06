@@ -46,6 +46,14 @@ export const getVaults = () => {
     });
 };
 
+export const deleteVault = (vaultId, userId) => {
+    return axios.delete(`https://pwdly.herokuapp.com/api/vault/${vaultId}`, { data: { userId: userId } });
+};
+
+export const deleteSite = (vaultId, siteId) => {
+    return axios.delete(`https://pwdly.herokuapp.com/api/vault/${vaultId}/site/${siteId}`);
+};
+
 export const useVault = (vaultId) => {
     return useQuery([`getVault_${vaultId}`], () => {
         return new Promise((resolve, reject) => {

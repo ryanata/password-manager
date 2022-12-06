@@ -5,11 +5,15 @@ import axios from 'axios';
 import {useForm, Controller} from 'react-hook-form';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { createVault } from "../helpers/Hooks";
+import { useQueryClient } from 'react-query';
 
 
 const NewVaultButton = (props) => {
 	const [state, setState] = useState('')
 	const [modalVisible, setModalVisible] = useState(false);
+  const queryClient = useQueryClient();
+  const userId = queryClient.getQueryData('getUser')._id;
+
 	const {setValue, handleSubmit, formState: {errors, isValid}, control} = useForm({
 		defaultValues:{
 			vaultName: '',
@@ -29,21 +33,23 @@ const NewVaultButton = (props) => {
         setModalVisible(!modalVisible)
         return
     }
-    createVault(props.userId, data.vaultName, data.masterPassword)
+    createVault(userId, data.vaultName, data.masterPassword)
         .then((res) => {
             if (res.status === 201) {
-                console.log("vault created successfully")
-                Alert("Vault created Successfully")
+                console.log("vault created successfully");
+                Alert.alert("Vault created Successfully");
+                // Refetch the vaults
+                queryClient.invalidateQueries('getVaults');
+                queryClient.invalidateQueries('getUser');
             }
 		}).catch((err) => {
-			
 			if (err.status === 400){
 				console.log("error")
 				setState({ alert: err.response.data.message});
-                Alert.alert(err.response.data.message)
+        Alert.alert(err.response.data.message)
 			} else {
 				setState({ alert: "an error occured"});
-                Alert.alert("Error: Failed vault creation")
+        Alert.alert("Error: Failed vault creation")
 			}
 		})
     setModalVisible(!modalVisible)
@@ -75,7 +81,7 @@ const NewVaultButton = (props) => {
                 <Controller
                   control={control}
                   name="vaultName"
-                  render={({field: {onChange, value} }) =>(
+                  render={({field: {onChange, value} }) => (
                       	<TextInput
                           required={true}
                           style={styles.TextInput}
@@ -99,7 +105,7 @@ const NewVaultButton = (props) => {
                 <Controller
                 control= {control}
                 name="masterPassword"
-                render={({field: {onChange, value} }) =>(
+                render={({field: {onChange, value} }) => (
                   <TextInput
                   secureTextEntry={true}
                   required={true}
@@ -114,10 +120,10 @@ const NewVaultButton = (props) => {
                   />
                 )}
                 rules={{
-					minLength: {
-						value: 1,
-						message: 'field is empty' // JS only: <p>error message</p> TS only support string
-					}
+                  minLength: {
+                    value: 1,
+                    message: 'field is empty' // JS only: <p>error message</p> TS only support string
+                  }
                 }}
                 />     
         
@@ -133,14 +139,14 @@ const NewVaultButton = (props) => {
         </Modal>
 
         <Pressable
-        onPress={() => {
-          	setModalVisible(true)
-        }}
-        style={({ pressed }) => [styles.addButton, styles.addButtonClose,{backgroundColor: pressed ? "#16578B" : "#2196F3"}]}
+          onPress={() => {
+              setModalVisible(true)
+          }}
+          style={({ pressed }) => [styles.addButton, styles.addButtonClose,{backgroundColor: pressed ? "#16578B" : "#2196F3"}]}
         >
-			{({ pressed }) => (
-                <Text style={{color: "white"}}>Add New Vault</Text>
-			)}
+          {({ pressed }) => (
+            <Text style={{color: "white"}}>Add New Vault</Text>
+          )}
         </Pressable>
     </View>
   );

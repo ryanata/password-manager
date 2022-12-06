@@ -80,20 +80,20 @@ const Login = ()  => {
 
     return (
         <View style={styles.container}>
-            <Image style={styles.image} source = {require("../assets/logo.png")} />
+            <Image style={styles.image} source={require("../assets/logo.png")} />
 
                 <View style={styles.inputView}>
                     <Controller
-                        control = {control}
-                        name = "email"
-                        render = {({ field: {onChange, value} }) => (
+                        control={control}
+                        name="email"
+                        render={({ field: {onChange, value} }) => (
                             <TextInput
                                 required={true}
                                 style={styles.TextInput}
                                 placeholder="Email"
                                 autoCapitalize='none'
                                 placeholderTextColor="#003f5c"
-                                width = "100%"
+                                width="100%"
                                 textAlign='center'
                                 onSubmitEditing={event =>
                                     {}
@@ -107,14 +107,14 @@ const Login = ()  => {
                 <View style={styles.inputView}>
                     <Controller
                         control={control}
-                        name = "password"
-                        render = {({field: {onChange, value} }) => (
+                        name="password"
+                        render={({field: {onChange, value} }) => (
                             <TextInput
                                 style={styles.TextInput}
                                 placeholder="Password"
                                 placeholderTextColor="#003f5c"
                                 secureTextEntry={true}
-                                width = "100%"
+                                width="100%"
                                 textAlign='center'
                                 autoCapitalize='none'
                                 onChangeText={value => onChange(value)}
@@ -123,11 +123,11 @@ const Login = ()  => {
                     />
                 </View>
 
-                <TouchableOpacity style ={styles.forgot_button} onPress = {handleSubmit(onPressSignup)}>
-                    <Text style = {styles.signUpText}>New user? Sign Up</Text>
+                <TouchableOpacity style={styles.forgot_button} onPress={handleSubmit(onPressSignup)}>
+                    <Text style={styles.signUpText}>New user? Sign Up</Text>
                 </TouchableOpacity>
         
-                <TouchableOpacity style={styles.loginBtn} onPress = {handleSubmit(onPressLogin)}> 
+                <TouchableOpacity style={styles.loginBtn} onPress={handleSubmit(onPressLogin)}> 
                     <Text style={styles.loginText}>LOGIN</Text>
                 </TouchableOpacity>
         </View>
@@ -135,7 +135,7 @@ const Login = ()  => {
     
 }
 
-const styles = StyleSheet.create({
+const styles=StyleSheet.create({
     container: {
       flex: 1,
       backgroundColor: '#4681D0',
