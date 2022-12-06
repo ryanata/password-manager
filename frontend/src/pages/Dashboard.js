@@ -50,7 +50,6 @@ const VaultProvider = ({ vaultIds, children }) => {
 const Dashboard = () => {
     const { classes, theme } = useStyles();
     // Hooks
-    const isTablet = useMediaQuery(`(max-width: ${theme.breakpoints.md - 1}px)`);
     const { data, isLoading, error } = useUser();
     if (isLoading) {
         return (
@@ -80,7 +79,7 @@ const Dashboard = () => {
         <VaultProvider vaultIds={vaults}>
             <AppShell
                 padding="md"
-                navbar={isTablet ? null : <DashboardLeftNav />}
+                navbar={<DashboardLeftNav />}
                 header={<DashboardHeader />}
                 styles={(theme) => ({
                     main: {

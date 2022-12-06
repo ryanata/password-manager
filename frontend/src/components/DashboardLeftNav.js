@@ -27,7 +27,7 @@ const useStyles = createStyles((theme) => ({
 
     linksInner: {
         paddingTop: 0,
-        paddingBottom: theme.spacing.xl,
+        color: "red",
     },
 
     footer: {
