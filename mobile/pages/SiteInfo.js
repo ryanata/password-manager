@@ -46,8 +46,8 @@ const Password = ({ vaultId, password}) => {
 
         },
         modalView: {
-            width: "70%",
-            height: "30%",
+            width: 270,
+            height: 270,
             margin: 20,
             backgroundColor: "#f0f0f0",
             borderRadius: 10,
@@ -276,8 +276,8 @@ const styles = StyleSheet.create({
         fontSize: 16,
     },
     modalView: {
-        width: "70%",
-        height: "30%",
+        width: 270,
+        height: 270,
         margin: 20,
         backgroundColor: "white",
         borderRadius: 10,
