@@ -1,51 +1,49 @@
-import { createStyles, Box, Center, ColorSwatch, Stack, Group, Popover, CheckIcon } from "@mantine/core";
+import { Box, Center, CheckIcon, ColorSwatch, Group, Popover, Stack, createStyles } from "@mantine/core";
 import { useState } from "react";
 
-const useStyles = createStyles((theme) => ({
-}));
+const useStyles = createStyles((theme) => ({}));
 
-
-const ColorModal = ({setTag, tag}) => {
+const ColorModal = ({ setTag, tag }) => {
     const { classes, theme } = useStyles();
     const [selectedColor, setSelectedColor] = useState("blue");
 
     const colors = Object.keys(theme.colors);
     const topColors = colors.slice(0, 7).map((color) => (
-        <ColorSwatch 
-            component="button" 
+        <ColorSwatch
+            component="button"
             radius="sm"
             size={34}
             m={2}
-            key={color} 
+            key={color}
             color={theme.colors[color][6]}
             onClick={() => {
                 setSelectedColor(color);
-                setTag({...tag, color: color, mantineColor: theme.colors[color][6]});
+                setTag({ ...tag, color: color, mantineColor: theme.colors[color][6] });
             }}
-            sx={{ color: '#fff', cursor: 'pointer' }}
+            sx={{ color: "#fff", cursor: "pointer" }}
         >
-            {(selectedColor == color) && <CheckIcon width={10} />}
+            {selectedColor == color && <CheckIcon width={10} />}
         </ColorSwatch>
     ));
     const bottomColors = colors.slice(7, 14).map((color) => (
-        <ColorSwatch 
-            component="button" 
+        <ColorSwatch
+            component="button"
             radius="sm"
             size={34}
             m={2}
-            key={color} 
+            key={color}
             color={theme.colors[color][6]}
             onClick={() => {
                 setSelectedColor(color);
-                setTag({...tag, color: color, mantineColor: theme.colors[color][6]});
+                setTag({ ...tag, color: color, mantineColor: theme.colors[color][6] });
             }}
-            sx={{ color: '#fff', cursor: 'pointer' }}
+            sx={{ color: "#fff", cursor: "pointer" }}
         >
-            {(selectedColor == color) && <CheckIcon width={10} />}
+            {selectedColor == color && <CheckIcon width={10} />}
         </ColorSwatch>
     ));
 
-    return ( 
+    return (
         <Box>
             <Center>
                 <Stack spacing={0}>
@@ -58,7 +56,7 @@ const ColorModal = ({setTag, tag}) => {
                 </Stack>
             </Center>
         </Box>
-     );
-}
- 
+    );
+};
+
 export default ColorModal;

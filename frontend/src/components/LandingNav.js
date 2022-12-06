@@ -161,7 +161,7 @@ export function LandingNav({ loginModalOpened, signupModalOpened, toggleLoginMod
     const [drawerOpened, { toggle: toggleDrawer, close: closeDrawer }] = useDisclosure(false);
     const [linksFeaturesOpened, { toggle: toggleFeatures }] = useDisclosure(false);
     const [linksSolutionsOpened, { toggle: toggleSolutions }] = useDisclosure(false);
-    
+
     // Save width and height of login/signup div to use on image
     const [groupSize, setGroupSize] = useState([0, 0]);
     const ref = useRef(null);

@@ -1,4 +1,4 @@
-import { Button, Modal, PasswordInput, Stack, Text, TextInput, createStyles, Title, Group } from "@mantine/core"
+import { Button, Group, Modal, PasswordInput, Stack, Text, TextInput, Title, createStyles } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { useMediaQuery } from "@mantine/hooks";
 import { useQueryClient } from "@tanstack/react-query";
@@ -41,7 +41,13 @@ const EditAccountModal = ({ opened, closed, user }) => {
     });
 
     const formHandler = (values) => {
-        axios.put(`/api/user/${user._id}/update`, {firstName: values.firstName, lastName: values.lastName, email: values.email, phoneNumber: values.phoneNumber})
+        axios
+            .put(`/api/user/${user._id}/update`, {
+                firstName: values.firstName,
+                lastName: values.lastName,
+                email: values.email,
+                phoneNumber: values.phoneNumber,
+            })
             .then((res) => {
                 closed();
                 queryClient.invalidateQueries(["getUser"]);
@@ -49,8 +55,7 @@ const EditAccountModal = ({ opened, closed, user }) => {
             .catch((err) => {
                 form.setFieldError("error", "An error occurred. Please try again later.");
                 console.log(err.response.data.message);
-            }
-        )
+            });
     };
 
     return (
@@ -72,7 +77,7 @@ const EditAccountModal = ({ opened, closed, user }) => {
         >
             <form onSubmit={form.onSubmit(formHandler)}>
                 <Stack>
-                <Group position="center" spacing="sm" grow pt>
+                    <Group position="center" spacing="sm" grow pt>
                         <TextInput
                             required={true}
                             label="First Name"
@@ -103,19 +108,16 @@ const EditAccountModal = ({ opened, closed, user }) => {
                         value={form.values.phoneNumber}
                         {...form.getInputProps("phoneNumber")}
                     />
-                    <Button
-                        type="submit"
-                        variant="filled"
-                        fullWidth
-                    >
+                    <Button type="submit" variant="filled" fullWidth>
                         Done
                     </Button>
                 </Stack>
-                <Text color="red" size="xs">{form.values.error}</Text>
+                <Text color="red" size="xs">
+                    {form.values.error}
+                </Text>
             </form>
         </Modal>
     );
 };
 
 export default EditAccountModal;
-

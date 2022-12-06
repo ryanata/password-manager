@@ -1,7 +1,7 @@
 import { Button, Grid, Group, Image, Text, Title, createStyles } from "@mantine/core";
+import { useNavigate } from "react-router-dom";
 
 import { default as landingMock } from "../assets/mocksLanding.png";
-import { useNavigate } from "react-router-dom";
 
 const useStyles = createStyles((theme) => ({
     hiddenMobile: {
@@ -19,7 +19,7 @@ const useStyles = createStyles((theme) => ({
     },
 }));
 
-export function ProductDescription({loginModalOpened, signupModalOpened, toggleLoginModal, toggleSignupModal}) {
+export function ProductDescription({ loginModalOpened, signupModalOpened, toggleLoginModal, toggleSignupModal }) {
     const { classes, theme } = useStyles();
     const mobilePadding = 20;
     const desktopPadding = 50;
@@ -91,7 +91,9 @@ export function ProductDescription({loginModalOpened, signupModalOpened, toggleL
                             radius="xl"
                             size="md"
                             className={classes.control}
-                            onClick={() => {navigate("/features")}}
+                            onClick={() => {
+                                navigate("/features");
+                            }}
                         >
                             Learn More
                         </Button>

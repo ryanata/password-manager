@@ -14,7 +14,6 @@ const useStyles = createStyles((theme) => ({
         fontSize: theme.fontSizes.md,
         [theme.fn.smallerThan("sm")]: {
             fontSize: theme.fontSizes.sm,
-            
         },
         [theme.fn.smallerThan("xs")]: {
             fontSize: theme.fontSizes.xs,
@@ -49,10 +48,10 @@ const HiddenInput = ({ children, value, passwordHandler }) => {
     );
 };
 
-const PasswordData = ({ account, toggleModal }) => {
+const PasswordData = ({ account, toggleModal, vaultId }) => {
     const { classes, theme } = useStyles();
     const { id } = useParams();
-
+    const properId = vaultId ? vaultId : id;
     // Hooks
     const [showPassword, setShowPassword] = useState(false);
     const { vaultStates, setVaultStates } = useContext(VaultContext);
@@ -61,7 +60,7 @@ const PasswordData = ({ account, toggleModal }) => {
 
     // Handlers
     const showPasswordHandler = () => {
-        if (vaultStates[id]?.unlocked) {
+        if (vaultStates[properId]?.unlocked) {
             setShowPassword(!showPassword);
         } else {
             // Remmber that user wants to show password. This is important because
@@ -77,7 +76,7 @@ const PasswordData = ({ account, toggleModal }) => {
     };
 
     const copyHandler = () => {
-        if (vaultStates[id]?.unlocked) {
+        if (vaultStates[properId]?.unlocked) {
             navigator.clipboard.writeText(account.password);
         } else {
             toggleModal();
@@ -89,12 +88,11 @@ const PasswordData = ({ account, toggleModal }) => {
         <Group spacing="xl" className={classes.root}>
             <HiddenInput
                 passwordHandler={inputPasswordHandler}
-                value={showPassword && vaultStates[id]?.unlocked ? account.password : "•••••••••••••••"}
-                
+                value={showPassword && vaultStates[properId]?.unlocked ? account.password : "•••••••••••••••"}
             />
             <Group spacing="xs" className={classes.iconContainer}>
                 <UnstyledButton onClick={showPasswordHandler}>
-                    {showPassword && vaultStates[id]?.unlocked ? (
+                    {showPassword && vaultStates[properId]?.unlocked ? (
                         <IconEye size={iconSize} stroke={2} />
                     ) : (
                         <IconEyeOff size={iconSize} stroke={2} />

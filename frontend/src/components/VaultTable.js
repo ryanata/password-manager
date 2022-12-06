@@ -97,7 +97,7 @@ const VaultTable = ({ tags, searchTerm, filteredTags }) => {
         if (filteredTags.length === 0 || filteredTags.length === tags.length) {
             return sites;
         }
-        
+
         // Return sites array with accounts filtered by tags
         const fSites = sites.map((site) => {
             return {
@@ -112,18 +112,16 @@ const VaultTable = ({ tags, searchTerm, filteredTags }) => {
         return fSites.filter((site) => site.accounts.length > 0);
     };
 
-    const vault = searchData ? 
-        {
-            ...data.vault,
-            sites: filterTags(searchData.sites),
-        }
-        : 
-        {
-            ...data.vault,
-            sites: filterTags(data.vault.sites),
-        };
+    const vault = searchData
+        ? {
+              ...data.vault,
+              sites: filterTags(searchData.sites),
+          }
+        : {
+              ...data.vault,
+              sites: filterTags(data.vault.sites),
+          };
 
-    
     const isFiltered = !(filteredTags.length === 0 || filteredTags.length === tags.length);
     const onDragEnd = (result) => {
         // dropped outside the list
@@ -149,15 +147,15 @@ const VaultTable = ({ tags, searchTerm, filteredTags }) => {
         }
     };
 
-
-
     return (
         <>
             <Box className={classes.noSpacing}>
                 <VaultHeader sort={sort} toggleSort={toggleSort} />
                 {vault.sites.length === 0 && (
                     <Center style={{ width: "100%", height: "100%" }}>
-                        <Text color="steel-blue">No accounts here. Try adding an account by clicking the 'Add New' button above.</Text>
+                        <Text color="steel-blue">
+                            No accounts here. Try adding an account by clicking the 'Add New' button above.
+                        </Text>
                     </Center>
                 )}
                 {sort === "unsorted" ? (
@@ -199,6 +197,7 @@ const VaultTable = ({ tags, searchTerm, filteredTags }) => {
                 opened={masterPassModalOpened}
                 closed={toggleMasterPassModal}
                 password={vault.masterPassword}
+                vaultName={vault.name}
             />
         </>
     );

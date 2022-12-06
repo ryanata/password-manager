@@ -8,7 +8,7 @@ import { createVault } from "../helpers/Hooks";
 const VaultModal = ({ opened, closed }) => {
     const queryClient = useQueryClient();
     const userId = queryClient.getQueryData(["getUser"]).data._id;
-    
+
     const [error, setError] = useState("");
     const form = useForm({
         initialValues: {
@@ -54,12 +54,13 @@ const VaultModal = ({ opened, closed }) => {
             padding="lg"
             title={"Create New Vault"}
         >
-
             <form onSubmit={form.onSubmit((values) => formHandler(values))}>
                 <Stack>
                     <TextInput required label="Vault name" {...form.getInputProps("name")} />
                     <PasswordInput required label="Master password" {...form.getInputProps("password")} />
-                    <Button mt="xs" type="submit">Submit</Button>
+                    <Button mt="xs" type="submit">
+                        Submit
+                    </Button>
                 </Stack>
                 <Text color="red">{error}</Text>
             </form>

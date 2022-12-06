@@ -1,14 +1,15 @@
-import { PasswordInput, Group, Modal, Button, Text, Stack } from "@mantine/core"
+import { Button, Group, Modal, PasswordInput, Stack, Text } from "@mantine/core";
 import { useForm } from "@mantine/form";
-import { useState } from "react";
 import axios from "axios";
+import { useState } from "react";
+
 const EditPasswordModal = ({ opened, closed, user }) => {
     const form = useForm({
         initialValues: {
             currentPassword: "",
             newPassword: "",
             confirmPassword: "",
-            error: ""
+            error: "",
         },
     });
 
@@ -16,7 +17,11 @@ const EditPasswordModal = ({ opened, closed, user }) => {
         if (values.newPassword !== values.confirmPassword) {
             form.setFieldValue("error", "Passwords do not match");
         } else {
-            axios.put(`/api/user/${user._id}/update`, { oldPassword: values.currentPassword, password: values.newPassword })
+            axios
+                .put(`/api/user/${user._id}/update`, {
+                    oldPassword: values.currentPassword,
+                    password: values.newPassword,
+                })
                 .then((res) => {
                     if (res.status === 200) {
                         closed();
@@ -32,9 +37,8 @@ const EditPasswordModal = ({ opened, closed, user }) => {
         }
     };
 
-
-    return ( 
-        <Modal 
+    return (
+        <Modal
             centered
             opened={opened}
             onClose={closed}
@@ -51,26 +55,21 @@ const EditPasswordModal = ({ opened, closed, user }) => {
         >
             <form onSubmit={form.onSubmit(formHandler)}>
                 <Stack spacing="md">
-                    <PasswordInput required label="Current Password" {...form.getInputProps("currentPassword")}/>
-                    <PasswordInput required label="New Password" {...form.getInputProps("newPassword")}/>
-                    <PasswordInput required label="Confirm New Password" {...form.getInputProps("confirmPassword")}/>
+                    <PasswordInput required label="Current Password" {...form.getInputProps("currentPassword")} />
+                    <PasswordInput required label="New Password" {...form.getInputProps("newPassword")} />
+                    <PasswordInput required label="Confirm New Password" {...form.getInputProps("confirmPassword")} />
                 </Stack>
-                
+
                 <Group position="right">
-                    <Button
-                        type="submit"
-                        variant="filled"
-                        my="sm"
-                        fullWidth
-                    >
+                    <Button type="submit" variant="filled" my="sm" fullWidth>
                         Update
                     </Button>
                 </Group>
-                
+
                 <Text color="red">{form.values.error}</Text>
             </form>
         </Modal>
-     );
-}
- 
+    );
+};
+
 export default EditPasswordModal;
