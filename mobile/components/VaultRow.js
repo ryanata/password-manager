@@ -1,13 +1,51 @@
 import React from 'react';
-import {StyleSheet, Text, View, Button, Image, TouchableOpacity} from 'react-native';
+import {StyleSheet, Text, View, Button, Alert, Image, TouchableOpacity} from 'react-native';
 import Avatar from './Avatar'
 import { NavigationContainer, useNavigation } from '@react-navigation/native';
+import { deleteSite } from '../helpers/Hooks';
+import { useQueryClient } from 'react-query';
 
 const VaultRow = ({site, vaultId, stackable, first}) => {
     const navigation = useNavigation();
+    const queryClient = useQueryClient();
 
     const endNavigation = () => {
         navigation.navigate('SiteInfo', {site: site, vaultId:vaultId, fromAllPasswords: stackable});
+    }
+
+    const deleteRow = () => {
+        // Create an alert to confirm deletion
+        Alert.alert(
+            "Delete site",
+            `Are you sure you want to delete "${site.name}"?`,
+            [
+                {
+                    text: "Cancel",
+                    onPress: () => console.log("Cancel Pressed"),
+                    style: "cancel"
+                },
+                { text: "OK", onPress: () => {
+                    // Delete the vault
+                    deleteSite(vaultId, site._id)
+                    .then((res) => {
+                        if (res.status === 200) {
+                            Alert.alert("Site deleted Successfully");
+                            // Refetch the sites
+                            queryClient.invalidateQueries(`getVault_${vaultId}`);
+                        }
+                    })
+                    .catch((err) => {
+                        if (err.status === 400){
+                            Alert.alert(err.response.data.message);
+                        } else {
+                            Alert.alert("Error: Failed vault deletion");
+                        }
+                    });
+                }
+                }
+            ],
+            { cancelable: false }
+        );
     }
 
     const styles = StyleSheet.create({
@@ -24,10 +62,14 @@ const VaultRow = ({site, vaultId, stackable, first}) => {
 
     return (
         <View style={styles.container}>
-            <TouchableOpacity style={{
-                flex: 1,
-                alignItems: 'center'
-            }} onPress={endNavigation}>
+            <TouchableOpacity 
+                style={{
+                    flex: 1,
+                    alignItems: 'center'
+                }} 
+                onPress={endNavigation}
+                onLongPress={deleteRow}
+            >
                 <View style={{
                     flex: 1,
                     flexDirection: 'row',
