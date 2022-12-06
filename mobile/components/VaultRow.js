@@ -3,18 +3,29 @@ import {StyleSheet, Text, View, Button, Image, TouchableOpacity} from 'react-nat
 import Avatar from './Avatar'
 import { NavigationContainer, useNavigation } from '@react-navigation/native';
 
-const VaultRow = ({site, vaultId, stackable}) => {
+const VaultRow = ({site, vaultId, stackable, first}) => {
     const navigation = useNavigation();
 
     const endNavigation = () => {
         navigation.navigate('SiteInfo', {site: site, vaultId:vaultId, fromAllPasswords: stackable});
     }
 
+    const styles = StyleSheet.create({
+        container:{
+            height: 80,
+            borderBottomColor: '#B8B8B8',
+            borderBottomWidth: 0.9,
+            paddingLeft: 10,
+            paddingRight: 10,
+            borderTopWidth: (first && stackable) ? 0.9 : 0,
+            borderTopColor: (first && stackable) ? '#B8B8B8' : 'transparent',
+        },
+    });
+
     return (
         <View style={styles.container}>
             <TouchableOpacity style={{
                 flex: 1,
-                backgroundColor: '#ffffff',
                 alignItems: 'center'
             }} onPress={endNavigation}>
                 <View style={{
@@ -23,10 +34,10 @@ const VaultRow = ({site, vaultId, stackable}) => {
                     alignItems: 'center',
                 }}>
                     <View style={{flex: 1, flexDirection: 'row'}}>
-                        <Avatar site={site.url}></Avatar>
-                        <Text style={{fontSize: 25, paddingLeft: 10}}>{site.name}</Text>
+                        <Avatar site={site.url} style={{marginLeft: 20}}></Avatar>
+                        <Text style={{fontSize: 23, paddingLeft: 20}}>{site.name}</Text>
                     </View>
-                    <Image source={require('../assets/right-chevron.png')} style={{ width: 22, height: 22 }} />
+                    <Image source={require('../assets/right-chevron.png')} style={{ width: 22, height: 18 }} />
                 </View>
             </TouchableOpacity>
         </View>
@@ -34,21 +45,5 @@ const VaultRow = ({site, vaultId, stackable}) => {
 }
 
 
-
-
-const styles = StyleSheet.create({
-    container:{
-        height: 100,
-        borderBottomColor: '#B8B8B8',
-        borderBottomWidth: 0.7,
-        borderTopWidth: 0.7,
-        paddingLeft: 10,
-        paddingTop: 10,
-        paddingRight: 10,
-    },
-    row: {
-        
-    },
-});
 
 export default VaultRow;

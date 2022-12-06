@@ -1,6 +1,7 @@
-import {StyleSheet, Text, View, Modal, TextInput, Button, Image, TouchableOpacity, Touchable} from 'react-native';
+import { StyleSheet, Text, View, Modal, TextInput, Button, Image, TouchableOpacity, Touchable, Pressable, Linking } from 'react-native';
 import { useContext, useState, useLayoutEffect } from 'react';
 import { VaultContext } from "../hooks/vaultContext";
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { useQueryClient } from 'react-query';
 
 const Password = ({ vaultId, password}) => {
@@ -42,42 +43,83 @@ const Password = ({ vaultId, password}) => {
             flex: 1,
             justifyContent: "center",
             alignItems: "center",
-            marginTop: 22
+
         },
         modalView: {
-            // opaque blue background
-            backgroundColor: "rgba(70, 130, 180, 0.9)",
-            height: 200,
-            width: 200,
+            width: "70%",
+            height: "30%",
+            margin: 20,
+            backgroundColor: "#f0f0f0",
+            borderRadius: 10,
+            paddingHorizontal: 35,
+            paddingTop: 17,
+            alignItems: "center",
             shadowColor: "#000",
             shadowOffset: {
-                width: 0,
-                height: 2
+              width: 0,
+              height: 2
             },
             shadowOpacity: 0.25,
             shadowRadius: 4,
-            borderRadius: 10,
+            elevation: 5
         },
-        input: {
-            height: 35,
-            width: 170,
-            margin: 15,
+        modalHeader: {
+            flexDirection: "row",
+            marginBottom: 10,
+        },
+        modalHeaderContent: {
+            flexGrow: 1,
+        },
+        button: {
+            borderRadius: 20,
             padding: 10,
-            borderWidth: 1,
+            paddingHorizontal: 25,
+            marginTop: 20,
+            elevation: 2
+        },
+        buttonClose: {
+            backgroundColor: "#2196F3",
+        },
+        textStyle: {
+            color: "white",
+            fontWeight: "bold",
+            textAlign: "center"
+        },
+        TextInput: {
+            padding: 10,
+            width: "100%",
+            textAlign: "center",
             borderRadius: 5,
-            backgroundColor: "white",
-        }
+            backgroundColor: "#F8F9F9",
+            marginBottom: 15,
+            marginTop: 5,
+            borderWidth: 1,
+            borderColor: "#CCCCCC",
+        },
     });
 
     return (
         <View style={{
             flexDirection: 'row',
         }}>
-            <Text>{(vaultUnlocked && show) ? password : "********"}</Text>
-            <Button title={(vaultUnlocked && show) ? "🕶" : "👁"} onPress={clickHandler}/>
+            <Text style={{paddingRight: 5, fontSize: 16}} >{(vaultUnlocked && show) ? password : "•••••••••"}</Text>
+            <Pressable onPress={clickHandler}>
+                {(vaultUnlocked && show) ? <MaterialCommunityIcons
+                    name="eye-off-outline"
+                    size={24}
+                    color={'black'}
+                />
+                : <MaterialCommunityIcons
+                    name="eye-outline"
+                        size={24}
+                        color={'black'}
+                    />
+                }
+            </Pressable>
             {modalVisible && (
                 <View style={styles.centeredView}>
                     <Modal
+                        animationType="fade"
                         visible={modalVisible}
                         transparent={true}
                         onRequestClose={() => {
@@ -86,20 +128,33 @@ const Password = ({ vaultId, password}) => {
                     >
                         <View style={styles.centeredView}>
                             <View style={styles.modalView}>
-                                <TouchableOpacity
-                                    onPress={() => {
-                                        setModalVisible(false);
-                                        setAlert('');
-                                        setMasterPassword('');
-                                    }}>
-                                        <Text style={{color: 'black', fontSize: 14, textAlign: 'right', paddingRight: 10, paddingTop: 5}}>x</Text>
-                                </TouchableOpacity>
-                                <Text style={{textAlign: "center", marginTop: 10}}>{`Enter master password for ${vaultName} vault.`}</Text>
-                                <TextInput secureTextEntry style={styles.input} placeholder="*******" value={masterPassword} onChangeText={setMasterPassword} />
-                                <View style={{alignItems: "center"}}>
-                                    <TouchableOpacity style={{backgroundColor: "white", width: 100, borderRadius: 5}} onPress={submitHandler}>
-                                        <Text style={{textAlign: "center", padding: 5, fontWeight: "bold"}}>Unlock</Text>
+                                <View style={styles.modalHeader}>
+                                    <View style={styles.modalHeaderContent}><Text></Text></View>
+                                    <TouchableOpacity style={styles.closeButton} onPress={() => setModalVisible(false)}>
+                                        <MaterialCommunityIcons
+                                        name="close"
+                                        size={25}
+                                        color={'#000000'}
+                                        />
                                     </TouchableOpacity>
+                                </View>
+                                <Text style={{textAlign: "center", marginBottom: 15, fontSize: 15}}>{`Enter master password for ${vaultName} vault.`}</Text>
+                                <TextInput
+                                    secureTextEntry
+                                    style={styles.TextInput}
+                                    placeholder="Enter Password"
+                                    placeholderTextColor={"#003f5c"}
+                                    padding={10}
+                                    value={masterPassword}
+                                    onChangeText={setMasterPassword}
+                                />
+                                <View style={{alignItems: "center"}}>
+                                    <Pressable
+                                        style={({pressed}) => [styles.button, styles.buttonClose,{backgroundColor: pressed ? "#16578B" : "#2196F3"}]}
+                                        onPress={submitHandler}
+                                        >
+                                        <Text style={styles.textStyle}>Unlock</Text>
+                                    </Pressable>
                                 </View>
                                 <Text style={{color: "red", paddingLeft: 16, fontWeight: "bold", marginTop: 10}}>{alert}</Text>
                             </View>
@@ -116,37 +171,66 @@ const SiteInfo = ({navigation, route}) => {
     const accounts = site.accounts;
     console.log(route.params.fromAllPasswords);
 
+    // If site.url does not start with http:// or https://, add https:// to the beginning of the url
+    const url = site.url.startsWith('http://') || site.url.startsWith('https://') ? site.url : `https://${site.url}`;
+
+    // if site.url starts with http:// or https://, remove it from the beginning of the url
+    const urlWithoutProtocol = site.url.startsWith('http://') || site.url.startsWith('https://') ? site.url.substring(site.url.indexOf('/') + 2, site.url.lastIndexOf(".") + 4) : site.url;
+
     return(
         <View style={styles.container}>
             <View style={styles.header}>
                 <View style={{
                     flexDirection: 'row',
-                    justifyContent: 'space-between',
+                    justifyContent: 'flex-start',
                 }}>
-                    <Text style={styles.site}>{site.name}</Text>
-                    <TouchableOpacity style={{
-                        backgroundColor: 'lightblue',
-                        borderRadius: 5,
-                        paddingVertical: 5,
-                    }}
-                        onPress={() => {
-                            if (route.params.fromAllPasswords) { 
-                                navigation.navigate('AllPasswords');
-                            } else {
-                                navigation.navigate('Vaults', {id: vaultId});
-                            }
-                        }}>
-                        <Text style={styles.url}>Go back</Text>
-                    </TouchableOpacity>
+                    <View style={{
+                        flex: 1,
+                    }}>
+                        <TouchableOpacity style={{
+                            backgroundColor: 'lightgrey',
+                            alignContent: 'center',
+                            paddingTop: 3,
+                            width: 40,
+                            borderRadius: 5,
+                            height: 40,
+                        }}
+                            onPress={() => {
+                                if (route.params.fromAllPasswords) { 
+                                    navigation.navigate('AllPasswords');
+                                } else {
+                                    navigation.navigate('Vaults', {id: vaultId});
+                                }
+                            }}>
+                            <MaterialCommunityIcons
+                            name="chevron-left"
+                            size={36}
+                            color={'#5b5b5b'}
+                            />
+                        </TouchableOpacity>
+                    </View>
+                    <View style={{
+                        flex: 4,
+                    }}>
+                        <Text style={{
+                            fontSize: 30,
+                            fontWeight: 'bold',
+                            paddingBottom: 10,
+                            textAlign: 'center',
+                        }}>{site.name}</Text>
+                    </View>
+                    <View style={{ flex: 1 }}></View>
                 </View>
-                <Text style={styles.url}>{site.url}</Text>
+                <Text style={styles.url} onPress={() => Linking.openURL(url)}>{urlWithoutProtocol}</Text>
             </View>
             <View style={styles.accountInfo}>
                 <Text style={{
                     fontWeight: 'bold',
+                    fontSize: 16,
                 }}>Username</Text>
                 <Text style={{
                     fontWeight: 'bold',
+                    fontSize: 16,
                 }}>Password</Text>
             </View>
             {accounts.map((account, index) => (
@@ -171,6 +255,7 @@ const styles = StyleSheet.create({
     },
     site: {
         fontSize: 30,
+        justifyContent: 'center',
         fontWeight: 'bold',
         paddingBottom: 10,
         textAlign: 'left',
@@ -178,13 +263,36 @@ const styles = StyleSheet.create({
     url: {
         fontSize: 20,
         paddingBottom: 10,
+        textAlign: 'center',
+        marginBottom: 20,
     },
     accountInfo: {
         flexDirection: 'row',
         justifyContent: 'space-between',
         fontSize: 16,
         paddingBottom: 10,
-    }
+    },
+    username: { 
+        fontSize: 16,
+    },
+    modalView: {
+        width: "70%",
+        height: "30%",
+        margin: 20,
+        backgroundColor: "white",
+        borderRadius: 10,
+        paddingHorizontal: 35,
+        paddingTop: 17,
+        alignItems: "center",
+        shadowColor: "#000",
+        shadowOffset: {
+          width: 0,
+          height: 2
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 4,
+        elevation: 5
+    },
 });
 
 export default SiteInfo;
