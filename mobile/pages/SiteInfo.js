@@ -1,5 +1,5 @@
 import {StyleSheet, Text, View, Modal, TextInput, Button, Image, TouchableOpacity, Touchable} from 'react-native';
-import { useContext, useState } from 'react';
+import { useContext, useState, useLayoutEffect } from 'react';
 import { VaultContext } from "../hooks/vaultContext";
 import { useQueryClient } from 'react-query';
 
@@ -110,11 +110,28 @@ const Password = ({ vaultId, password}) => {
         </View>
     )
 }
-const SiteInfo = ({route}) => {
+const SiteInfo = ({navigation, route}) => {
     const site = route.params.site;
     const vaultId = route.params.vaultId;
-
     const accounts = site.accounts;
+    // console.log(route.params);
+
+    useLayoutEffect(() => {
+        navigation.setOptions({
+            headerLeft: () => (
+                <TouchableOpacity onPress={() => {
+                    if (route.params.fromAllPasswords) {
+                        navigation.navigate('AllPasswords');
+                    } else {
+                        navigation.navigate('Vaults', {vault: {id: vaultId}});
+                    }
+                }}>
+                    <Text>{"<---"}</Text>
+                </TouchableOpacity>
+            )
+        });
+    }, []);
+
     return(
         <View style={styles.container}>
             <View style={styles.header}>

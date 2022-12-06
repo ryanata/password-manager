@@ -3,17 +3,20 @@ import {StyleSheet, Text, View, Button, Image, TouchableOpacity} from 'react-nat
 import Avatar from './Avatar'
 import { NavigationContainer, useNavigation } from '@react-navigation/native';
 
-const VaultRow = ({site, vaultId, lastElement}) => {
+const VaultRow = ({site, vaultId, stackable}) => {
     const navigation = useNavigation();
-    
-    console.log(`vaultId in vaultRow: ${vaultId}`);
+
+    const endNavigation = () => {
+        navigation.navigate('SiteInfo', {site: site, vaultId:vaultId, fromAllPasswords: stackable});
+    }
+
     return (
         <View style={styles.container}>
             <TouchableOpacity style={{
                 flex: 1,
                 backgroundColor: '#ffffff',
                 alignItems: 'center'
-            }} onPress={() => {navigation.navigate('SiteInfo', {site: site, vaultId:vaultId})}}>
+            }} onPress={endNavigation}>
                 <View style={{
                     flex: 1,
                     flexDirection: 'row',

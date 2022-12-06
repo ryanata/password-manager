@@ -14,7 +14,6 @@ import axios from "axios";
 import { useReducer } from "react";
 import { useNavigation } from '@react-navigation/native';
 import * as SecureStore from 'expo-secure-store';
-//import AsyncStorage from '@react-native-async-storage/async-storage';
 
     
 const Login = ()  => { 
@@ -31,6 +30,15 @@ const Login = ()  => {
     async function save(key, value) {
         await SecureStore.setItemAsync(key, value);
         navigation.navigate('Dashboard');
+    }
+
+    async function getValueFor(key) {
+        let result = await SecureStore.getItemAsync(key);
+        if (result) {
+          return result
+        } else {
+          alert('No values stored under that key.');
+        }
     }
 
     const [state, setState] = useReducer((state, newState) => ({ ...state, ...newState }), {
@@ -86,7 +94,7 @@ const Login = ()  => {
                                 autoCapitalize='none'
                                 placeholderTextColor="#003f5c"
                                 onSubmitEditing={event =>
-                                    this.passwordInput?.wrappedInstance?.focus()
+                                    {}
                                 }
                                 onChangeText={value => onChange(value)}
                             />

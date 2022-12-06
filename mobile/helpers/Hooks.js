@@ -1,6 +1,8 @@
-import { useQuery } from "@tanstack/react-query";
+import { QueryClient, QueryClientProvider, useQuery } from 'react-query'
 import axios from "axios";
 import { createContext, useEffect, useState } from "react";
+import * as SecureStore from 'expo-secure-store';
+import { Text } from 'react-native';
 
 // Vault state context
 export const VaultContext = createContext(null);
@@ -9,28 +11,46 @@ export const VaultContext = createContext(null);
 export const useUser = () => {
     let token = "none";
     try {
-        token = JSON.parse(localStorage.getItem("pwdlyToken"));
+        SecureStore.getItemAsync('pwdlytoken').then((response) => {token = response})
     } catch (error) {
         console.log(error);
     }
-    return useQuery(["getUser"], () => axios.get("/api/user/me", { headers: { Authorization: `Bearer ${token}` } }));
+    return useQuery(["getUser"], () => axios.get("https://pwdly.herokuapp.com/api/user/me", { headers: { Authorization: `Bearer ${token}` } }));
 };
 
-export const useVaults = () => {
-    let token = "none";
-    try {
-        token = JSON.parse(localStorage.getItem("pwdlyToken"));
-    } catch (error) {
-        console.log(error);
-    }
-    return useQuery(["getVaults"], () => axios.get("/api/vault", { headers: { Authorization: `Bearer ${token}` } }));
+export const getUserId = () => {
+    const { data, isLoading, isError, error } = useUser();
+    
+    if(isLoading){
+     return <Text>Loading vault</Text>
+     }
+     if(isError){
+         Alert("Error: placeholder")
+         return <Text>Errorr</Text>
+     }
+    return data.data._id
+}
+
+export const getVaults = () => {
+    return new Promise((resolve, reject) => {
+        SecureStore.getItemAsync('pwdlytoken')
+        .then((response) => {
+            return axios.get("https://pwdly.herokuapp.com/api/vault", { headers: { Authorization: `Bearer ${response}` } })
+        })
+        .then((res) => {
+            resolve(res.data);
+        })
+        .catch((err) => {
+            reject(err);
+        })
+    });
 };
 
 export const useVault = (vaultId) => {
     return useQuery([`getVault_${vaultId}`], () => {
         return new Promise((resolve, reject) => {
             axios
-                .get(`/api/vault/${vaultId}`)
+                .get(`https://pwdly.herokuapp.com/api/vault/${vaultId}`)
                 .then((res) => {
                     resolve(res.data);
                 })
@@ -48,7 +68,7 @@ export const useVaultSearch = (vaultId, searchTerm) => {
                 resolve(null);
             } else {
                 axios
-                    .get(`/api/vault/${vaultId}/searchSites/${searchTerm}`)
+                    .get(`https://pwdly.herokuapp.com/api/vault/${vaultId}/searchSites/${searchTerm}`)
                     .then((res) => {
                         resolve(res.data);
                     })
@@ -60,34 +80,15 @@ export const useVaultSearch = (vaultId, searchTerm) => {
     });
 };
 
-export const useTags = (vaultId) => {
-    return useQuery([`getTags_${vaultId}`], () => {
-        return new Promise((resolve, reject) => {
-            axios
-                .get(`/api/vault/${vaultId}/tags`)
-                .then((res) => {
-                    resolve(res.data);
-                })
-                .catch((err) => {
-                    reject(err);
-                });
-        });
-    });
-};
-
 export const createVault = (userId, name, masterPassword) => {
-    return axios.post("/api/vault", { userId, name, masterPassword });
-};
-
-export const updateSite = (vaultId, oldName, name, url, accounts) => {
-    return axios.put(`/api/vault/${vaultId}/site`, { oldName, name, url, accounts });
+    return axios.post("https://pwdly.herokuapp.com/api/vault", { userId, name, masterPassword });
 };
 
 export const setSites = (vaultId, sites) => {
     // Return promise to wrap axios call
     return new Promise((resolve, reject) => {
         axios
-            .put(`/api/vault/${vaultId}/setSites`, { sites })
+            .put(`https://pwdly.herokuapp.com/api/vault/${vaultId}/setSites`, { sites })
             .then((res) => {
                 resolve(res.data);
             })
@@ -96,15 +97,6 @@ export const setSites = (vaultId, sites) => {
             });
     });
 };
-
-export const deleteSite = (vaultId, siteId) => {
-    return axios.delete(`/api/vault/${vaultId}/site/${siteId}`);
-};
-
-export const deleteVault = (vaultId, userId) => {
-    return axios.delete(`/api/vault/${vaultId}`, { data: {userId: userId} });
-};
-
 export const useDebounce = (value, delay) => {
     // State and setters for debounced value
     const [debouncedValue, setDebouncedValue] = useState(value);
@@ -138,3 +130,17 @@ export const getGeneratePassword = (length, numbers, symbols, uppercase, lowerca
             });
     });
 };
+
+//store value in local storage
+export async function save(key, value) {
+    await SecureStore.setItemAsync(key, value);
+}
+//retrieve value from local storage
+export async function getValueFor(key) {
+    let result = await SecureStore.getItemAsync(key);
+    if (result) {
+      return result
+    } else {
+      alert('No values stored under that key.');
+    }
+}

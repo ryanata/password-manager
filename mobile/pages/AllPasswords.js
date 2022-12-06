@@ -7,10 +7,11 @@ const AllPasswords = () => {
     const queryClient = useQueryClient();
     const user = queryClient.getQueryData('getUser');
     const vaults = user.vaults;
+    console.log(vaults);
     return (
         <ScrollView contentInsetAdjustmentBehavior="automatic">
             <SafeAreaView style={styles.container}>
-                {vaults.map((vault, index) => (<VaultTable stackable key={index} id={vault} lastElement={index === vaults.length - 1}/> ))}
+                {vaults.map((vault, index) => (<VaultTable stackable searchTerm="" key={index} id={vault} lastElement={index === vaults.length - 1}/> ))}
             </SafeAreaView>
         </ScrollView>
     );

@@ -1,4 +1,4 @@
-import { Code, Group, Navbar, ScrollArea, ThemeIcon, UnstyledButton, createStyles } from "@mantine/core";
+import { Code, Group, Navbar, ScrollArea, Text, ThemeIcon, UnstyledButton, createStyles } from "@mantine/core";
 import { IconChevronLeft, IconKey, IconLock, IconMenu2, IconSettings, IconShieldLock } from "@tabler/icons";
 import { useState } from "react";
 
@@ -46,11 +46,11 @@ export function DashboardLeftNav() {
     const { data, isLoading, isError } = useVaults();
 
     if (isLoading) {
-        return <div>Loading...</div>;
+        return <Text>Loading...</Text>;
     }
 
     if (isError) {
-        return <div>Error</div>;
+        return <Text>Error</Text>;
     }
 
     const vaults = data.data.vaults;
@@ -79,7 +79,7 @@ export function DashboardLeftNav() {
         {
             label: "Settings",
             icon: IconSettings,
-            link: "https://www.google.com/",
+            link: "/dashboard/settings",
         },
     ];
 

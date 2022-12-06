@@ -116,15 +116,15 @@ const SignupModal = ({ opened, closed, openLoginModal }) => {
                     <Group position="center" spacing="sm" grow>
                         <TextInput
                             required={true}
-                            label="First name"
-                            placeholder="john"
+                            label="First Name"
+                            placeholder="John"
                             value={form.values.firstName}
                             {...form.getInputProps("firstName")}
                         />
                         <TextInput
                             required={true}
-                            label="Last name"
-                            placeholder="doe"
+                            label="Last Name"
+                            placeholder="Doe"
                             value={form.values.lastName}
                             {...form.getInputProps("lastName")}
                         />
@@ -139,8 +139,8 @@ const SignupModal = ({ opened, closed, openLoginModal }) => {
 
                     <TextInput
                         required={true}
-                        label="Phone number"
-                        placeholder="john.doe@gmail.com"
+                        label="Phone Number"
+                        placeholder="1234567890"
                         value={form.values.phoneNumber}
                         {...form.getInputProps("phoneNumber")}
                     />

@@ -1,7 +1,23 @@
 import { Button, Group, TextInput, createStyles } from "@mantine/core";
+import { useDisclosure } from "@mantine/hooks";
 import { IconPlus, IconSearch } from "@tabler/icons";
+import { useQueryClient } from "@tanstack/react-query";
+import { useParams } from "react-router-dom";
+import AccountModal from "./AccountModal";
 
 const SearchBar = ({ setSearch }) => {
+    const [accountModalOpened, { toggle: toggleAccountModal }] = useDisclosure(false);
+    const { id } = useParams();
+    const queryClient = useQueryClient();
+    const queryTags = `getTags_${id}`;
+    const queryVault = `getVault_${id}`;
+
+    const onClose = () => {
+        toggleAccountModal();
+        queryClient.invalidateQueries([queryTags]);
+        queryClient.invalidateQueries([queryVault]);
+    };
+
     return (
         <Group position="apart">
             <TextInput
@@ -21,6 +37,7 @@ const SearchBar = ({ setSearch }) => {
                 size="md"
                 uppercase
                 leftIcon={<IconPlus size={28} />}
+                onClick={toggleAccountModal}
                 styles={(theme) => ({
                     root: {
                         backgroundColor: "#4681D0",
@@ -35,6 +52,11 @@ const SearchBar = ({ setSearch }) => {
             >
                 add new
             </Button>
+
+            {accountModalOpened && <AccountModal
+                opened={accountModalOpened}
+                closed={onClose}
+            />}
         </Group>
     );
 };

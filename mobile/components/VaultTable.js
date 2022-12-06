@@ -1,78 +1,36 @@
-
-import { StyleSheet, SafeAreaView, Button, FlatList, Text, View, Keyboard, ScrollView, StatusBar } from 'react-native';
+import { useState } from 'react';
+import { ActivityIndicator, StyleSheet, SafeAreaView, Button, FlatList, Text, View, Keyboard, ScrollView, StatusBar } from 'react-native';
 import { useQuery } from 'react-query';
 import VaultRow from '../components/VaultRow'
 import { useVault } from '../hooks/getAllVaultsQuery';
+import { useDebounce, useVaultSearch } from '../helpers/Hooks';
 
-
-const VaultTable = ({id, stackable}) => {
+const VaultTable = ({searchTerm, id, stackable}) => {
     const { data, isLoading, isError } = useQuery(`getVault_${id}`, () => useVault(id))
-
-    if (isLoading) {
-        return <Text>Loading...</Text>;
+    // Get vault search data
+    const searchTermDebounced = useDebounce(searchTerm, 500);
+    const { data: searchData, isLoading: searchLoading, error: searchError } = useVaultSearch(id, searchTermDebounced);
+    if(isLoading || searchLoading){
+        return <ActivityIndicator />
     }
-
-    if (isError) {
-        return <Text>Error: {isError.message}</Text>;
+    if(isError || searchError){
+        return <Text>Errorr</Text>
     }
+    
+    const vault = searchData
+        ? {
+              ...data.vault,
+              sites: searchData.sites,
+          }
+        : data.vault;
+    const sites = vault.sites
 
-    const sites = data.vault.sites
-    const fakeSites = [
-        {
-            "_id": 1,
-            "name": "Google",
-            "url": "https://www.google.com",
-            accounts: []
-        },
-        {
-            "_id": 2,
-            "name": "Facebook",
-            "url": "https://www.facebook.com",
-            accounts: []
-        },
-        {
-            "_id": 3,
-            "name": "Twitter",
-            "url": "https://www.twitter.com",
-            accounts: []
-        },
-        {
-            "_id": 4,
-            "name": "Instagram",
-            "url": "https://www.instagram.com",
-            accounts: []
-        },
-        {
-            "_id": 5,
-            "name": "Reddit",
-            "url": "https://www.reddit.com",
-            accounts: []
-        },
-        {
-            "_id": 6,
-            "name": "Github",
-            "url": "https://www.github.com",
-            accounts: []
-        },
-        {
-            "_id": 7,
-            "name": "Amazon",
-            "url": "https://www.amazon.com",
-            accounts: []
-        },
-        {
-            "_id": 8,
-            "name": "Netflix",
-            "url": "https://www.netflix.com",
-            accounts: []
-        },
-    ];
 
     if (stackable) {
         return (
             <View>
                 <Text style={{fontSize: 15, fontWeight: "bold"}}>{data.vault.name}</Text>
-                {sites.map((site, index) => (<VaultRow key={index} site={site} vaultId={id}/> ))}
+                {sites.map((site, index) => (<VaultRow key={index} site={site} vaultId={id} stackable/> ))}
             </View>
         )
     }
@@ -80,7 +38,7 @@ const VaultTable = ({id, stackable}) => {
     return ( 
         <SafeAreaView style={styles.container}>
             <FlatList
-                data={fakeSites}
+                data={sites}
                 renderItem={({ item }) => <VaultRow site={item} vaultId={id}/>}
                 keyExtractor={item => item._id}
             />
@@ -88,16 +46,15 @@ const VaultTable = ({id, stackable}) => {
         </SafeAreaView>
      );
 }
- 
+
 const styles = StyleSheet.create({
     container: {
         width: "100%",
         height: "100%",
         marginTop: StatusBar.currentHeight || 0,
-        backgroundColor: 'blue',
     },
 });
 
 export default VaultTable;
-
  
+

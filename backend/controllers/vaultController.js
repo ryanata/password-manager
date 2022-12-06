@@ -141,21 +141,28 @@ const updateVault = asyncHandler(async (req, res) => {
 // @route   DELETE /api/vault/{vaultID}
 const deleteVault = asyncHandler(async (req, res) => {
     const vaultID = req.params.vaultID;
+    const { userId } = req.body;
 
-    const vaultExists = await Vault.findById(vaultID);
-
-    if (!vaultExists) {
+    if (!userId) {
         res.status(400);
-        throw new Error('This vault does not exist');
+        throw new Error('Please provide a user ID');
     }
 
+    await checkVaultExists(vaultID, res);
     const vault = await Vault.findByIdAndDelete(vaultID);
 
+    // Remove vault from user's vaults
+    const updatedUser = await User.findByIdAndUpdate(
+        { _id: userId },
+        { $pull: { vaults: vault._id } },
+        { new: true }
+    );
+
     if (vault) {
-        res.status(200);
-        res.json({
-            message: "Vault was deleted"
-        });
+        res.status(200).json({
+            message: 'Vault deleted',
+            newUser: updatedUser
+        })
     }
     else {
         res.status(400);
@@ -167,7 +174,7 @@ const deleteVault = asyncHandler(async (req, res) => {
 // @route   POST /api/vault/{vaultID}/tag
 const createTag = asyncHandler(async (req, res) => {
     const vaultID = req.params.vaultID;
-    const { name, colorHEX } = req.body;
+    const { name, color } = req.body;
 
     const vaultExists = await Vault.findById(vaultID);
 
@@ -176,14 +183,14 @@ const createTag = asyncHandler(async (req, res) => {
         throw new Error('This vault does not exist');
     }
 
-    if (!name || !colorHEX) {
+    if (!name || !color) {
         res.status(400);
         throw new Error('Please enter all fields');
     }
 
     const tag = await Tag.create({
         name: name,
-        colorHEX: colorHEX
+        color: color
     });
 
     if (!tag) {
@@ -211,27 +218,30 @@ const createTag = asyncHandler(async (req, res) => {
 // @desc    Gets all tags
 // @route   GET /api/vault/{vaultID}/tag
 const getTags = asyncHandler(async (req, res) => {
-    const { vaultID } = req.params.vaultID;
+    const vaultID = req.params.vaultID;
 
-    // Check for vault with this vaultID
-    const vaultExists = await Vault.findOne({ vaultID });
-    if (!vaultExists) {
-        res.status(400);
-        throw new Error('Vault does not exist');
-    }
-
-    const tags = await vaultExists.populate({path: 'tags'});
-    console.log(tags);
-
-
-    if (tags) {
-        res.status(200).json({
-            tags: tags["tags"]
+    const vault = await checkVaultExists(vaultID, res);
+    // Tags are stored in vault.sites.accounts.tags
+    // sites, accounts, and tags are all arrays
+    // We need to get all tags from all accounts from all sites in a set
+    // Then we can return the set as an array
+    let tagsDict = {};
+    vault.sites.forEach(site => {
+        site.accounts.forEach(account => {
+            account.tags.forEach(tag => {
+                tagsDict[tag.name] = tag;
+            });
         });
-    } else {
-        res.status(400);
-        throw new Error('Could not get the tags');
-    }
+    });
+
+    // Get all the values from the dictionary
+    const tagsArray = Object.values(tagsDict);
+
+    
+    res.status(200).json({
+        message: 'Tags retrieved',
+        tags: tagsArray,
+    })
 });
 
 // @desc    Update tag
@@ -239,7 +249,7 @@ const getTags = asyncHandler(async (req, res) => {
 const updateTag = asyncHandler(async (req, res) => {
     const vaultID = req.params.vaultID;
     const tagID = req.params.tagID;
-    const { name, colorHEX } = req.body;
+    const { name, color } = req.body;
     let update = {}
 
     const vaultExists = await Vault.findById(vaultID);
@@ -256,7 +266,7 @@ const updateTag = asyncHandler(async (req, res) => {
         throw new Error('This tag does not exist');
     }
 
-    if (!name && !colorHEX) {
+    if (!name && !color) {
         res.status(400);
         throw new Error('Please enter a field to update');
     }
@@ -266,8 +276,8 @@ const updateTag = asyncHandler(async (req, res) => {
         update["name"] = name;
     }
 
-    if (colorHEX) {
-        update["colorHEX"] = colorHEX;
+    if (color) {
+        update["color"] = color;
     }
 
     const tag = await Tag.findByIdAndUpdate(tagID, update, {new: true});
@@ -286,34 +296,36 @@ const updateTag = asyncHandler(async (req, res) => {
 // @route   DELETE /api/vault/{vaultID}/tag/{tagID}
 const deleteTag = asyncHandler(async (req, res) => {
     const vaultID = req.params.vaultID;
-    const tagID = req.params.tagID;
+    const { name } = req.body;
 
-    const vaultExists = await Vault.findById(vaultID);
-
-    if (!vaultExists) {
+    if (!name) {
         res.status(400);
-        throw new Error('This vault does not exist');
+        throw new Error('Please enter a tag name to delete');
     }
 
-    const tagExists = await Tag.findById(tagID);
+    await checkVaultExists(vaultID, res);
 
-    if (!tagExists) {
-        res.status(400);
-        throw new Error('This tag does not exist');
-    }
+    // Pull all tags with the name from the vault
+    // Tags are stored in vault.sites.accounts.tags
+    // sites, accounts, and tags are all arrays
+    const vault = await Vault.findOneAndUpdate(
+        { _id: vaultID },
+        { $pull: {
+            "sites.$[].accounts.$[].tags": {
+                name: name
+            }
+        }
+    }, {new: true});
 
-    const tag = await Tag.findByIdAndDelete(tagID);
-
-    if (tag) {
-        res.status(200);
-        res.json({
-            message: "Tag was deleted"
-        });
-    }
-    else {
+    if (!vault) {
         res.status(400);
         throw new Error('Tag could not be deleted');
     }
+
+    res.status(200).json({
+        message: 'Tag deleted',
+        vault: vault
+    })
 });
 
 // @desc Update a site
@@ -321,11 +333,11 @@ const deleteTag = asyncHandler(async (req, res) => {
 const updateSite = asyncHandler(async (req, res) => {
     const vaultId = req.params.vaultID;
 
-    const { oldName, name, url } = req.body;
+    const { oldName, name, url, accounts } = req.body;
 
-    if (!vaultId || !oldName || (!name && !url)) {
+    if (!vaultId || !oldName || (!name && !url && !accounts)) {
         res.status(400);
-        throw new Error('Please provide a vault ID, old site name, and new site name or url');
+        throw new Error('Please provide a vault ID, old site name, and new site name,url, or accounts');
     }
 
     const vault = await checkVaultExists(vaultId, res);
@@ -345,6 +357,13 @@ const updateSite = asyncHandler(async (req, res) => {
     }
     if (url) {
         existingSite.url = url;
+    }
+    if (accounts) {
+        existingSite.accounts = accounts;
+    }
+    if (accounts?.length === 0) {
+        // Delete the site
+        vault.sites.splice(siteIndex, 1);
     }
 
     const updatedVault = await vault.save();
@@ -491,6 +510,21 @@ const createAccount = asyncHandler(async (req, res) => {
         res.status(400);
         throw new Error('Please provide a vault ID, name, url, username, and password');
     }
+
+    if (tags) { 
+        if (!Array.isArray(tags)) {
+            res.status(400);
+            throw new Error('Tags must be an array');
+        }
+
+        // Check if all tags have name and color prop
+        const tagsValid = tags.every(tag => tag.name && tag.color);
+        if (!tagsValid) {
+            res.status(400);
+            throw new Error('Tags must have name and color properties');
+        }
+    }
+
 
     const vault = await checkVaultExists(vaultId, res);
 

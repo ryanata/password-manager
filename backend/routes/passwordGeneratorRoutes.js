@@ -5,6 +5,6 @@ const {
     generatePassword,
 } = require('../controllers/passwordGeneratorController');
 
-router.get('/', generatePassword);
+router.post('/', generatePassword);
 
 module.exports = router;
