@@ -1,8 +1,16 @@
+
+import React from 'react';
+
 import { StyleSheet, Text, Button, View, Image, Pressable, TouchableOpacity, Alert } from 'react-native';
+
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 
-
+import MultiSlider from '@ptomasroos/react-native-multi-slider';
+import * as Clipboard from 'expo-clipboard';
+import DefaultMarker from '../components/DefaultMarker';
+import Checkbox from 'expo-checkbox';
+import { PasswordStrength } from "../components/StrengthMeter";
 
 const PasswordGenerator = () => {
     const [password, setPassword] = useState('');
@@ -32,29 +40,126 @@ const PasswordGenerator = () => {
             });
     }, [settings, refetch]);
 
+    // const [length, setLength] = useState(10);
+    const [length, setLength] = React.useState([settings.length]);
+    const lengthChange = values => setLength(values);
+    
+    const [copiedText, setCopiedText] = React.useState('');
+
+    const copyToClipboard = async () => {
+    await Clipboard.setStringAsync(password);
+    };
+
+    const fetchCopiedText = async () => {
+    const text = await Clipboard.getStringAsync();
+    setCopiedText(text);
+    };
+    
+    const [isChecked, setChecked] = useState(false);
+
+
+    const [numbers, setNumbers] = useState(false);
+    const [symbols, setSymbols] = useState(false);
+    const [uppercase, setUppercase] = useState(false);
+    const [lowercase, setLowercase] = useState(true);
+    const [alert, setAlert] = useState(false);
+
+    const [isEnabled, setIsEnabled] = useState(false);
+    const toggleSwitch = () => setIsEnabled(previousState => !previousState);
+
+    
+    const checkOthers = (caller) => {
+        const states = [lowercase, uppercase, numbers, symbols];
+        // Check if every state in the array, except the caller index, is false
+        return states.filter((state, index) => index !== caller).every((state) => state === false);
+    };
+
     return (
         <View style={styles.container}>
             <View>
                 <Text style={{fontSize: 30, marginBottom: 20}}>Password Generator</Text>
             </View>
 
-            <View>
-                <Text style={{fontSize: 22}}>------ ------ ------ ------</Text>
-            </View>
+            {/* <View>
+                <PasswordStrength password={password} />
+            </View> */}
 
-            <TouchableOpacity style={styles.passwordContainer}> 
+            <TouchableOpacity style={styles.passwordContainer} onPress={() => copyToClipboard()}> 
                     <Text style={{ color: '454545', fontSize: 22 }}>{password}</Text>
             </TouchableOpacity>
 
             <View style={[styles.customizePasswordContainer]}>
                 <Text style={{fontSize: 25}}>Customize Password</Text>
             </View>
-            <View style={[styles.checklistContainer]}>
-                <Text style={{fontSize: 25}}>*Checklists*</Text>
-            </View>
 
-            <TouchableOpacity style={styles.generatePasswordButton}> 
-                    <Text style={{ color: 'white' }}>Generate Password</Text>
+            <View style={[styles.checklistContainer]}>
+                <View style={[styles.checkContainer]}>
+                    <Checkbox 
+                    color={isChecked ? '#4681D0' : undefined} 
+                    style={styles.check} value={lowercase} 
+                    onValueChange={(newValue) => setLowercase(newValue)}
+                    />
+                    <Text style={{fontSize: 20}}>Lowercase</Text>
+                </View>
+
+                <View style={[styles.checkContainer]}>
+                    <Checkbox 
+                    color={isChecked ? '#4681D0' : undefined} 
+                    style={styles.check} value={uppercase} 
+                    onValueChange={(newValue) => setUppercase(newValue)}
+                    />
+                    <Text style={{fontSize: 20}}>Uppercase</Text>
+                </View>
+
+                <View style={[styles.checkContainer]}>
+                    <Checkbox 
+                    color={isChecked ? '#4681D0' : undefined} 
+                    style={styles.check} value={numbers} 
+                    onValueChange={(newValue) => setNumbers(newValue)}
+                    />
+                    <Text style={{fontSize: 20}}>Numbers</Text>
+                </View>
+
+                <View style={[styles.checkContainer]}>
+                    <Checkbox 
+                    color={isChecked ? '#4681D0' : undefined} 
+                    style={styles.check} value={symbols} 
+                    onValueChange={(newValue) => setSymbols(newValue)}
+                    />
+                    <Text style={{fontSize: 20}}>Symbols</Text>
+                </View>
+
+                <Text style={{fontSize: 20, marginTop: 15}}>Password Length</Text>
+
+                <View style={[styles.sliderContainer]}>
+                    <TouchableOpacity style={[styles.sliderLength]}>
+                        <Text style={{fontSize: 17}}>{length}</Text>
+                    </TouchableOpacity>
+                    <MultiSlider
+                    values={length}
+                    sliderLength={260}
+                    onValuesChange={lengthChange}
+                    min={8}
+                    max={20}
+                    step={1}
+                    customMarker={DefaultMarker}
+                    selectedStyle={{
+                        backgroundColor: '#4681D0',
+                        height: 10,
+                        borderRadius: 50,
+                    }}
+                    unselectedStyle={{
+                        height: 10,
+                        borderRadius: 50,
+                        backgroundColor: '#D9D9D9',
+                    }}
+                    />
+                    </View>
+                </View>       
+
+            <TouchableOpacity style={styles.generatePasswordButton} > 
+                                                                        
+                    <Text style={{ color: 'white', fontSize: 17 }}>Generate Password</Text>
             </TouchableOpacity>
             
         </View>
@@ -96,7 +201,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         height: 65,
         width: "100%",
-        borderWidth: 1,
+        borderWidth: 0.5,
         marginTop: 10, 
         paddingTop: 6,
         borderColor: '#E9E9E9',
@@ -104,13 +209,47 @@ const styles = StyleSheet.create({
     },
     checklistContainer: {
         backgroundColor: '#F5F5F5',
-        alignItems: 'center',
+        paddingLeft: 35,
         justifyContent: 'center',
-        height: 300,
+        height: 325,
         width: "100%",
         borderWidth: 1,
         borderColor: '#E9E9E9',
-    }
+    },
+    sliderLength: {
+        backgroundColor: '#F5F5F5',
+        justifyContent: 'center',
+        alignItems: 'center',
+        width: "12%",
+        height: 30,
+        borderWidth: 1,
+        borderColor: '#B6B6B6',
+        borderRadius: 7.5,
+        marginRight: 25,
+        marginTop:8.5,
+    },
+    sliderContainer: {
+        flexDirection: "row",
+        marginTop: 5,
+    },
+    checkContainer: {
+        flexDirection: "row",
+        marginBottom: 15,
+    },
+    check: {
+        backgroundColor: '#F5F5F5',
+        justifyContent: 'center',
+        alignItems: 'center',
+        width: "7.5%",
+        height: 30,
+        borderWidth: 1,
+        borderColor: '#B6B6B6',
+        borderRadius: 7.5,
+        marginRight: 20,
+    },
+    slider: {
+        flexDirection: 'row',
+    },
 });
 
 export default PasswordGenerator;
