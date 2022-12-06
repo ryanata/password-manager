@@ -2,10 +2,37 @@ const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const User = require('../models/user');
 const asyncHandler = require('express-async-handler');
-const user = require('../models/user');
+const mongoose = require('mongoose');
+const nodemailer = require("nodemailer");
+var generator = require('generate-password');
+
+// @desc    Send email
+const sendEmail = asyncHandler(async (data) => {
+    let transporter = nodemailer.createTransport({
+        host: 'smtp.gmail.com',
+        port: 587,
+        secure: false, // true for 465, false for other ports
+        auth: {
+          user: "verifypwdly@gmail.com",
+          pass: process.env.GMAIL_ACCOUNT_PASSWORD
+        },
+    });
+
+    let mailOptions = {
+        from: "pwdly",
+        to: data.to,
+        subject: data.subject,
+        text: data.text,
+        html: data.html,
+    };
+
+    let info = await transporter.sendMail(mailOptions);
+    console.log("Message sent: %s", info.messageId);
+    console.log("Preview URL: %s", nodemailer.getTestMessageUrl(info));
+});
 
 // @desc    Create new user
-// @route   GET /api/users/register
+// @route   POST /api/user/register
 const registerUser = asyncHandler(async (req, res) => {
     const { firstName, lastName, email, phoneNumber, password } = req.body;
 
@@ -37,6 +64,11 @@ const registerUser = asyncHandler(async (req, res) => {
     });
 
     if (user) {
+        sendEmail({
+            to: email,
+            subject: "Verify your email",
+            text: `Please click this link to verify your email: https://pwdly.herokuapp.com/api/user/${user._id}/verify`,
+        });
         res.status(201).json({
             message: 'User created!',
             user: {
@@ -56,7 +88,7 @@ const registerUser = asyncHandler(async (req, res) => {
 });
 
 // @desc    Login user
-// @route   GET /api/users/login
+// @route   POST /api/user/login
 const loginUser = asyncHandler(async (req, res) => {
     const { email, password } = req.body;
 
@@ -91,59 +123,124 @@ const loginUser = asyncHandler(async (req, res) => {
 });
 
 // @desc    Get user data
-// @route   GET /api/users/me
+// @route   GET /api/user/me
 const getMe = asyncHandler(async (req, res) => {
     res.status(200).json(req.user)
 })
     
-//@desc     Create a Vault          FIXME : !WIP/unsure!
-//@route    GET /api/users/addVault    
-const addVault = asyncHandler(async (req, res) => {
-    const {vName, vPass, initSite, initLogin, initPass/*, 2FAEnabled*/} = req.body;
+// @desc verify user
+// @route GET /api/user/:id/verify
+const verifyUser = asyncHandler(async (req, res) => {
+    const userId = req.params.id;
+    await checkUserExists(userId);
 
-    if(!vName || !vPass || !initSite || !initLogin || !initPass/*, || !2FAEnabled*/) {
-        res.status(400);
-        throw new Error('All Vault fields must be filled');
-    }
-
-    const vaultExists =  await User.findOne({ vName });
-    if(vaultExists) {
-        res.status(400);
-        throw new Error('Vault names cannot be repeated');
-    }
-
-    //Hash password
-    const salt = await bcrypt.genSalt(10)
-    const hashPassword = await bcrypt.hash(vPass, salt)
-
-    const pepper = await bcrypt.genSalt(10)
-    const hashbrownPassword = await bcrypt .hash(initPass, pepper)
-
-    const vault = await User.addVault({
-        vaultName: vName,
-        vaultPassword: vPass,
-        firstSite: {
-            startinglogin: initSite,
-            startingName: initLogin,
-            startingPass: initPass
-         },
-    });
-
-    if(vault) {
-        res.status(201).json({
-            message: 'Vault created!',
-            vault:{
-                vName: vault.vaultName,
-                initLogin: vault.firstSite.startinglogin,
-                initName: vault.firstSite.startingName,
-            },
+    // Find user by id and update emailVerified to true
+    const user = await User.findByIdAndUpdate(userId, { emailVerified: true }, { new: true });
+    if (user) {
+        res.status(200).json({
+            message: 'User verified!',
+            newUser: user
         });
     } else {
         res.status(400);
-        throw new Error('Invalid vault data');
+        throw new Error('Invalid user data');
+    }
+});
+
+// @desc Forgot password
+// @route POST /api/user/forgotPassword
+const forgotPassword = asyncHandler(async (req, res) => {
+    const { email } = req.body;
+
+    if (!email) {
+        res.status(400);
+        throw new Error('Please enter all fields');
     }
 
+    const user = await User.findOne({ email });
+
+    if (!user) {
+        res.status(401);
+        throw new Error('Email not found');
+    }
+
+    // Send email with generated password
+    const newPassword = generator.generate({
+        length: 13,
+        uppercase: true,
+        numbers: true,
+        symbols: true,
+    });
+
+    // Hash password
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(newPassword, salt);
+
+    // Update user password
+    const updated = await User.findByIdAndUpdate(user._id, { password: hashedPassword }, { new: true });
+
+    if (updated) {
+        sendEmail({
+            to: email,
+            subject: "pwdly - Forgot password",
+            text: `Hello ${user.name.firstName}, your new password is ${newPassword}`,
+        });
+        res.status(200).json({
+            message: 'Password reset successful!',
+        });
+    } else {
+        res.status(400);
+        throw new Error('Invalid user data');
+    }
 });
+
+// @desc    Update user
+// @route   PUT /api/user/:id/update
+const updateUser = asyncHandler(async (req, res) => {
+    const userId = req.params.id;
+
+    const { firstName, lastName, email, phoneNumber, password } = req.body;
+
+    if (!firstName && !lastName && !email && !phoneNumber && !password) {
+        res.status(400);
+        throw new Error('Please enter ANY field');
+    }
+
+    const user = await checkUserExists(userId);
+
+    if (firstName) {
+        user.name.firstName = firstName;
+    }
+    if (lastName) {
+        user.name.lastName = lastName;
+    }
+    if (email) {
+        user.email = email;
+        user.emailVerified = false;
+    }
+    if (phoneNumber) {
+        user.phone = phoneNumber;
+    }
+    if (password) {
+        // Hash password
+        const salt = await bcrypt.genSalt(10);
+        const hashedPassword = await bcrypt.hash(password, salt);
+        user.password = hashedPassword;
+    }
+
+    const updated = await user.save();
+
+    if (updated) {
+        res.status(200).json({
+            message: 'User updated!',
+            user: updated,
+        });
+    } else {
+        res.status(400);
+        throw new Error('Invalid user data');
+    }
+});
+
 
 // Generate JWT
 const generateToken = (id) => {
@@ -152,9 +249,22 @@ const generateToken = (id) => {
     })
 }
 
+// @desc Helper function to check if user exists
+const checkUserExists = asyncHandler(async (userId, res) => {
+    // Make sure userId is valid ObjectId and user exists
+    const userExists = mongoose.Types.ObjectId.isValid(userId) ? await User.findById(userId) : false;
+    if (!userExists) {
+        res.status(400);
+        throw new Error('User does not exist');
+    }
+    return userExists;
+});
+
 module.exports = {
     registerUser,
     loginUser,
     getMe,
-    addVault,
+    verifyUser,
+    forgotPassword,
+    updateUser,
   }
