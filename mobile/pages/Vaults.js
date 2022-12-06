@@ -12,7 +12,7 @@ const styles = StyleSheet.create({
         backgroundColor: '#fff',
         alignItems: 'left',
         justifyContent: 'top',
-        paddingTop: 10
+        paddingTop: 10,
     },
 });
 

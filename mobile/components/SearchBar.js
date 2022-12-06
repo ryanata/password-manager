@@ -15,6 +15,7 @@ const CustomSearchbar = ({setSearch}) => {
             onChangeText={onChangeSearch}
             value={searchQuery}
             onIconPress={() => {Keyboard.dismiss()}}
+            style={{marginHorizontal: 10}}
         />
     );
 }

@@ -49,15 +49,15 @@ const CustomDrawer = props => {
           style={styles.navDrawerHeader}
         >
 					{/*Hamburger menu header backarrow pressable*/}
-          <Pressable onPress={() => { 
-              navigation.navigate('Login');
-            }}>
-            <MaterialCommunityIcons
-              name="arrow-left-box"
-              size={40}
-              color={'#625A5A'}
-            />
-          </Pressable>
+					<Pressable onPress={() => { 
+						navigation.navigate('Login');
+						}}>
+						<MaterialCommunityIcons
+						name="arrow-left-box"
+						size={36}
+						color={'#5b5b5b'}
+						/>
+					</Pressable>
 					{/* Hamburger menu header pwdly icon*/}
 					<Image
 						style={{ width: 90, height: 29,  }}
@@ -75,11 +75,11 @@ const CustomDrawer = props => {
 				// onPress={() => navigation.navigate('AllPasswords')}
 			>
 				<Ionicons
-          name="settings-outline"
-          size={30}
-          color={'#ffffff'}
+				name="settings-outline"
+				size={28}
+				color={'#ffffff'}
 				/>
-				<Text style={{color: 'white', fontWeight: "500"}}>Account Settings</Text>
+				<Text style={{color: 'white', fontWeight: "500", paddingLeft:20}}>Account Settings</Text>
 			</TouchableOpacity>
 		</View>
   );
@@ -126,8 +126,8 @@ function Dashboard() {
             initialRouteName="AllPasswords"
             screenOptions={{
                 drawerStyle: {
-                backgroundColor: '#363535',
-                width: 240,
+                backgroundColor: '#454545',
+                width: 280,
                 },
                 headerTitle: (props) => <LogoTitle/>,
                 headerStyle: {
@@ -150,9 +150,9 @@ function Dashboard() {
               options={{
                   drawerIcon: ({focused, size}) => (
                       <MaterialCommunityIcons
-                          name="lock"
+                          name="lock-outline"
                           size={24}
-                          color={focused ? '#fffffff' : '#fff'}
+                          color="white"
                       />
                   ),
                   drawerActiveTintColor: "white",
@@ -171,7 +171,7 @@ function Dashboard() {
                       <MaterialCommunityIcons
                           name="safe"
                           size={24}
-                          color={focused ? '#fffffff' : '#fff'}
+                          color="white"
                       />
                   ),
                   title: "Vaults",
@@ -189,9 +189,9 @@ function Dashboard() {
             options={{
                   drawerIcon: ({focused, size}) => (
                       <MaterialCommunityIcons
-                          name="shield-sword"
+                          name="shield-outline"
                           size={24}
-                          color={focused ? '#fffffff' : '#fff'}
+                          color="white"
                       />
                   ),
                   title: "Password Generator",
@@ -249,14 +249,15 @@ const styles = StyleSheet.create({
     right: 0,
     left: 0,
     bottom: 0,
-    backgroundColor: '#363535',
+    backgroundColor: '#454545',
     padding: 20,
+    paddingLeft: 38,
     alignItems: 'center',
-    borderTopColor: 'white',
-    borderTopWidth: 0.19,
+    borderTopColor: '#363535',
+    borderTopWidth: 1,
   },
   navDrawerStyle: {
-    backgroundColor: '#363535',
+    backgroundColor: '#454545',
     width: 240,
   }
 });

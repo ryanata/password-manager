@@ -29,8 +29,17 @@ const VaultTable = ({searchTerm, id, stackable}) => {
     if (stackable) {
         return (
             <View>
-                <Text style={{fontSize: 15, fontWeight: "bold"}}>{data.vault.name}</Text>
-                {sites.map((site, index) => (<VaultRow key={index} site={site} vaultId={id} stackable/> ))}
+                <Text style={{
+                    fontSize: 17, 
+                    paddingLeft: 16, 
+                    paddingVertical: 2,
+                    backgroundColor:"#F2F2F2",
+                    fontWeight: "500",
+                    borderBottomWidth: 0.9,
+                    borderBottomColor: '#B8B8B8',
+                    
+                }}>{data.vault.name}</Text>
+                {sites.map((site, index) => (<VaultRow key={index} site={site} vaultId={id} stackable first={index===0}/> ))}
             </View>
         )
     }
