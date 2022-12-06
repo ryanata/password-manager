@@ -53,9 +53,10 @@ const CustomDrawer = props => {
 						navigation.navigate('Login');
 						}}>
 						<MaterialCommunityIcons
-						name="arrow-left-box"
-						size={36}
-						color={'#5b5b5b'}
+              name="logout-variant"
+              size={30}
+              color={'white'}
+              style={{transform: [{ rotate: '180deg'}]}}
 						/>
 					</Pressable>
 					{/* Hamburger menu header pwdly icon*/}
