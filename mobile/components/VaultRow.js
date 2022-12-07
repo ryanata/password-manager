@@ -29,7 +29,6 @@ const VaultRow = ({site, vaultId, stackable, first}) => {
                     deleteSite(vaultId, site._id)
                     .then((res) => {
                         if (res.status === 200) {
-                            Alert.alert("Site deleted Successfully");
                             // Refetch the sites
                             queryClient.invalidateQueries(`getVault_${vaultId}`);
                         }

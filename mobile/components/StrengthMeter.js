@@ -19,6 +19,7 @@ const requirements = [
             progress={1} 
             width={75}
             margin={5}
+            key={0}
         />,
         <Progress.Bar 
             styles={{ bar: { transitionDuration: "0ms", justifyContent: "space-evenly" } }}
@@ -27,6 +28,7 @@ const requirements = [
             progress={1} 
             width={75}
             margin={5}
+            key={1}
         />,
         <Progress.Bar 
             styles={{ bar: { transitionDuration: "0ms", justifyContent: "space-evenly" } }}
@@ -35,6 +37,7 @@ const requirements = [
             progress={1} 
             width={75}
             margin={5}
+            key={2}
         />,
         <Progress.Bar 
             styles={{ bar: { transitionDuration: "0ms", justifyContent: "space-evenly" } }}
@@ -43,6 +46,7 @@ const requirements = [
             progress={1} 
             width={75}
             margin={5}
+            key={3}
         />
     );
 

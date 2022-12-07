@@ -29,7 +29,6 @@ const PasswordGenerator = () => {
         };
 
     useEffect(() => {
-        console.log(length, lowercase, uppercase, numbers, symbols);
         axios
             .post("https://pwdly.herokuapp.com/api/generatePassword", { 
                 length: length[0],
