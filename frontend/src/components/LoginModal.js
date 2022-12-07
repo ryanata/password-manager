@@ -13,10 +13,11 @@ import {
     createStyles,
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
-import { useMediaQuery } from "@mantine/hooks";
+import { useMediaQuery, useDisclosure } from "@mantine/hooks";
 import axios from "axios";
-import { useReducer } from "react";
+import { useReducer, useState } from "react";
 import { Navigate } from "react-router-dom";
+import TwoFactorAuthModal from "./TwoFactorAuthModal";
 
 const useStyles = createStyles((theme) => ({
     link: {
@@ -44,6 +45,8 @@ const LoginModal = ({ opened, closed, openSignupModal }) => {
         forgotPassword: false,
         alert: "",
     });
+    const [data, setData] = useState({});
+    const [twoFactorAuthModalOpened, { toggle: toggleTwoFactorAuthModal }] = useDisclosure(false);
     const isMobile = useMediaQuery(`(max-width: ${theme.breakpoints.sm - 1}px)`);
 
     const form = useForm({
@@ -53,6 +56,7 @@ const LoginModal = ({ opened, closed, openSignupModal }) => {
             remember: false,
             submittingLogin: null,
             loggedIn: null,
+            twoFactorAuthEnabled: false,
         },
         validate: {
             email: (value) => !value.includes("@") && "Invalid email",
@@ -82,8 +86,14 @@ const LoginModal = ({ opened, closed, openSignupModal }) => {
                     // If login successful
                     if (res.status === 200) {
                         // Redirect to dashboard
-                        localStorage.setItem("pwdlyToken", JSON.stringify(res.data.user.token));
-                        form.setFieldValue("loggedIn", true);
+                        const twoFaEnabled = res.data.user.twoFactorAuthEnabled;
+                        if (twoFaEnabled) {
+                            setData(res.data.user);
+                            redirectToTwoFactorAuth();
+                        } else {
+                            localStorage.setItem("pwdlyToken", JSON.stringify(res.data.user.token));
+                            form.setFieldValue("loggedIn", true);
+                        }
                     }
                 })
                 .catch((err) => {
@@ -121,122 +131,135 @@ const LoginModal = ({ opened, closed, openSignupModal }) => {
         // Open Register Modal
         openSignupModal();
     };
+    
+    const redirectToTwoFactorAuth = () => {
+        // Close Modal
+        onClose();
+        // Open Two Factor Auth Modal
+        toggleTwoFactorAuthModal();
+    };
 
     if (form.values.loggedIn) {
         return <Navigate to="/dashboard" />;
     }
 
     return (
-        <Modal
-            centered={true}
-            opened={opened}
-            onClose={onClose}
-            fullScreen={isMobile}
-            size="sm"
-            radius={theme.radius.md}
-            styles={{
-                header: {
-                    marginBottom: 0,
-                },
-            }}
-            padding="lg"
-        >
-            <Title order={1} align="center" mb={state.forgotPassword && "xs"} className={classes.modalHeader}>
-                {state.forgotPassword ? "Reset password" : "Welcome back!"}
-            </Title>
-            <Text align="center" color={theme.colors.gray[6]} className={classes.modalSubheader}>
-                {state.forgotPassword
-                    ? "Enter your account's email address and we'll send you a link to reset your password."
-                    : "Don’t have an account yet?"}{" "}
-                {!state.forgotPassword && <Anchor onClick={redirectToRegister}>Create account</Anchor>}
-            </Text>
-            <form onSubmit={form.onSubmit(formHandler)}>
-                <Stack>
-                    <TextInput
-                        required={true}
-                        label="Email"
-                        placeholder="john.doe@gmail.com"
-                        value={form.values.email}
-                        onChange={(event) => form.setFieldValue("email", event.currentTarget.value)}
-                        error={form.errors.email && "Invalid email"}
-                    />
-
-                    {!state.forgotPassword && (
-                        <PasswordInput
+        <>
+            <Modal
+                centered={true}
+                opened={opened}
+                onClose={onClose}
+                fullScreen={isMobile}
+                size="sm"
+                radius={theme.radius.md}
+                styles={{
+                    header: {
+                        marginBottom: 0,
+                    },
+                }}
+                padding="lg"
+            >
+                <Title order={1} align="center" mb={state.forgotPassword && "xs"} className={classes.modalHeader}>
+                    {state.forgotPassword ? "Reset password" : "Welcome back!"}
+                </Title>
+                <Text align="center" color={theme.colors.gray[6]} className={classes.modalSubheader}>
+                    {state.forgotPassword
+                        ? "Enter your account's email address and we'll send you a link to reset your password."
+                        : "Don’t have an account yet?"}{" "}
+                    {!state.forgotPassword && <Anchor onClick={redirectToRegister}>Create account</Anchor>}
+                </Text>
+                <form onSubmit={form.onSubmit(formHandler)}>
+                    <Stack>
+                        <TextInput
                             required={true}
-                            label="Password"
-                            placeholder="********"
-                            value={form.values.password}
-                            onChange={(event) => form.setFieldValue("password", event.currentTarget.value)}
-                            error={form.errors.password && "Invalid password"}
+                            label="Email"
+                            placeholder="john.doe@gmail.com"
+                            value={form.values.email}
+                            onChange={(event) => form.setFieldValue("email", event.currentTarget.value)}
+                            error={form.errors.email && "Invalid email"}
                         />
-                    )}
 
-                    {!state.forgotPassword && (
-                        <Group position="apart" mb="xl">
-                            <Checkbox
-                                label="Remember Me"
-                                checked={form.values.remember}
-                                onChange={(event) => form.setFieldValue("remember", event.currentTarget.checked)}
+                        {!state.forgotPassword && (
+                            <PasswordInput
+                                required={true}
+                                label="Password"
+                                placeholder="********"
+                                value={form.values.password}
+                                onChange={(event) => form.setFieldValue("password", event.currentTarget.value)}
+                                error={form.errors.password && "Invalid password"}
                             />
-                            <Anchor
-                                size="sm"
-                                onClick={() => {
-                                    setState({ forgotPassword: true, alert: "" });
-                                }}
-                            >
-                                Forgot Password?
-                            </Anchor>
-                        </Group>
-                    )}
+                        )}
 
-                    {state.forgotPassword ? (
-                        <Button
-                            type="submit"
-                            onClick={() => form.setFieldValue("submittingLogin", false)}
-                            size="md"
-                            mb="sm"
-                        >
-                            Submit
-                        </Button>
-                    ) : (
-                        <Button
-                            type="submit"
-                            onClick={() => form.setFieldValue("submittingLogin", true)}
-                            size="md"
-                            mb="sm"
-                            color="steel-blue"
-                        >
-                            {form.values.submittingLogin ? <Loader color="white" /> : "Login"}
-                        </Button>
-                    )}
-
-                    {state.alert &&
-                        (state.forgotPassword ? (
-                            // Alert dialog on forgot password page
-                            <Text size="xs">
-                                Sent password reset to {state.alert}.{" "}
+                        {!state.forgotPassword && (
+                            <Group position="apart" mb="xl">
+                                <Checkbox
+                                    label="Remember Me"
+                                    checked={form.values.remember}
+                                    onChange={(event) => form.setFieldValue("remember", event.currentTarget.checked)}
+                                />
                                 <Anchor
+                                    size="sm"
                                     onClick={() => {
-                                        setState({ forgotPassword: false, alert: "" });
-                                        form.reset();
+                                        setState({ forgotPassword: true, alert: "" });
                                     }}
                                 >
-                                    Back to login
+                                    Forgot Password?
                                 </Anchor>
-                            </Text>
+                            </Group>
+                        )}
+
+                        {state.forgotPassword ? (
+                            <Button
+                                type="submit"
+                                onClick={() => form.setFieldValue("submittingLogin", false)}
+                                size="md"
+                                mb="sm"
+                            >
+                                Submit
+                            </Button>
                         ) : (
-                            // Alert dialog on login page
-                            <Text size="xs" color="red">
-                                <Text weight={700} span={true}>
-                                    Error:{" "}
+                            <Button
+                                type="submit"
+                                onClick={() => form.setFieldValue("submittingLogin", true)}
+                                size="md"
+                                mb="sm"
+                                color="steel-blue"
+                            >
+                                {form.values.submittingLogin ? <Loader color="white" /> : "Login"}
+                            </Button>
+                        )}
+
+                        {state.alert &&
+                            (state.forgotPassword ? (
+                                // Alert dialog on forgot password page
+                                <Text size="xs">
+                                    Sent password reset to {state.alert}.{" "}
+                                    <Anchor
+                                        onClick={() => {
+                                            setState({ forgotPassword: false, alert: "" });
+                                            form.reset();
+                                        }}
+                                    >
+                                        Back to login
+                                    </Anchor>
                                 </Text>
-                                {state.alert}.
-                            </Text>
-                        ))}
-                </Stack>
-            </form>
-        </Modal>
+                            ) : (
+                                // Alert dialog on login page
+                                <Text size="xs" color="red">
+                                    <Text weight={700} span={true}>
+                                        Error:{" "}
+                                    </Text>
+                                    {state.alert}.
+                                </Text>
+                            ))}
+                    </Stack>
+                </form>
+            </Modal>
+            <TwoFactorAuthModal opened={twoFactorAuthModalOpened} closed={toggleTwoFactorAuthModal} origin={{
+                location: "login",
+                data: data
+            }}/>
+        </>
     );
 };
 

@@ -62,6 +62,7 @@ const registerUser = asyncHandler(async (req, res) => {
             firstName: firstName,
             lastName: lastName,
         },
+        twoFactorAuthEnabled: false,
     });
 
     if (user) {
