@@ -16,6 +16,7 @@ import { VaultContext } from '../hooks/vaultContext';
 import VaultDrawerlabel from '../components/VaultDrawerLabel';
 import Settings from './Settings';
 import { getVaults } from '../helpers/Hooks';
+import PasswordGenerator from './PasswordGenerator';
 
 function LogoTitle() {
   return (
@@ -187,7 +188,7 @@ function Dashboard() {
           />  
           <Drawer.Screen 
             name="Password Generator" 
-            component={Login} 
+            component={PasswordGenerator} 
             options={{
                   drawerIcon: ({focused, size}) => (
                       <MaterialCommunityIcons
