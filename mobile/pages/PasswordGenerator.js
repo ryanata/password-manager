@@ -24,6 +24,10 @@ const PasswordGenerator = () => {
     const [lowercase, setLowercase] = useState(true);
     const [alert, setAlert] = useState(false);
 
+    const copyToClipboard = async () => {
+        await Clipboard.setStringAsync(password);
+        };
+
     useEffect(() => {
         console.log(length, lowercase, uppercase, numbers, symbols);
         axios
@@ -41,10 +45,6 @@ const PasswordGenerator = () => {
                 console.log(err);
             });
     }, [lowercase, uppercase, numbers, symbols, length, refetch]);
-
-    const copyToClipboard = async () => {
-    await Clipboard.setStringAsync(password);
-    };
 
     return (
         <View style={styles.container}>
@@ -162,7 +162,7 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         borderRadius: 7.5,
         borderColor: '#E9E9E9',
-        width: "60%",
+        width: "80%",
         marginBottom: 30,
         marginTop: 30,
     },

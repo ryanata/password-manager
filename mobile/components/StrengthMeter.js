@@ -1,7 +1,4 @@
 import { StyleSheet, Text, Button, View, Image, Pressable, TouchableOpacity, Alert } from 'react-native';
-// import { PasswordStrength } from '../../frontend/src/components/StrengthMeter';
-// import PasswordGenerator from '../pages/PasswordGenerator';
-// import { ProgressBar, MD3Colors } from 'react-native-paper';
 import * as Progress from 'react-native-progress';
 
 const requirements = [
@@ -29,22 +26,15 @@ function getStrength(password) {
     const bars = Array(4)
         .fill(0)
         .map((_, index) => (
-            // <Progress
-            //     styles={{ bar: { transitionDuration: "0ms" } }}
-            //     value={password.length > 0 && index === 0 ? 100 : strength >= ((index + 1) / 4) * 100 ? 100 : 0}
-            //     color={strength > 80 ? "teal" : strength > 50 ? "yellow" : "red"}
-            //     key={index}
-            //     size={6}
-            // />
             <Progress.Bar 
             styles={{ bar: { transitionDuration: "0ms", justifyContent: "space-evenly" } }}
             value={password.length > 0 && index === 0 ? 100 : strength >= ((index + 1) / 4) * 100 ? 100 : 0}
-            color={strength > 80 ? "teal" : strength > 50 ? "yellow" : "red"}
+            color={strength > 80 ? "green" : strength > 50 ? "yellow" : "red"}
+            borderColor={strength > 80 ? "green" : strength > 50 ? "yellow" : "red"}
             key={index}
             progress={1} 
             width={75}
             margin={5}
-            borderColor={"#B6B6B6"}
             />
         ));
 
@@ -55,6 +45,6 @@ function getStrength(password) {
 
 const styles = StyleSheet.create({
     bar: {
-        borderColor: "#B6B6B6",
+        borderColor:"#B6B6B6"
     },
 })
