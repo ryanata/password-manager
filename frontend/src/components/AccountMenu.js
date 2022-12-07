@@ -88,7 +88,8 @@ const AccountMenu = () => {
                         <Button
                             onClick={() => {
                                 localStorage.removeItem("pwdlyToken");
-                                navigate("/");
+                                // Change window location to "/"
+                                window.location.href = "/";
                             }}
                         >
                             Log Out
