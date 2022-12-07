@@ -8,35 +8,43 @@ const requirements = [
     { re: /[$&+,:;=?@#|'<>.^*()%!-]/, label: "Includes special symbol" },
 ];
 
-function getStrength(password) {
-    let multiplier = password.length > 5 ? 0 : 1;
+    export function PasswordStrength({ passwordStrength }) {
 
-    requirements.forEach((requirement) => {
-        if (!requirement.re.test(password)) {
-            multiplier += 1;
-        }
-    });
-
-    return Math.max(100 - (100 / (requirements.length + 1)) * multiplier, 0);
-}
-
-    export function PasswordStrength({ password }) {
-    const strength = getStrength(password);
-
-    const bars = Array(4)
-        .fill(0)
-        .map((_, index) => (
-            <Progress.Bar 
+    const bars = [];
+    bars.push(
+        <Progress.Bar 
             styles={{ bar: { transitionDuration: "0ms", justifyContent: "space-evenly" } }}
-            value={password.length > 0 && index === 0 ? 100 : strength >= ((index + 1) / 4) * 100 ? 100 : 0}
-            color={strength > 80 ? "green" : strength > 50 ? "yellow" : "red"}
-            borderColor={strength > 80 ? "green" : strength > 50 ? "yellow" : "red"}
-            key={index}
+            color={passwordStrength > 3 ? "green" : passwordStrength ==2 || passwordStrength == 3  ? "yellow" : "red"}
+            borderColor={passwordStrength > 3 ? "green" : passwordStrength > 1 ? "yellow" : "red"}
             progress={1} 
             width={75}
             margin={5}
-            />
-        ));
+        />,
+        <Progress.Bar 
+            styles={{ bar: { transitionDuration: "0ms", justifyContent: "space-evenly" } }}
+            color={passwordStrength > 3 ? "green" :  passwordStrength == 2 || passwordStrength == 3  ? "yellow" : "#F5F5F5"}
+            borderColor={passwordStrength > 3 ? "green" :  passwordStrength == 2 || passwordStrength == 3  ? "yellow" : "#F5F5F5"}
+            progress={1} 
+            width={75}
+            margin={5}
+        />,
+        <Progress.Bar 
+            styles={{ bar: { transitionDuration: "0ms", justifyContent: "space-evenly" } }}
+            color={passwordStrength > 3 ? "green" :   passwordStrength == 3  ? "yellow" : "#F5F5F5"}
+            borderColor={passwordStrength > 3 ? "green" :  passwordStrength == 3  ? "yellow" : "#F5F5F5"}
+            progress={1} 
+            width={75}
+            margin={5}
+        />,
+        <Progress.Bar 
+            styles={{ bar: { transitionDuration: "0ms", justifyContent: "space-evenly" } }}
+            color={passwordStrength > 3 ? "green" : passwordStrength > 1 ? "#F5F5F5" : "#F5F5F5"}
+            borderColor={passwordStrength > 3 ? "green" : passwordStrength > 1 ? "#F5F5F5" : "#F5F5F5"}
+            progress={1} 
+            width={75}
+            margin={5}
+        />
+    );
 
     return (
         <View style={{flexDirection: 'row'}}>{bars}</View>      
