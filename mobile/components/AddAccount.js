@@ -7,218 +7,122 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import { useNavigation } from '@react-navigation/native';
 import { useQueryClient } from 'react-query';
 
+
+const ControllerInput = ({control, name, placeholder, ...rest}) => {
+  return (
+    <Controller
+      control= {control}
+      name={name}
+      render={({field: {onChange, value} }) =>  (
+        <TextInput
+            required={true}
+            style={styles.textInput}
+            placeholder={placeholder}
+            autoCapitalize='none'
+            placeholderTextColor={"#003f5c"}
+            onSubmitEditing={() => {}}
+            onChangeText={value => onChange(value)}
+            {...rest}
+        />
+      )}
+      rules={{
+        minLength: {
+          value: 1,
+          message: 'field is empty'
+        }
+      }}
+    />
+  )
+}
 const AddAccount = ({vaultId}) => {
-    const navigation = useNavigation();
-	const [state, setState] = useState('')
+  const navigation = useNavigation();
 	const [modalVisible, setModalVisible] = useState(false);
-    const queryClient = useQueryClient();
+  const queryClient = useQueryClient();
 	const {setValue, handleSubmit, formState: {errors, isValid}, control} = useForm({
 		defaultValues:{
-			name: '',
-            username: '',
-            password: '',
-            url: '',
-            tags: ''
+      url: '',
+      name: '',
+      username: '',
+      password: '',
 		}
 	})
     
-    const formHandler = (values) => {
-        const selectedTags = values.tags;
-
-        //check if fields are empty
-        if(values.url.trim().length === 0 || 
-        values.username.trim().length === 0 || 
-        values.password.trim().length === 0 ||
-        values.name.trim().length === 0){
-            Alert.alert("Please fill out all fields");
-            return
-        }
-        
-        axios.post(`https://pwdly.herokuapp.com/api/vault/${vaultId}/site/account`, {
-            name: values.name,
-            url: values.url,
-            username: values.username,
-            password: values.password,
-            tags: selectedTags,
-        }).then((res) => {
-            setModalVisible(false)
-            queryClient.invalidateQueries(`getVault_${vaultId}`);
-            Alert.alert("Account added")
-            //navigation.navigate('Vaults', {id: vaultId})
-        }).catch((err) => {
-            Alert.alert("Account creation failed:\n" + err)
-            console.log(err)
-        });
-        setModalVisible(false);
-    };
-return(
-    <View style={styles.centeredView}>
-        <Modal
-		animationType="fade"
-		transparent={true}
-		visible={modalVisible}
-		onRequestClose={() => {
-		Alert.alert("Modal has been closed.");
-		setModalVisible(!modalVisible);
-		}}
-        >
+  const formHandler = (values) => {
+      //check if fields are empty
+      if(values.url.trim().length === 0 || 
+      values.username.trim().length === 0 || 
+      values.password.trim().length === 0 ||
+      values.name.trim().length === 0){
+          Alert.alert("Please fill out all fields");
+          return
+      }
+      
+      axios.post(`https://pwdly.herokuapp.com/api/vault/${vaultId}/site/account`, {
+          name: values.name,
+          url: values.url,
+          username: values.username,
+          password: values.password,
+      }).then((res) => {
+          queryClient.invalidateQueries(`getVault_${vaultId}`);
+      }).catch((err) => {
+          Alert.alert("Account creation failed:\n" + err)
+          console.log(err)
+      });
+      setModalVisible(false);
+  };
+  return(
+      <View style={styles.centeredView}>
+          <Modal
+            animationType="fade"
+            transparent={true}
+            visible={modalVisible}
+            onRequestClose={() => {
+              Alert.alert("Modal has been closed.");
+              setModalVisible(!modalVisible);
+            }}
+            style={{backgroundColor: "red"}}
+          >
             <View style={styles.centeredView}>
-                <View style={styles.modalView}>
-                    <View style={styles.modalHeader}>
-                    <View style={styles.modalHeaderContent}><Text></Text></View>
-                    <TouchableOpacity style={styles.closeButton} onPress={() => setModalVisible(false)}>
+              <View style={styles.modalView}>
+                <View style={styles.modalHeader}>
+                  <TouchableOpacity style={styles.closeButton} onPress={() => setModalVisible(false)}>
                     <MaterialCommunityIcons
                         name="close"
                         size={25}
                         color={'#000000'}
                     />
-                    </TouchableOpacity>
+                  </TouchableOpacity>
                 </View>
-                <Controller
-                  control= {control}
-                  name="name"
-                  render={({field: {onChange, value} }) =>(
-                      	<TextInput
-						required={true}
-						style={styles.TextInput}
-						placeholder="Enter Account name"
-						autoCapitalize='none'
-						placeholderTextColor={"#003f5c"}
-						onSubmitEditing={event =>
-						{}
-						}
-						onChangeText={value => onChange(value)}
-                      	/>
-                  )}
-                  rules={{
-                    minLength: {
-                      value: 1,
-                      message: 'field is empty' // JS only: <p>error message</p> TS only support string
-                    }
-                  }}
-                />
-                <Controller
-                control= {control}
-                name="url"
-                render={({field: {onChange, value} }) =>(
-					<TextInput
-					required={true}
-					style={styles.TextInput}
-					placeholder="URL"
-					autoCapitalize='none'
-					placeholderTextColor={"#003f5c"}
-					onSubmitEditing={event =>
-						{}
-					}
-					onChangeText={value => onChange(value)}
-					/>
-                )}
-                rules={{
-					minLength: {
-						value: 1,
-						message: 'field is empty' // JS only: <p>error message</p> TS only support string
-					}
-                }}
-                />     
-                <Controller
-                  control= {control}
-                  name="username"
-                  render={({field: {onChange, value} }) =>(
-                      	<TextInput
-						required={true}
-                        textContentType='username'
-						style={styles.TextInput}
-						placeholder="Enter Username"
-						autoCapitalize='none'
-						placeholderTextColor={"#003f5c"}
-						onSubmitEditing={event =>
-						{}
-						}
-						onChangeText={value => onChange(value)}
-                      	/>
-                  )}
-                  rules={{
-                    minLength: {
-                      value: 1,
-                      message: 'field is empty' // JS only: <p>error message</p> TS only support string
-                    }
-                  }}
-                />
-                <Controller
-                  control= {control}
-                  name="password"
-                  render={({field: {onChange, value} }) =>(
-                      	<TextInput
-						required={true}
-                        secureTextEntry={true}
-                        textContentType='password'
-						style={styles.TextInput}
-						placeholder="Enter Password"
-						autoCapitalize='none'
-						placeholderTextColor={"#003f5c"}
-						onSubmitEditing={event =>
-						{}
-						}
-						onChangeText={value => onChange(value)}
-                      	/>
-                  )}
-                  rules={{
-                    minLength: {
-                      value: 1,
-                      message: 'field is empty' // JS only: <p>error message</p> TS only support string
-                    }
-                  }}
-                />
-                <Controller
-                  control= {control}
-                  name="tags"
-                  render={({field: {onChange, value} }) =>(
-                      	<TextInput
-						required={true}
-						style={styles.TextInput}
-						placeholder="Enter Tags"
-						autoCapitalize='none'
-						placeholderTextColor={"#003f5c"}
-						onSubmitEditing={event =>
-						{}
-						}
-						onChangeText={value => onChange(value)}
-                      	/>
-                  )}
-                  rules={{
-                    minLength: {
-                      value: 1,
-                      message: 'field is empty' // JS only: <p>error message</p> TS only support string
-                    }
-                  }}
-                />
+                <ControllerInput control={control} name="name" placeholder="Facebook"/>
+                <ControllerInput control={control} name="url" placeholder="facebook.com"/>
+                <ControllerInput control={control} name="username" placeholder="JohnDoe11"/>
+                <ControllerInput control={control} name="password" placeholder="***********" secureTextEntry/>
                 <Pressable
-                style={({pressed}) => [styles.button, styles.buttonClose,{backgroundColor: pressed ? "#16578B" : "#2196F3"}]}
-                onPress={handleSubmit(formHandler)}
+                  style={({pressed}) => [styles.button, styles.buttonClose,{backgroundColor: pressed ? "#16578B" : "#2196F3"}]}
+                  onPress={handleSubmit(formHandler)}
                 >
                   <Text style={styles.textStyle}>Add Account</Text>
                 </Pressable>
-
               </View>
             </View>
-        </Modal>
+          </Modal>
 
-        <Pressable
-        onPress={() => {
-          	setModalVisible(true)
-        }}
-        style={({ pressed }) => [{borderRadius: 10 },{backgroundColor: pressed ? "#16578B" : "white"}]}
-        >
-			{({ pressed }) => (
-                <MaterialCommunityIcons
-				name="plus-box"
-				size={35}
-				color={'#4681D0'}
-				/>
-			)}
-        </Pressable>
-    </View>
-);
+          <Pressable
+          onPress={() => {
+              setModalVisible(true)
+          }}
+          style={({ pressed }) => [{borderRadius: 10 },{backgroundColor: pressed ? "#16578B" : "white"}]}
+          >
+        {({ pressed }) => (
+                  <MaterialCommunityIcons
+          name="plus-box"
+          size={35}
+          color={'#4681D0'}
+          />
+        )}
+          </Pressable>
+      </View>
+  );
 }
 
 const styles = StyleSheet.create({
@@ -228,6 +132,8 @@ const styles = StyleSheet.create({
       alignItems: "center",
     },
     modalView: {
+      width: "80%",
+      height: 350,
       margin: 20,
       backgroundColor: "white",
       borderRadius: 20,
@@ -263,7 +169,7 @@ const styles = StyleSheet.create({
       marginBottom: 15,
       textAlign: "center"
     },
-    TextInput: {
+    textInput: {
         padding: 10,
         width: "100%",
         textAlign: "center",
@@ -275,20 +181,21 @@ const styles = StyleSheet.create({
         borderColor: "#CCCCCC",
     },
     closeButton: {
-        alignItems: "flex-end",
-      },
-    
-      modalHeader: {
-        flexDirection: "row",
-        marginBottom: 10,
-      },
-      modalHeaderContent: {
-        flexGrow: 1,
-      },
-      modalButton: {
-        flexDirection: "row",
-        justifyContent: "flex-end",
-      }
+      
+    },
+    modalHeader: {
+      flexDirection: "row",
+      width: "100%",
+      justifyContent: "flex-end",
+      marginBottom: 10,
+    },
+    modalHeaderContent: {
+      flexGrow: 1,
+    },
+    modalButton: {
+      flexDirection: "row",
+      justifyContent: "flex-end",
+    }
   });
 
 export default AddAccount;
