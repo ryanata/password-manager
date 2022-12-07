@@ -15,8 +15,9 @@ import {
 import { useForm } from "@mantine/form";
 import { useMediaQuery } from "@mantine/hooks";
 import axios from "axios";
-import { useReducer } from "react";
+import { useReducer, useState } from "react";
 import { Navigate } from "react-router-dom";
+import TwoFactorAuthModal from "./TwoFactorAuthModal";
 
 const useStyles = createStyles((theme) => ({
     link: {
@@ -43,7 +44,9 @@ const LoginModal = ({ opened, closed, openSignupModal }) => {
     const [state, setState] = useReducer((state, newState) => ({ ...state, ...newState }), {
         forgotPassword: false,
         alert: "",
+        twoFactorAuthEnabled: false
     });
+    const [user, setUser] = useState({});
     const isMobile = useMediaQuery(`(max-width: ${theme.breakpoints.sm - 1}px)`);
 
     const form = useForm({
@@ -65,7 +68,7 @@ const LoginModal = ({ opened, closed, openSignupModal }) => {
         closed();
         // Waits 0.4 second because of the animation delay
         setTimeout(() => {
-            setState({ forgotPassword: false, alert: "" });
+            setState({ forgotPassword: false, alert: "", twoFactorAuthEnabled: false });
         }, 400);
     };
 
@@ -81,9 +84,16 @@ const LoginModal = ({ opened, closed, openSignupModal }) => {
                 .then((res) => {
                     // If login successful
                     if (res.status === 200) {
-                        // Redirect to dashboard
+                        const twoFactorAuth = res.data.user.twoFactorAuthEnabled;
                         localStorage.setItem("pwdlyToken", JSON.stringify(res.data.user.token));
-                        form.setFieldValue("loggedIn", true);
+
+                        // If two factor auth is enabled 
+                        if (twoFactorAuth) {
+                            setState({ twoFactorAuthEnabled: true });
+                            setUser(res.data.user);
+                        } else {
+                            form.setFieldValue("loggedIn", true);
+                        }
                     }
                 })
                 .catch((err) => {
@@ -120,6 +130,13 @@ const LoginModal = ({ opened, closed, openSignupModal }) => {
         onClose();
         // Open Register Modal
         openSignupModal();
+    };
+
+    
+    if (state.twoFactorAuthEnabled) {
+        return (
+            <TwoFactorAuthModal opened={state.twoFactorAuthEnabled} closed={onClose} user={user}/>
+        )
     };
 
     if (form.values.loggedIn) {

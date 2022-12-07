@@ -1,6 +1,5 @@
 const User = require('../models/user');
 const asyncHandler = require('express-async-handler');
-const { update } = require('../models/user');
 const accountSid = process.env.TWILIO_ACCOUNT_SID;
 const serviceSid = process.env.TWILIO_SERVICE_SID;
 const serviceSidPasswordReset = process.env.TWILIO_SERVICE_SID_RESET_PASSWORD;
@@ -142,9 +141,14 @@ const checkVerification = asyncHandler(async (req, res) => {
             }
         }
         else {
-            res.status(200).json({
-                message: "Verification " + verificationStatus,
-            });
+            if (verificationStatus == "approved") {
+                res.status(200).json({
+                    message: 'Verification successful',
+                });
+            } else {
+                res.status(400);
+                throw new Error('Verification failed');
+            }
         }
         
     } else {
