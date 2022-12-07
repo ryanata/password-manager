@@ -14,6 +14,7 @@ import { useQuery } from 'react-query';
 import SiteInfo from './SiteInfo';
 import { VaultContext } from '../hooks/vaultContext';
 import VaultDrawerlabel from '../components/VaultDrawerLabel';
+import Settings from './Settings';
 import { getVaults } from '../helpers/Hooks';
 
 function LogoTitle() {
@@ -73,7 +74,7 @@ const CustomDrawer = props => {
 			{/*Settings button at bottom of drawer*/}
 			<TouchableOpacity
 				style={styles.navbarFooter}
-				// onPress={() => navigation.navigate('AllPasswords')}
+				onPress={() => navigation.navigate('Settings')}
 			>
 				<Ionicons
 				name="settings-outline"
@@ -206,6 +207,26 @@ function Dashboard() {
           <Drawer.Screen 
             name="SiteInfo" 
             component={SiteInfo} 
+            options={{
+              drawerIcon: ({focused, size}) => (
+                  <MaterialCommunityIcons
+                      name="shield-sword"
+                      size={24}
+                      color={focused ? '#fffffff' : '#fff'}
+                  />
+              ),
+              title: "Password Generator",
+              drawerActiveTintColor: "white",
+              drawerLabel: "Password Generator",
+              drawerLabelStyle: {
+                color: "white"
+              },
+              drawerItemStyle: { display: 'none' }
+            }}
+          />
+           <Drawer.Screen 
+            name="Settings" 
+            component={Settings} 
             options={{
               drawerIcon: ({focused, size}) => (
                   <MaterialCommunityIcons
