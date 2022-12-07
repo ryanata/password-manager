@@ -38,7 +38,8 @@ const WelcomeModal = ({ userId }) => {
         <Modal
             opened={true}
             onClose={() => {}}
-            size="lg"
+            size={500}
+            centered
             transition="slide-down"
             transitionDuration={200}
             transitionTimingFunction="ease"
@@ -54,7 +55,7 @@ const WelcomeModal = ({ userId }) => {
                 </Text>
             </Text>
             <form onSubmit={form.onSubmit(formHandler)}>
-                <Stack>
+                <Stack spacing="xl">
                     <PasswordInput required label="Master Password" {...form.getInputProps("password")} />
                     <Button type="submit">Submit</Button>
                 </Stack>
