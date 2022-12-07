@@ -31,8 +31,6 @@ const NewVaultButton = (props) => {
     createVault(userId, data.vaultName, data.masterPassword)
         .then((res) => {
             if (res.status === 201) {
-                console.log("vault created successfully");
-                Alert.alert("Vault created Successfully");
                 // Refetch the vaults
                 queryClient.invalidateQueries('getVaults');
                 queryClient.invalidateQueries('getUser');
@@ -57,7 +55,6 @@ const NewVaultButton = (props) => {
         transparent={true}
         visible={modalVisible}
         onRequestClose={() => {
-          Alert.alert("Modal has been closed.");
           setModalVisible(false);
         }}
         >

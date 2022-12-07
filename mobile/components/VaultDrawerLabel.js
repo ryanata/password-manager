@@ -55,11 +55,9 @@ const VaultDrawerlabel = ({vaults}) => {
                                 deleteVault(vault.id, userId)
                                 .then((res) => {
                                     if (res.status === 200) {
-                                        Alert.alert("Vault deleted Successfully");
                                         // Refetch the vaults
                                         queryClient.invalidateQueries('getVaults');
                                         queryClient.invalidateQueries('getUser');
-                                        // 
                                     }
                                 })
                                 .catch((err) => {
