@@ -3,9 +3,10 @@ import { useDisclosure } from "@mantine/hooks";
 import { IconPlus, IconSearch } from "@tabler/icons";
 import { useQueryClient } from "@tanstack/react-query";
 import { useParams } from "react-router-dom";
+
 import AccountModal from "./AccountModal";
 
-const SearchBar = ({ setSearch }) => {
+const SearchBar = ({ setSearch, disableAdd }) => {
     const [accountModalOpened, { toggle: toggleAccountModal }] = useDisclosure(false);
     const { id } = useParams();
     const queryClient = useQueryClient();
@@ -33,30 +34,29 @@ const SearchBar = ({ setSearch }) => {
                     },
                 })}
             />
-            <Button
-                size="md"
-                uppercase
-                leftIcon={<IconPlus size={28} />}
-                onClick={toggleAccountModal}
-                styles={(theme) => ({
-                    root: {
-                        backgroundColor: "#4681D0",
-                        fontSize: 18,
-                        paddingLeft: 10,
-                        paddingRight: 10,
-                        "&:hover": {
-                            backgroundColor: theme.fn.darken("#4681D0", 0.05),
+            {!disableAdd && (
+                <Button
+                    size="md"
+                    uppercase
+                    leftIcon={<IconPlus size={28} />}
+                    onClick={toggleAccountModal}
+                    styles={(theme) => ({
+                        root: {
+                            backgroundColor: "#4681D0",
+                            fontSize: 18,
+                            paddingLeft: 10,
+                            paddingRight: 10,
+                            "&:hover": {
+                                backgroundColor: theme.fn.darken("#4681D0", 0.05),
+                            },
                         },
-                    },
-                })}
-            >
-                add new
-            </Button>
+                    })}
+                >
+                    add new
+                </Button>
+            )}
 
-            {accountModalOpened && <AccountModal
-                opened={accountModalOpened}
-                closed={onClose}
-            />}
+            {accountModalOpened && <AccountModal opened={accountModalOpened} closed={onClose} />}
         </Group>
     );
 };

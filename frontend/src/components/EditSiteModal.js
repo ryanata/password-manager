@@ -1,18 +1,31 @@
-import { useState, useRef } from 'react';
-import { ActionIcon, Box, Modal, Divider, Title, TextInput, PasswordInput, Text, Group, Button, Stack, createStyles} from '@mantine/core';
-import { useForm } from '@mantine/form';
-import { useDisclosure } from '@mantine/hooks';
-import { useParams } from 'react-router-dom';
-import { updateSite } from '../helpers/Hooks';
-import { useQueryClient } from '@tanstack/react-query';
-import MultiInput from './MultiInput';
-import DeleteWarning from './DeleteWarning';
-import { IconTrash } from '@tabler/icons';
+import {
+    ActionIcon,
+    Box,
+    Button,
+    Divider,
+    Group,
+    Modal,
+    PasswordInput,
+    Stack,
+    Text,
+    TextInput,
+    Title,
+    createStyles,
+} from "@mantine/core";
+import { useForm } from "@mantine/form";
+import { useDisclosure } from "@mantine/hooks";
+import { IconTrash } from "@tabler/icons";
+import { useQueryClient } from "@tanstack/react-query";
+import { useRef, useState } from "react";
+import { useParams } from "react-router-dom";
 
-const useStyles = createStyles((theme) => ({
-}));
+import { updateSite } from "../helpers/Hooks";
+import DeleteWarning from "./DeleteWarning";
+import MultiInput from "./MultiInput";
 
-const EditModal = ({site, opened, closed}) => {
+const useStyles = createStyles((theme) => ({}));
+
+const EditModal = ({ site, opened, closed }) => {
     // Hooks
     const { classes, theme } = useStyles();
     const { id } = useParams();
@@ -26,7 +39,7 @@ const EditModal = ({site, opened, closed}) => {
 
     // Store all the accounts in an object with the account._id as the key
     const initialAccounts = {};
-    site.accounts.forEach(account => {
+    site.accounts.forEach((account) => {
         initialAccounts[account._id] = account;
     });
 
@@ -42,49 +55,52 @@ const EditModal = ({site, opened, closed}) => {
         const updateTags = (selectedTags) => {
             const account = {
                 ...form.values[id],
-                tags: selectedTags
-            }
+                tags: selectedTags,
+            };
             form.setFieldValue(id, account);
-        }
+        };
         return updateTags;
-    }
+    };
 
     const formHandler = (values) => {
-        const nonDeletedAccounts = site.accounts.filter(account => {
-            return !(values[account._id].deleted);
-        }).map(account => {
-            return {
-                username: values[account._id].username,
-                password: values[account._id].password,
-                tags: values[account._id].tags,
-                _id: account._id,
-            }
-        });
+        const nonDeletedAccounts = site.accounts
+            .filter((account) => {
+                return !values[account._id].deleted;
+            })
+            .map((account) => {
+                return {
+                    username: values[account._id].username,
+                    password: values[account._id].password,
+                    tags: values[account._id].tags,
+                    _id: account._id,
+                };
+            });
         updateSite(id, site.name, values.name, values.url, nonDeletedAccounts)
-        .then((res) => {
-            closed();
-            queryClient.invalidateQueries([queryTags]);
-            queryClient.invalidateQueries([queryVault]);
-        }).catch((err) => {
-            setAlert(err.response.data.message);
-        });
+            .then((res) => {
+                closed();
+                queryClient.invalidateQueries([queryTags]);
+                queryClient.invalidateQueries([queryVault]);
+            })
+            .catch((err) => {
+                setAlert(err.response.data.message);
+            });
     };
 
     const deleteAccount = (id) => {
         const acc = form.values[id];
         if (acc.deleted) {
-            form.setFieldValue(id, {...acc, deleted: false});
+            form.setFieldValue(id, { ...acc, deleted: false });
         } else {
-            form.setFieldValue(id, {...acc, deleted: true});
+            form.setFieldValue(id, { ...acc, deleted: true });
         }
-    }
+    };
 
     // Check if any object in form.values has a deleted property and save it as a boolean
-    const hasDeleted = Object.values(form.values).some(account => account.deleted);
-    return ( 
-        <Modal 
+    const hasDeleted = Object.values(form.values).some((account) => account.deleted);
+    return (
+        <Modal
             title={`Editing ${site.name}`}
-            opened={opened} 
+            opened={opened}
             onClose={closed}
             closeOnClickOutside={false}
             size="lg"
@@ -118,16 +134,25 @@ const EditModal = ({site, opened, closed}) => {
                         {site.accounts.map((account) => {
                             return (
                                 <div key={account._id}>
-                                    <Stack spacing="sm" p="sm" sx={{
-                                        backgroundColor: form.values[account._id].deleted ? theme.colors.red[1] : theme.colors.gray[0],
-                                    }}>
+                                    <Stack
+                                        spacing="sm"
+                                        p="sm"
+                                        sx={{
+                                            backgroundColor: form.values[account._id].deleted
+                                                ? theme.colors.red[1]
+                                                : theme.colors.gray[0],
+                                        }}
+                                    >
                                         <Stack spacing={0}>
                                             <Group position="right" m={0} p={0}>
-                                                <ActionIcon variant='light' onClick={() => {
-                                                    console.log("Delete");
-                                                    deleteAccount(account._id);
-                                                }}>
-                                                    <IconTrash size={16}/>
+                                                <ActionIcon
+                                                    variant="light"
+                                                    onClick={() => {
+                                                        console.log("Delete");
+                                                        deleteAccount(account._id);
+                                                    }}
+                                                >
+                                                    <IconTrash size={16} />
                                                 </ActionIcon>
                                             </Group>
                                             <TextInput
@@ -150,43 +175,52 @@ const EditModal = ({site, opened, closed}) => {
                                             updateForm={changeSelectedTags(account._id)}
                                         />
                                     </Stack>
-                                    <Divider my="xs"/>
+                                    <Divider my="xs" />
                                 </div>
-                            )
+                            );
                         })}
                     </Stack>
                     <Group position="right" mt="md">
-                        {hasDeleted ?
+                        {hasDeleted ? (
                             <Button onClick={toggleWarning}>Save</Button>
-                            :
+                        ) : (
                             <Button type="submit">Save</Button>
-                        }
+                        )}
                     </Group>
                     <Text size="xs" color="red">
                         {alert}
                     </Text>
-                    {warningOpened && 
-                    (<DeleteWarning
-                        opened={warningOpened}
-                        closed={toggleWarning}
-                        label="Are you sure you want to delete these accounts?"
-                    >
-                        <Group position="right" mt="sm">
-                            <Group spacing="xs">
-                                <Button variant="outline" onClick={toggleWarning}>No</Button>
-                                <Button onClick={() => {
-                                    // Close Modal
-                                    toggleWarning();
-                                    // Submit form
-                                    formRef.current.dispatchEvent(new Event("submit", { cancelable: true, bubbles: true }));
-                                }}>Yes</Button>
+                    {warningOpened && (
+                        <DeleteWarning
+                            opened={warningOpened}
+                            closed={toggleWarning}
+                            label="Are you sure you want to delete these accounts?"
+                        >
+                            <Group position="right" mt="sm">
+                                <Group spacing="xs">
+                                    <Button variant="outline" onClick={toggleWarning}>
+                                        No
+                                    </Button>
+                                    <Button
+                                        onClick={() => {
+                                            // Close Modal
+                                            toggleWarning();
+                                            // Submit form
+                                            formRef.current.dispatchEvent(
+                                                new Event("submit", { cancelable: true, bubbles: true })
+                                            );
+                                        }}
+                                    >
+                                        Yes
+                                    </Button>
+                                </Group>
                             </Group>
-                        </Group>
-                    </DeleteWarning>)}
+                        </DeleteWarning>
+                    )}
                 </form>
             </Box>
         </Modal>
-     );
-}
- 
+    );
+};
+
 export default EditModal;

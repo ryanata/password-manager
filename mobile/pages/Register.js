@@ -71,9 +71,11 @@ const Register = () => {
                             <TextInput
                                 required={true}
                                 style={styles.TextInput}
-                                placeholder="First name"
+                                placeholder="First Name"
                                 autoCapitalize='none'
                                 placeholderTextColor={"#003f5c"}
+                                width = "100%"
+                                textAlign='center'
                                 onSubmitEditing={event =>
                                     this.passwordInput.wrappedInstance.focus()
                                 }
@@ -90,9 +92,11 @@ const Register = () => {
                             <TextInput
                                 required={true}
                                 style={styles.TextInput}
-                                placeholder="Last name"
+                                placeholder="Last Name"
                                 autoCapitalize='none'
                                 placeholderTextColor={"#003f5c"}
+                                width = "100%"
+                                textAlign='center'
                                 onChangeText={value => onChange(value)}
                             />
                         )}
@@ -109,6 +113,8 @@ const Register = () => {
                                 placeholder="Email"
                                 autoCapitalize='none'
                                 placeholderTextColor={"#003f5c"}
+                                width = "100%"
+                                textAlign='center'
                                 onChangeText={value => onChange(value)}
                             />
                         )}
@@ -126,6 +132,8 @@ const Register = () => {
                                 placeholder="Phone Number"
                                 autoCapitalize='none'
                                 placeholderTextColor={"#003f5c"}
+                                width = "100%"
+                                textAlign='center'
                                 onChangeText={value => onChange(value)}
                             />
                         )}
@@ -143,6 +151,8 @@ const Register = () => {
                                 secureTextEntry={true}
                                 autoCapitalize='none'
                                 placeholderTextColor={"#003f5c"}
+                                width = "100%"
+                                textAlign='center'
                                 onChangeText={value => onChange(value)}
                             />
                         )}
@@ -156,7 +166,7 @@ const Register = () => {
             <Text style={styles.errorMessageTextStyle}>{state.alert}</Text>
 
             <TouchableOpacity style={styles.SignBtn} onPress = {handleSubmit(formHandler)}>
-                <Text style={styles.loginText}>Sign Up</Text>
+                <Text style={styles.loginText}>SIGN UP</Text>
             </TouchableOpacity>
         </View>
      );
@@ -171,9 +181,12 @@ const styles = StyleSheet.create({
     },
 
     image :{
-        marginBottom: 40,
+        marginBottom: 30,
         alignItems: "center",
-    },
+        width: 110,
+        height: 50,
+        resizeMode: 'contain',
+      },
 
     inputView: {
         backgroundColor: "#ffffff",
@@ -192,7 +205,7 @@ const styles = StyleSheet.create({
     },
     
     SignBtn: {
-        width: "80%",
+        width: "50%",
         borderRadius: 25,
         height: 50,
         alignItems: "center",
@@ -214,7 +227,7 @@ const styles = StyleSheet.create({
     },
 
     Already_button: {
-        color: '#ffffffr',
+        color: '#ffffff',
         height: 30,
         marginBottom: 30,
     },

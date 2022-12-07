@@ -31,6 +31,7 @@ const PasswordGenerator = () => {
     const [lowercase, setLowercase] = useState(true);
     const [alert, setAlert] = useState(false);
     // const { data: passwordObj, isLoading, isError, refetch } = useGenerator(length, numbers, symbols, uppercase, lowercase);
+    
     const {
         data: passwordObj,
         isLoading,

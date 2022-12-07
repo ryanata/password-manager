@@ -1,13 +1,24 @@
-import { Affix, Box, Button, Collapse, Group, Menu, Text, ThemeIcon, UnstyledButton, createStyles } from "@mantine/core";
+import {
+    Affix,
+    Box,
+    Button,
+    Collapse,
+    Group,
+    Menu,
+    Text,
+    ThemeIcon,
+    UnstyledButton,
+    createStyles,
+} from "@mantine/core";
 import { useClickOutside, useDisclosure } from "@mantine/hooks";
 import { IconCalendarStats, IconChevronLeft, IconChevronRight, TablerIcon } from "@tabler/icons";
-import { deleteVault } from "../helpers/Hooks";
+import { useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useQueryClient } from "@tanstack/react-query";
 
-import VaultModal from "./VaultModal";
+import { deleteVault } from "../helpers/Hooks";
 import DeleteWarning from "./DeleteWarning";
+import VaultModal from "./VaultModal";
 
 const useStyles = createStyles((theme) => ({
     control: {
@@ -33,7 +44,7 @@ const useStyles = createStyles((theme) => ({
         marginLeft: 30,
         fontSize: theme.fontSizes.md,
         color: "#D4D4D4",
-        borderLeft: `1px solid ${theme.colorScheme === "dark" ? theme.colors.dark[4] : theme.colors.gray[3]}`,
+        borderLeft: `1px solid white`,
 
         "&:hover": {
             backgroundColor: "#3A3A3A",
@@ -53,13 +64,11 @@ const DrawerLink = ({ link }) => {
     // Context menu
     const [coords, setCoords] = useState({
         clientX: null,
-        clientY: null
+        clientY: null,
     });
-    const ref = useClickOutside(() =>
-    setCoords({ clientX: null, clientY: null })
-    );
+    const ref = useClickOutside(() => setCoords({ clientX: null, clientY: null }));
     const queryClient = useQueryClient();
-    
+
     // link.link is /dashboard/${vaultId}
     // get the vaultId from the link
     const vaultId = link.link.split("/")[2];
@@ -74,8 +83,8 @@ const DrawerLink = ({ link }) => {
         setCoords({ clientX, clientY });
     };
     const validCoords = coords.clientX !== null && coords.clientY !== null;
-    const affixPosition = (coords.clientX !== null && coords.clientY !== null) ? 
-                          { left: coords.clientX, top: coords.clientY } : undefined;
+    const affixPosition =
+        coords.clientX !== null && coords.clientY !== null ? { left: coords.clientX, top: coords.clientY } : undefined;
     return (
         <>
             <div onContextMenu={handleContextMenu}>
@@ -87,24 +96,23 @@ const DrawerLink = ({ link }) => {
                     }}
                     align="left"
                     sx={{
-                        borderLeft: onVault && `3px solid ${theme.colors.green[5]}`,
+                        borderLeft: onVault && `3px solid ${theme.colors.lime[4]}`,
                         cursor: "pointer",
                     }}
                 >
                     {link.label}
                 </Text>
             </div>
-            <Affix
-                sx={{ display: validCoords ? "initial" : "none" }}
-                position={affixPosition}
-            >
+            <Affix sx={{ display: validCoords ? "initial" : "none" }} position={affixPosition}>
                 <Menu opened={validCoords} width={150}>
                     <div ref={ref}>
                         <Menu.Target>
-                        <div />
+                            <div />
                         </Menu.Target>
                         <Menu.Dropdown>
-                        <Menu.Item color="red" onClick={toggleDeleteVault}>Delete vault</Menu.Item>
+                            <Menu.Item color="red" onClick={toggleDeleteVault}>
+                                Delete vault
+                            </Menu.Item>
                         </Menu.Dropdown>
                     </div>
                 </Menu>
@@ -112,39 +120,45 @@ const DrawerLink = ({ link }) => {
                     <DeleteWarning
                         opened={deleteVaultOpened}
                         toggle={toggleDeleteVault}
-                        label="Are you sure you want to delete this vault?">
+                        label="Are you sure you want to delete this vault?"
+                    >
                         <Group position="right" mt="sm">
-                                <Group spacing="xs">
-                                    <Button variant="outline" onClick={toggleDeleteVault}>No</Button>
-                                    <Button onClick={() => {
+                            <Group spacing="xs">
+                                <Button variant="outline" onClick={toggleDeleteVault}>
+                                    No
+                                </Button>
+                                <Button
+                                    onClick={() => {
                                         // Close Modal
                                         toggleDeleteVault();
                                         // Delete vault
                                         deleteVault(vaultId, userId)
-                                        .then((res) => {
-                                            // Navigate to dashboard
-                                            navigate("/dashboard");
-                                        })
-                                        .catch((err) => {
-                                            console.log(err);
-                                        });
-                                    }}>
-                                        Yes
-                                    </Button>
-                                </Group>
+                                            .then((res) => {
+                                                // Navigate to dashboard
+                                                navigate("/dashboard");
+                                            })
+                                            .catch((err) => {
+                                                console.log(err);
+                                            });
+                                    }}
+                                >
+                                    Yes
+                                </Button>
                             </Group>
+                        </Group>
                     </DeleteWarning>
                 )}
             </Affix>
         </>
-    )
-}
+    );
+};
 
 export function LinksGroup({ icon: Icon, label, initiallyOpened, links, link, openSidebar }) {
     const { classes, theme } = useStyles();
     const hasLinks = Array.isArray(links);
     const [opened, setOpened] = useState(initiallyOpened || false);
     const [vaultModalOpened, { toggle: toggleVaultModal }] = useDisclosure(false);
+    const navigate = useNavigate();
 
     const ChevronIcon = theme.dir === "ltr" ? IconChevronRight : IconChevronLeft;
 
@@ -157,9 +171,7 @@ export function LinksGroup({ icon: Icon, label, initiallyOpened, links, link, op
             );
         }
 
-        return (
-            <DrawerLink key={index} link={link} />
-        );
+        return <DrawerLink key={index} link={link} />;
     });
 
     useEffect(() => {
@@ -181,7 +193,7 @@ export function LinksGroup({ icon: Icon, label, initiallyOpened, links, link, op
                         }
                     } else if (link) {
                         // Redirect to link (this is for all non-vault links)
-                        window.location.href = link;
+                        navigate(link);
                     }
                 }}
                 title={label}
@@ -211,4 +223,3 @@ export function LinksGroup({ icon: Icon, label, initiallyOpened, links, link, op
         </>
     );
 }
-

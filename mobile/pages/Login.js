@@ -14,7 +14,6 @@ import axios from "axios";
 import { useReducer } from "react";
 import { useNavigation } from '@react-navigation/native';
 import * as SecureStore from 'expo-secure-store';
-//import AsyncStorage from '@react-native-async-storage/async-storage';
 
     
 const Login = ()  => { 
@@ -59,8 +58,7 @@ const Login = ()  => {
             })
             .then((res) => {
                 if (res.status === 200) { 
-                    save('pwdlytoken', res.data.user.token)
-                    
+                    save('pwdlytoken', res.data.user.token )
                 }
             })
             .catch((err) => {
@@ -82,21 +80,23 @@ const Login = ()  => {
 
     return (
         <View style={styles.container}>
-            <Image style={styles.image} source = {require("../assets/logo.png")} />
+            <Image style={styles.image} source={require("../assets/logo.png")} />
 
                 <View style={styles.inputView}>
                     <Controller
-                        control = {control}
-                        name = "email"
-                        render = {({ field: {onChange, value} }) => (
+                        control={control}
+                        name="email"
+                        render={({ field: {onChange, value} }) => (
                             <TextInput
                                 required={true}
                                 style={styles.TextInput}
                                 placeholder="Email"
                                 autoCapitalize='none'
                                 placeholderTextColor="#003f5c"
+                                width="100%"
+                                textAlign='center'
                                 onSubmitEditing={event =>
-                                    this.passwordInput.wrappedInstance.focus()
+                                    {}
                                 }
                                 onChangeText={value => onChange(value)}
                             />
@@ -107,13 +107,15 @@ const Login = ()  => {
                 <View style={styles.inputView}>
                     <Controller
                         control={control}
-                        name = "password"
-                        render = {({field: {onChange, value} }) => (
+                        name="password"
+                        render={({field: {onChange, value} }) => (
                             <TextInput
                                 style={styles.TextInput}
                                 placeholder="Password"
                                 placeholderTextColor="#003f5c"
                                 secureTextEntry={true}
+                                width="100%"
+                                textAlign='center'
                                 autoCapitalize='none'
                                 onChangeText={value => onChange(value)}
                             />
@@ -121,11 +123,11 @@ const Login = ()  => {
                     />
                 </View>
 
-                <TouchableOpacity style ={styles.forgot_button} onPress = {handleSubmit(onPressSignup)}>
-                    <Text style = {styles.signUpText}>New User? Sign Up</Text>
+                <TouchableOpacity style={styles.forgot_button} onPress={handleSubmit(onPressSignup)}>
+                    <Text style={styles.signUpText}>New user? Sign Up</Text>
                 </TouchableOpacity>
         
-                <TouchableOpacity style={styles.loginBtn} onPress = {handleSubmit(onPressLogin)}> 
+                <TouchableOpacity style={styles.loginBtn} onPress={handleSubmit(onPressLogin)}> 
                     <Text style={styles.loginText}>LOGIN</Text>
                 </TouchableOpacity>
         </View>
@@ -133,7 +135,7 @@ const Login = ()  => {
     
 }
 
-const styles = StyleSheet.create({
+const styles=StyleSheet.create({
     container: {
       flex: 1,
       backgroundColor: '#4681D0',
@@ -142,11 +144,13 @@ const styles = StyleSheet.create({
      },
    
     image :{
-      marginBottom: 40,
+      marginBottom: 30,
       alignItems: "center",
-      
-   
+      width: 110,
+      height: 50,
+      resizeMode: 'contain',
     },
+
     signUpText :{
         color: '#ffffff'
     },
@@ -172,7 +176,7 @@ const styles = StyleSheet.create({
     },
      
     loginBtn: {
-        width: "80%",
+        width: "50%",
         borderRadius: 25,
         height: 50,
         alignItems: "center",
