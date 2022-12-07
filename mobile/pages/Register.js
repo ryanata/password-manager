@@ -46,8 +46,10 @@ const Register = () => {
             }).then((res) => {
                 if (res.status === 201) {
                     // Redirect to dashboard
-                    save("pwdlyToken", res.data.user.token);
-                    navigation.navigate('Dashboard');
+                    save("pwdlyToken", res.data.user.token)
+                    .then(() => {
+                        navigation.navigate('Dashboard');
+                    });
                 }
             }).catch((err) => {
                 console.log(err)

@@ -224,7 +224,7 @@ const updateUser = asyncHandler(async (req, res) => {
         user.phone = phoneNumber;
     }
     if (twoFactorAuthEnabled !== undefined) {
-        if (user.emailVerified === false) {
+        if (twoFactorAuthEnabled && user.emailVerified === false) {
             res.status(401);
             throw new Error('Please verify your email first');
         } 
