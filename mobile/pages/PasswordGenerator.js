@@ -22,7 +22,11 @@ const PasswordGenerator = () => {
     const [symbols, setSymbols] = useState(false);
     const [uppercase, setUppercase] = useState(false);
     const [lowercase, setLowercase] = useState(true);
-    const [alert, setAlert] = useState(false);
+    // const [alert, setAlert] = useState(false);
+
+    const copyToClipboard = async () => {
+        await Clipboard.setStringAsync(password);
+        };
 
     useEffect(() => {
         console.log(length, lowercase, uppercase, numbers, symbols);
@@ -42,8 +46,9 @@ const PasswordGenerator = () => {
             });
     }, [lowercase, uppercase, numbers, symbols, length, refetch]);
 
-    const copyToClipboard = async () => {
-    await Clipboard.setStringAsync(password);
+    const checkOthers = (caller) => {
+        const states = [lowercase, uppercase, numbers, symbols];
+        return states.filter((state, index) => index !== caller).every((state) => state === false);
     };
 
     return (
@@ -53,7 +58,7 @@ const PasswordGenerator = () => {
             </View>
 
             <View >
-                <PasswordStrength password={password} />
+                <PasswordStrength passwordStrength={[numbers, symbols, uppercase, lowercase].filter(Boolean).length} password={password}/>
             </View>
 
             <TouchableOpacity style={styles.passwordContainer} onPress={() => copyToClipboard()}> 
@@ -69,7 +74,9 @@ const PasswordGenerator = () => {
                     <Checkbox 
                     color={lowercase ? '#4681D0' : '#B6B6B6'} 
                     style={styles.check} value={lowercase} 
-                    onValueChange={(newValue) => setLowercase(newValue)}
+                    onValueChange={
+                        checkOthers(0) ?
+                        (newValue) => lowercase : (newValue) => setLowercase(newValue)}
                     />
                     <Text style={{fontSize: 20}}>Lowercase</Text>
                 </View>
@@ -78,7 +85,9 @@ const PasswordGenerator = () => {
                     <Checkbox 
                     color={uppercase ? '#4681D0' : '#B6B6B6'} 
                     style={styles.check} value={uppercase} 
-                    onValueChange={(newValue) => setUppercase(newValue)}
+                    onValueChange={
+                        checkOthers(1) ?
+                        (newValue) => uppercase : (newValue) => setUppercase(newValue)}
                     />
                     <Text style={{fontSize: 20}}>Uppercase</Text>
                 </View>
@@ -87,7 +96,9 @@ const PasswordGenerator = () => {
                     <Checkbox 
                     color={numbers ? '#4681D0' : '#B6B6B6'} 
                     style={styles.check} value={numbers} 
-                    onValueChange={(newValue) => setNumbers(newValue)}
+                    onValueChange={
+                        checkOthers(2) ?
+                        (newValue) => numbers : (newValue) => setNumbers(newValue)}
                     />
                     <Text style={{fontSize: 20}}>Numbers</Text>
                 </View>
@@ -96,7 +107,9 @@ const PasswordGenerator = () => {
                     <Checkbox 
                     color={symbols ? '#4681D0' : '#B6B6B6'} 
                     style={styles.check} value={symbols} 
-                    onValueChange={(newValue) => setSymbols(newValue)}
+                    onValueChange={
+                        checkOthers(3) ?
+                        (newValue) => symbols : (newValue) => setSymbols(newValue)}
                     />
                     <Text style={{fontSize: 20}}>Symbols</Text>
                 </View>
@@ -162,7 +175,7 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         borderRadius: 7.5,
         borderColor: '#E9E9E9',
-        width: "60%",
+        width: "80%",
         marginBottom: 30,
         marginTop: 30,
     },
